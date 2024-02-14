@@ -41,11 +41,9 @@ $this->registerJsFile($publishedRes[1].'/control_sidebar.js', ['depends' => '\ha
     <!-- /.content-wrapper -->
 
     <!-- Control Sidebar -->
-    <?= $this->render('control-sidebar') ?>
+<!--    --><?php //= $this->render('control-sidebar') ?>
     <!-- /.control-sidebar -->
 
-    <!-- Main Footer -->
-    <?= $this->render('footer') ?>
 </div>
 
 <?php $this->endBody() ?>
