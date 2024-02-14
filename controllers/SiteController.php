@@ -83,7 +83,7 @@ class   SiteController extends Controller
         $model->password = '';
         return $this->render('login', [
             'model' => $model,
-        ]);
+        ]); 
     }
 
     /**
@@ -93,10 +93,11 @@ class   SiteController extends Controller
      */
     public function actionLogout()
     {
-        Yii::$app->user->logout();
+        Yii::$app->user->logout(); // Logs out the currently logged in user.
 
-        return $this->goHome();
+        return $this->redirect(['/site/login']); // Redirects the user to the login page after logout.
     }
+
 
 //    /**
 //     * Displays about page.
