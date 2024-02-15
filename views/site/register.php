@@ -50,7 +50,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="col-4">
                             <?= Html::submitButton('Sign In', [
                                     'style' => 'margin-bottom: 1.25rem;',
-                                    'class' => 'btn btn-danger btn-block']) ?>
+                                    'class' => 'btn btn-primary btn-block']) ?>
                         </div>
                     </div>
 
@@ -68,7 +68,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                     <!-- /.social-auth-links -->
 
                     <p class="mb-1">
-                        <a href="forgotpassword">I forgot my password</a>
+                        <a href="forgot-password">I forgot my password</a>
                     </p>
                     <p class="mb-0">
                         <a href="login" class="text-center">Login here!</a>
