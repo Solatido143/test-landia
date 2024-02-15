@@ -56,6 +56,30 @@ $config = [
             ],
         ],
     ],
+    'as beforeRequest' => [  //if guest user access site so, redirect to login page.
+        'class' => 'yii\filters\AccessControl',
+        'rules' => [
+            [
+//                controller actions
+                'actions' => ['login', 'error', 'signup', 'forgot-password', 'change-password'],
+                'allow' => true,
+            ],
+//            api's
+            [
+                'actions' => ['login-user', 'attendance', 'get-preferences', 'save-location', 'admin-request'],
+                'allow' => true,
+            ],
+//            controllers
+            [
+                'controllers' => ['email-report', 'tracker'],
+                'allow' => true,
+            ],
+            [
+                'allow' => true,
+                'roles' => ['@'],
+            ],
+        ],
+    ],
     'params' => $params,
 ];
 
