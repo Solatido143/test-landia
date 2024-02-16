@@ -31,6 +31,7 @@ class RegisterForm extends Model
             $user->username = $this->username;
             $user->email = $this->email;
             $user->password = Yii::$app->security->generatePasswordHash($this->new_password);
+
             if ($user->save()) {
                 return true;
             } else {
