@@ -64,7 +64,19 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
         </div>
 
         <div class="col-lg-6">
-
+            <div class="card-body">
+                <div class="services-box card border border-5 border-secondary text-center" style="">
+                    <a href="#" class="text-decoration-none">
+                        <div class="card-body py-5 services-body" style="">
+                            <div class="card-img-top pt-3">
+<!--                                            <img src="./pictures/bambanglogo.png" alt="ehe" height="100" width="100">-->
+                            </div>
+                            <h4 class="card-title"></h4>
+                            <p class="card-text services-box-clamp"></p>
+                        </div>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </div>

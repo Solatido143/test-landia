@@ -15,7 +15,6 @@ class LoginForm extends Model
 {
     public $username;
     public $password;
-    public $password_hash;
     public $rememberMe = false;
 
     private $_user = false;
@@ -31,8 +30,8 @@ class LoginForm extends Model
             [['username', 'password'], 'required'],
             // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
-            // password_hash is validated by validatePassword()
-            ['password_hash', 'validatePassword'],
+            // password is validated by validatePassword()
+            ['password', 'validatePassword'],
         ];
     }
 

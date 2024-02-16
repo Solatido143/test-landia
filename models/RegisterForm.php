@@ -11,16 +11,16 @@ class RegisterForm extends Model
 {
     public $email;
     public $username;
-    public $new_password;
     public $password;
     public $confirmPassword;
 
     public function rules()
     {
         return [
-            [['username', 'new_password', 'email', 'confirmPassword'], 'required'],
+            [['username', 'password', 'email', 'confirmPassword'], 'required'],
             ['username', 'string', 'min' => 3, 'max' => 255],
-            ['confirmPassword', 'compare', 'compareAttribute' => 'new_password', 'message' => 'Passwords do not match.'],
+            ['email', 'email'],
+            ['confirmPassword', 'compare', 'compareAttribute' => 'password', 'message' => 'Passwords do not match.'],
             ['username', UniqueValidator::class, 'targetClass' => User::class, 'message' => 'This username has already been taken.'], // Add the unique validator for username
         ];
     }
@@ -30,7 +30,11 @@ class RegisterForm extends Model
             $user = new User();
             $user->username = $this->username;
             $user->email = $this->email;
-            $user->password = Yii::$app->security->generatePasswordHash($this->new_password);
+            $user->password_hash = Yii::$app->security->generatePasswordHash($this->password);
+            $user->auth_key = Yii::$app->security->generateRandomString();
+            $user->verification_token = Yii::$app->security->generateRandomString();
+            $user->password_reset_token = NULL;
+
 
             if ($user->save()) {
                 return true;

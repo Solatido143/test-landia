@@ -25,7 +25,9 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         'wrapperOptions' => ['class' => 'input-group mb-3']
                     ])
                         ->label(false)
-                        ->textInput(['placeholder' => $model->getAttributeLabel('email')]) ?>
+                        ->textInput([
+                            'type' => 'email',
+                            'placeholder' => $model->getAttributeLabel('email')]) ?>
 
                     <?= $form->field($model,'username', [
                         'options' => ['class' => 'form-group has-feedback'],
@@ -36,14 +38,14 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         ->label(false)
                         ->textInput(['placeholder' => $model->getAttributeLabel('username')]) ?>
 
-                    <?= $form->field($model, 'new_password', [
+                    <?= $form->field($model, 'password', [
                         'options' => ['class' => 'form-group has-feedback'],
                         'inputTemplate' => '{input}<div class="input-group-append"><div class="input-group-text"><span class="fas fa-lock"></span></div></div>',
                         'template' => '{beginWrapper}{input}{error}{endWrapper}',
                         'wrapperOptions' => ['class' => 'input-group mb-3']
                     ])
                         ->label(false)
-                        ->passwordInput(['placeholder' => $model->getAttributeLabel('new_password')]) ?>
+                        ->passwordInput(['placeholder' => $model->getAttributeLabel('password')]) ?>
 
                     <?= $form->field($model, 'confirmPassword', [
                         'options' => ['class' => 'form-group has-feedback'],

@@ -24,11 +24,12 @@
             echo \hail812\adminlte\widgets\Menu::widget([
                 'items' => [
 //                    system
-                    ['label' => 'System', 'header' => true , 'options' => ['style' => 'color: #6c757d']],
+                    ['label' => 'System', 'header' => true , 'options' => ['style' => 'color: #6c757d'], 'visible' => $isGuest],
                     [
                         'label' => 'Dashboard',
                         'url' => ['site/index'],
-                        'icon' => 'home'
+                        'icon' => 'home',
+                        'visible' => $isGuest
                     ],
                     [
                         'label' => 'Pos',
@@ -41,6 +42,7 @@
                     [
                         'label' => 'Sales',
                         'icon' => 'sack-dollar',
+                        'visible' => $isGuest,
                         'items' => [
                             ['label' => 'Booking', 'url' => ['site/bookings'], 'icon' => 'check-to-slot'],
                             ['label' => 'Sales Receipt', 'url' => ['site/receipts'], 'icon' => 'receipt'],
@@ -50,23 +52,29 @@
                     [
                         'label' => 'Items',
                         'icon' => 'list',
+                        'visible' => $isGuest,
                         'items' => [
                             ['label' => 'Products', 'url' => ['site/products'], 'icon' => 'box'],
                         ]
                     ],
 
-                    ['label' => 'Reports', 'url' => ['site/reports'], 'icon' => 'file-lines'],
-                    ['label' => 'Employee\'s', 'url' => ['site/team'], 'icon' => 'user-group'],
+                    ['label' => 'Reports', 'url' => ['site/reports'], 'visible' => $isGuest, 'icon' => 'file-lines'],
+                    ['label' => 'Employee\'s', 'url' => ['site/team'], 'visible' => $isGuest, 'icon' => 'user-group'],
 
 
 //                    user
                     ['label' => 'User', 'header' => true , 'options' => ['style' => 'color: #6c757d']],
+                    ['label' => 'Login', 'url' => ['site/login'], 'icon' => 'sign-in-alt', 'visible' => !$isGuest,],
+                    ['label' => 'Signup', 'url' => ['site/register'], 'icon' => 'sign-in-alt', 'visible' => !$isGuest,],
                     [
                         'label' => 'Profile',
                         'icon' => 'user',
+                        'visible' => $isGuest,
                         'items' => [
                             ['label' => 'Settings', 'url' => ['site/settings'], 'icon' => 'gear'],
                             ['label' => 'Login', 'url' => ['site/login'], 'icon' => 'sign-in-alt', 'visible' => !$isGuest,],
+                            ['label' => 'Signup', 'url' => ['site/register'], 'icon' => 'sign-in-alt', 'visible' => !$isGuest,],
+
                             [
                                 'label' => 'Logout',
                                 'url' => ['site/logout'],

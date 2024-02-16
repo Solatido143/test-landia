@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 use yii\validators\UniqueValidator;
@@ -15,7 +16,6 @@ use yii\validators\UniqueValidator;
  * @property string $fk_employee_id
  * @property string $email
  * @property string $password_hash
- * @property string $password
  * @property int|null $status
  * @property string|null $password_reset_token
  * @property string|null $user_access
@@ -28,8 +28,6 @@ use yii\validators\UniqueValidator;
  */
 class User extends ActiveRecord implements IdentityInterface
 {
-    public $password;
-    public $new_password;
     /**
      * {@inheritdoc}
      */
@@ -44,9 +42,10 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'email', 'password',], 'required'],
+            [['username', 'email', 'password_hash',], 'required'],
             [['status', 'availability'], 'integer'],
-            [['username', 'email', 'new_password', 'user_access'], 'string', 'max' => 100],
+            [['username', 'email', 'password_hash', 'user_access'], 'string', 'max' => 100],
+            ['email', 'email'],
             ['username', 'unique', 'message' => 'This username has already been taken.'],
             [['fk_employee_id'], 'string', 'max' => 30],
             [['password_reset_token', 'created_at', 'updated_at', 'auth_key', 'verification_token', 'managers_code'], 'string', 'max' => 255],
@@ -73,6 +72,20 @@ class User extends ActiveRecord implements IdentityInterface
             'auth_key' => 'Auth Key',
             'verification_token' => 'Verification Token',
             'managers_code' => 'Managers Code',
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::class,
+                'createdAtAttribute' => 'created_at',
+                'value' => new \yii\db\Expression('NOW()'),
+            ],
         ];
     }
 
@@ -116,7 +129,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getAuthKey()
     {
-//        return $this->authKey;
+        return $this->auth_key;
     }
 
     /**
@@ -124,7 +137,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function validateAuthKey($authKey)
     {
-//        return $this->authKey === $authKey;
+        return $this->auth_key === $authKey;
     }
 
     /**
@@ -135,7 +148,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function validatePassword($password_hash)
     {
-        return Yii::$app->security->validatePassword($password_hash, $this->password);
+        return Yii::$app->security->validatePassword($password_hash, $this->password_hash);
 //        return $this->password === $password;
     }
 
