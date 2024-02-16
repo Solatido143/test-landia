@@ -8,14 +8,22 @@ use yii\web\IdentityInterface;
 use yii\validators\UniqueValidator;
 
 /**
- * This is the model class for table "users".
+ * This is the model class for table "user".
  *
  * @property int $id
  * @property string $username
- * @property string $password
- * @property string $authKey
- * @property string $accessToken
- *
+ * @property string $fk_employee_id
+ * @property string $email
+ * @property string $password_hash
+ * @property int|null $status
+ * @property string|null $password_reset_token
+ * @property string|null $user_access
+ * @property int $availability
+ * @property string $created_at
+ * @property string|null $updated_at
+ * @property string|null $auth_key
+ * @property string|null $verification_token
+ * @property string|null $managers_code
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -24,7 +32,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function tableName()
     {
-        return 'users';
+        return 'user';
     }
 
     /**
@@ -33,9 +41,11 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'password'], 'required'],
-            [['username', 'password'], 'string', 'max' => 255],
-            ['username', 'unique', 'message' => 'This username has already been taken.'],
+            [['username', 'fk_employee_id', 'email', 'password_hash'], 'required'],
+            [['status', 'availability'], 'integer'],
+            [['username', 'email', 'password_hash', 'user_access'], 'string', 'max' => 100],
+            [['fk_employee_id'], 'string', 'max' => 30],
+            [['password_reset_token', 'created_at', 'updated_at', 'auth_key', 'verification_token', 'managers_code'], 'string', 'max' => 255],
         ];
     }
 
@@ -47,7 +57,18 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             'id' => 'ID',
             'username' => 'Username',
-            'password' => 'Password',
+            'fk_employee_id' => 'Fk Employee ID',
+            'email' => 'Email',
+            'password_hash' => 'Password Hash',
+            'status' => 'Status',
+            'password_reset_token' => 'Password Reset Token',
+            'user_access' => 'User Access',
+            'availability' => 'Availability',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+            'auth_key' => 'Auth Key',
+            'verification_token' => 'Verification Token',
+            'managers_code' => 'Managers Code',
         ];
     }
 
@@ -105,12 +126,12 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * Validates password
      *
-     * @param string $password password to validate
+     * @param string $password_hash password to validate
      * @return bool if password provided is valid for current user
      */
-    public function validatePassword($password)
+    public function validatePassword($password_hash)
     {
-        return Yii::$app->security->validatePassword($password, $this->password);
+        return Yii::$app->security->validatePassword($password_hash, $this->password);
 //        return $this->password === $password;
     }
 }

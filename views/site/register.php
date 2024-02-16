@@ -48,7 +48,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
 
                     <div class="row">
                         <div class="col-4">
-                            <?= Html::submitButton('Sign In', [
+                            <?= Html::submitButton('Register', [
                                     'style' => 'margin-bottom: 1.25rem;',
                                     'class' => 'btn btn-primary btn-block']) ?>
                         </div>

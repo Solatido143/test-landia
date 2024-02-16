@@ -9,30 +9,10 @@ use yii\helpers\Html;
     <ul class="navbar-nav">
         <li class="nav-item d-sm-none d-lg-inline-block">
             <a class="nav-link px-3" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-        </li>
-        <li class="nav-item d-none d-sm-inline-block">
-            <a href="<?=\yii\helpers\Url::home()?>" class="nav-link">
-                <i class="fa fa-home"></i>
-                Dashboard
-            </a>
-        </li>
-
-        <li class="nav-item d-none d-sm-inline-block d-lg-none">
-            <a href="site/login" class="nav-link">
-                <i class="fa fa-sign-in-alt"></i>
-                Login
-            </a>
-        </li>
-<!--        <li class="nav-item d-none d-sm-inline-block d-lg-none">-->
-<!--            <a href="site/login" class="nav-link">-->
-<!--                <i class="fa fa-sign-in-alt"></i>-->
-<!--                Register-->
-<!--            </a>-->
-<!--        </li>-->
     </ul>
 
 <!--     SEARCH FORM -->
-    <form class="form-inline ml-auto ml-3">
+    <form class="form-inline">
         <div class="input-group input-group-sm">
             <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
             <div class="input-group-append">
@@ -44,46 +24,23 @@ use yii\helpers\Html;
     </form>
 
     <!-- Right navbar links -->
-    <ul class="navbar-nav">
-<!--        <li class="nav-item">-->
-<!--            <a class="nav-link" data-widget="navbar-search" href="#" role="button">-->
-<!--                <i class="fas fa-search"></i>-->
-<!--            </a>-->
-<!--            <div class="navbar-search-block">-->
-<!--                <form class="form-inline">-->
-<!--                    <div class="input-group input-group-sm">-->
-<!--                        <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">-->
-<!--                        <div class="input-group-append">-->
-<!--                            <button class="btn btn-navbar" type="submit">-->
-<!--                                <i class="fas fa-search"></i>-->
-<!--                            </button>-->
-<!--                            <button class="btn btn-navbar" type="button" data-widget="navbar-search">-->
-<!--                                <i class="fas fa-times"></i>-->
-<!--                            </button>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </form>-->
-<!--            </div>-->
-<!--        </li>-->
-
-
-
+    <ul class="navbar-nav ms-auto">
         <?php if (!Yii::$app->user->isGuest): ?>
-            <li class="nav-item">
-                <?= Html::a('<i class="fas fa-sign-out-alt"></i> Logout', ['/site/logout'], ['data-method' => 'post', 'class' => 'nav-link']) ?>
+            <li class="nav-item dropdown">
+                <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-user"></i>
+                    <?= \yii\helpers\Inflector::camelize(Yii::$app->user->identity->username) ?>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li class="dropdown-item">
+                        <?= Html::a('<i class="fas fa-gear"></i> Settings', ['/site/settings'], ['data-method' => 'post', 'class' => 'nav-link']) ?>
+                    </li>
+                    <li class="dropdown-item">
+                        <?= Html::a('<i class="fas fa-sign-out-alt"></i> Logout', ['/site/logout'], ['data-method' => 'post', 'class' => 'nav-link']) ?>
+                    </li>
+                </ul>
             </li>
         <?php endif; ?>
-
-        <!--        <li class="nav-item">-->
-<!--            <a class="nav-link" data-widget="fullscreen" href="#" role="button">-->
-<!--                <i class="fas fa-expand-arrows-alt"></i>-->
-<!--            </a>-->
-<!--        </li>-->
-<!--        <li class="nav-item">-->
-<!--            <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">-->
-<!--                <i class="fas fa-th-large"></i>-->
-<!--            </a>-->
-<!--        </li>-->
     </ul>
 </nav>
 <!-- /.navbar -->

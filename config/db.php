@@ -2,7 +2,7 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=nailLandia-test',
+    'dsn' => 'mysql:host=localhost;dbname=ecmvph_nailandia',
     'username' => 'root',
     'password' => '',
     'charset' => 'utf8',

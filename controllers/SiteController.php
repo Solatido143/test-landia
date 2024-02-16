@@ -82,18 +82,25 @@ class SiteController extends Controller
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
 //            Send notification messages
-            Yii::$app->session->setFlash('registeredUser_success_title', 'Yay!');
-            Yii::$app->session->setFlash('registeredUser_success_body', 'Login successful.');
+            Yii::$app->session->setFlash('success', [
+                'title' => 'Yay!',
+                'body' => 'Login successful.',
+            ]);
 
             return $this->goBack();
         }
 
-        $model->password = '';
+        $model->password_hash = '';
         return $this->render('login', [
             'model' => $model,
         ]);
     }
 
+    /**
+     * Forgot Password action.
+     *
+     * @return Response|string
+     */
     public function actionForgotPassword()
     {
         if (!Yii::$app->user->isGuest) {
@@ -116,11 +123,6 @@ class SiteController extends Controller
         ]);
     }
 
-    /**
-     * Forgot Password action.
-     *
-     * @return Response|string
-     */
     public function actionRegister()
     {
         if (!Yii::$app->user->isGuest) {
@@ -129,8 +131,8 @@ class SiteController extends Controller
 
         $model = new RegisterForm();
         if ($model->load(Yii::$app->request->post()) && $model->register()) {
-            Yii::$app->session->setFlash('registeredUser_success_title', 'Yay!');
-            Yii::$app->session->setFlash('registeredUser_success_body', 'Registration successful.');
+            Yii::$app->session->setFlash('success', 'Yay!');
+            Yii::$app->session->setFlash('success', 'Registration successful.');
             return $this->redirect(['site/login']);
         }
 
@@ -147,9 +149,12 @@ class SiteController extends Controller
      */
     public function actionLogout()
     {
+
         Yii::$app->user->logout(); // Logs out the currently logged in user.
-        Yii::$app->session->setFlash('registeredUser_success_title', 'Owmen!');
-        Yii::$app->session->setFlash('registeredUser_success_body', 'Logout successful.');
+        Yii::$app->session->setFlash('success', [
+            'title' => 'Owmen!',
+            'body' => 'Logout successful.',
+        ]);
         return $this->redirect(['/site/login']); // Redirects the user to the login page after logout.
     }
 

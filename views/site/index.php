@@ -1,34 +1,11 @@
 <?php
-$this->title = 'Nail Landia';
+$this->title = 'Overview';
 $this->params['breadcrumbs'] = [['label' => $this->title]];
 ?>
 <div class="container-fluid">
     <div class="row mb-3">
-<!--        <div class="col-lg-6 my-auto">-->
-<!--            <div id="myCarousel" class="carousel slide mb-3 mb-lg-0" data-ride="carousel">-->
-<!--                <div class="carousel-inner">-->
-<!--                    <div class="carousel-item active">-->
-<!--                        <img class="d-block w-100" src="https://via.placeholder.com/1280x720" alt="First slide">-->
-<!--                    </div>-->
-<!--                    <div class="carousel-item">-->
-<!--                        <img class="d-block w-100" src="https://via.placeholder.com/1280x720" alt="Second slide">-->
-<!--                    </div>-->
-<!--                    <div class="carousel-item">-->
-<!--                        <img class="d-block w-100" src="https://via.placeholder.com/1280x720" alt="Third slide">-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">-->
-<!--                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>-->
-<!--                    <span class="sr-only">Previous</span>-->
-<!--                </a>-->
-<!--                <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">-->
-<!--                    <span class="carousel-control-next-icon" aria-hidden="true"></span>-->
-<!--                    <span class="sr-only">Next</span>-->
-<!--                </a>-->
-<!--            </div>-->
-<!--        </div>-->
-
         <div class="col-lg-6">
+
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-6 col-12">
                     <?= \hail812\adminlte\widgets\SmallBox::widget([
@@ -65,6 +42,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                 </div>
             </div>
         </div>
+
         <div class="col-lg-6">
             <div class="card text-center">
                 <div class="card-header">
@@ -75,9 +53,6 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <li class="nav-item">
                             <a class="nav-link" href="#">Link</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-                        </li>
                     </ul>
                 </div>
                 <div class="card-body text-start">
@@ -86,6 +61,10 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                     <a href="#" class="btn btn-primary">Go somewhere</a>
                 </div>
             </div>
+        </div>
+
+        <div class="col-lg-6">
+
         </div>
     </div>
 </div>
