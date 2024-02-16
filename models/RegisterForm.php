@@ -2,25 +2,25 @@
 
 namespace app\models;
 
-use yii\base\Model;
 use Yii;
+use yii\base\Model;
 use yii\helpers\VarDumper;
 use yii\validators\UniqueValidator; // Import the UniqueValidator class
 
 class RegisterForm extends Model
 {
+    public $email;
     public $username;
     public $new_password;
     public $password;
-    public $confirm_password;
+    public $confirmPassword;
 
     public function rules()
     {
         return [
-            [['username', 'new_password'], 'required'],
+            [['username', 'new_password', 'email', 'confirmPassword'], 'required'],
             ['username', 'string', 'min' => 3, 'max' => 255],
-            ['new_password', 'string', 'min' => 8],
-            ['confirm_password', 'compare', 'compareAttribute' => 'new_password', 'message' => 'Passwords do not match.'],
+            ['confirmPassword', 'compare', 'compareAttribute' => 'new_password', 'message' => 'Passwords do not match.'],
             ['username', UniqueValidator::class, 'targetClass' => User::class, 'message' => 'This username has already been taken.'], // Add the unique validator for username
         ];
     }
@@ -29,8 +29,8 @@ class RegisterForm extends Model
         if ($this->validate()) {
             $user = new User();
             $user->username = $this->username;
+            $user->email = $this->email;
             $user->password = Yii::$app->security->generatePasswordHash($this->new_password);
-
             if ($user->save()) {
                 return true;
             } else {

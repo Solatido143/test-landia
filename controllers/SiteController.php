@@ -90,7 +90,7 @@ class SiteController extends Controller
             return $this->goBack();
         }
 
-        $model->password_hash = '';
+        $model->password = '';
         return $this->render('login', [
             'model' => $model,
         ]);
@@ -131,8 +131,10 @@ class SiteController extends Controller
 
         $model = new RegisterForm();
         if ($model->load(Yii::$app->request->post()) && $model->register()) {
-            Yii::$app->session->setFlash('success', 'Yay!');
-            Yii::$app->session->setFlash('success', 'Registration successful.');
+            Yii::$app->session->setFlash('success', [
+                'title' => 'Yay!',
+                'body' => 'Registration successful.',
+            ]);
             return $this->redirect(['site/login']);
         }
 

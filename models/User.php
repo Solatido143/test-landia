@@ -15,6 +15,7 @@ use yii\validators\UniqueValidator;
  * @property string $fk_employee_id
  * @property string $email
  * @property string $password_hash
+ * @property string $password
  * @property int|null $status
  * @property string|null $password_reset_token
  * @property string|null $user_access
@@ -27,6 +28,8 @@ use yii\validators\UniqueValidator;
  */
 class User extends ActiveRecord implements IdentityInterface
 {
+    public $password;
+    public $new_password;
     /**
      * {@inheritdoc}
      */
@@ -41,9 +44,10 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'fk_employee_id', 'email', 'password_hash'], 'required'],
+            [['username', 'email', 'password',], 'required'],
             [['status', 'availability'], 'integer'],
-            [['username', 'email', 'password_hash', 'user_access'], 'string', 'max' => 100],
+            [['username', 'email', 'new_password', 'user_access'], 'string', 'max' => 100],
+            ['username', 'unique', 'message' => 'This username has already been taken.'],
             [['fk_employee_id'], 'string', 'max' => 30],
             [['password_reset_token', 'created_at', 'updated_at', 'auth_key', 'verification_token', 'managers_code'], 'string', 'max' => 255],
         ];
@@ -134,4 +138,5 @@ class User extends ActiveRecord implements IdentityInterface
         return Yii::$app->security->validatePassword($password_hash, $this->password);
 //        return $this->password === $password;
     }
+
 }
