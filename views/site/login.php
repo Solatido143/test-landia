@@ -42,9 +42,10 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         <div class="col-8">
                             <?= $form->field($model, 'rememberMe')->checkbox([
                                 'template' => '<div class="icheck-primary">{input}{label}</div>',
-                                'style' => 'position: relative; margin-top: 0rem; margin-left: 0.25rem; margin-right: 0.25rem;',
+                                'style' => 'position: static; margin-left: 0.25rem; margin-right: 0.25rem; ',
                                 'labelOptions' => [
-                                    'class' => ''
+                                    'class' => '',
+                                    'style' => 'font-weight: normal',
                                 ],
                                 'uncheck' => null,
                             ]) ?>
@@ -69,7 +70,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                     <!-- /.social-auth-links -->
 
                     <p class="mb-1">
-                        <a href="forgot-password">I forgot my password</a>
+                        <a href="forgot-password">Forgot password</a>
                     </p>
                     <p class="mb-0">
                         <a href="register" class="text-center">Register now!</a>

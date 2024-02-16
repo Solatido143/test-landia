@@ -36,9 +36,13 @@
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <?php
+            $isGuest = Yii::$app->user->isGuest;
             echo \hail812\adminlte\widgets\Menu::widget([
                 'items' => [
-                    ['label' => 'Login', 'url' => ['site/login'], 'icon' => 'sign-in-alt', 'visible' => Yii::$app->user->isGuest],
+                    ['label' => 'Dashboard', 'url' => ['site/index'], 'icon' => 'home', 'visible' => $isGuest, 'options' => ['style' => 'border-bottom: 1px solid #4b545c;']],
+
+                    ['label' => 'User', 'header' => true, 'visible' => $isGuest],
+                    ['label' => 'Login', 'url' => ['site/login'], 'icon' => 'sign-in-alt', 'visible' => $isGuest],
                 ],
             ]);
             ?>

@@ -3,132 +3,89 @@ $this->title = 'Nail Landia';
 $this->params['breadcrumbs'] = [['label' => $this->title]];
 ?>
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-6">
-<!--            --><?php //= \hail812\adminlte\widgets\Alert::widget([
-//                'type' => 'success',
-//                'body' => '<h3>Congratulations!</h3>',
-//            ]) ?>
-<!--            --><?php //= \hail812\adminlte\widgets\Callout::widget([
-//                'type' => 'danger',
-//                'head' => 'I am a danger callout!',
-//                'body' => 'There is a problem that we need to fix. A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.'
-//            ]) ?>
-        </div>
-    </div>
+    <div class="row mb-3">
+<!--        <div class="col-lg-6 my-auto">-->
+<!--            <div id="myCarousel" class="carousel slide mb-3 mb-lg-0" data-ride="carousel">-->
+<!--                <div class="carousel-inner">-->
+<!--                    <div class="carousel-item active">-->
+<!--                        <img class="d-block w-100" src="https://via.placeholder.com/1280x720" alt="First slide">-->
+<!--                    </div>-->
+<!--                    <div class="carousel-item">-->
+<!--                        <img class="d-block w-100" src="https://via.placeholder.com/1280x720" alt="Second slide">-->
+<!--                    </div>-->
+<!--                    <div class="carousel-item">-->
+<!--                        <img class="d-block w-100" src="https://via.placeholder.com/1280x720" alt="Third slide">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">-->
+<!--                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>-->
+<!--                    <span class="sr-only">Previous</span>-->
+<!--                </a>-->
+<!--                <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">-->
+<!--                    <span class="carousel-control-next-icon" aria-hidden="true"></span>-->
+<!--                    <span class="sr-only">Next</span>-->
+<!--                </a>-->
+<!--            </div>-->
+<!--        </div>-->
 
-<!--    <div class="row">-->
-<!--        <div class="col-12 col-sm-6 col-md-3">-->
-<!--            --><?php //= \hail812\adminlte\widgets\InfoBox::widget([
-//                'text' => 'CPU Traffic',
-//                'number' => '10 <small>%</small>',
-//                'icon' => 'fas fa-cog',
-//            ]) ?>
-<!--        </div>-->
-<!--    </div>-->
-<!---->
-<!--    <div class="row">-->
-<!--        <div class="col-md-4 col-sm-6 col-12">-->
-<!--            --><?php //= \hail812\adminlte\widgets\InfoBox::widget([
-//                'text' => 'Messages',
-//                'number' => '1,410',
-//                'icon' => 'far fa-envelope',
-//            ]) ?>
-<!--        </div>-->
-<!--        <div class="col-md-4 col-sm-6 col-12">-->
-<!--            --><?php //= \hail812\adminlte\widgets\InfoBox::widget([
-//                'text' => 'Bookmarks',
-//                'number' => '410',
-//                 'theme' => 'success',
-//                'icon' => 'far fa-flag',
-//            ]) ?>
-<!--        </div>-->
-<!--        <div class="col-md-4 col-sm-6 col-12">-->
-<!--            --><?php //= \hail812\adminlte\widgets\InfoBox::widget([
-//                'text' => 'Uploads',
-//                'number' => '13,648',
-//                'theme' => 'gradient-warning',
-//                'icon' => 'far fa-copy',
-//            ]) ?>
-<!--        </div>-->
-<!--    </div>-->
-<!---->
-<!--    <div class="row">-->
-<!--        <div class="col-md-4 col-sm-6 col-12">-->
-<!--            --><?php //= \hail812\adminlte\widgets\InfoBox::widget([
-//                'text' => 'Bookmarks',
-//                'number' => '41,410',
-//                'icon' => 'far fa-bookmark',
-//                'progress' => [
-//                    'width' => '70%',
-//                    'description' => '70% Increase in 30 Days'
-//                ]
-//            ]) ?>
-<!--        </div>-->
-<!--        <div class="col-md-4 col-sm-6 col-12">-->
-<!--            --><?php //$infoBox = \hail812\adminlte\widgets\InfoBox::begin([
-//                'text' => 'Likes',
-//                'number' => '41,410',
-//                'theme' => 'success',
-//                'icon' => 'far fa-thumbs-up',
-//                'progress' => [
-//                    'width' => '70%',
-//                    'description' => '70% Increase in 30 Days'
-//                ]
-//            ]) ?>
-<!--            --><?php //= \hail812\adminlte\widgets\Ribbon::widget([
-//                'id' => $infoBox->id.'-ribbon',
-//                'text' => 'Ribbon',
-//            ]) ?>
-<!--            --><?php //\hail812\adminlte\widgets\InfoBox::end() ?>
-<!--        </div>-->
-<!--        <div class="col-md-4 col-sm-6 col-12">-->
-<!--            --><?php //= \hail812\adminlte\widgets\InfoBox::widget([
-//                'text' => 'Events',
-//                'number' => '41,410',
-//                'theme' => 'gradient-warning',
-//                'icon' => 'far fa-calendar-alt',
-//                'progress' => [
-//                    'width' => '70%',
-//                    'description' => '70% Increase in 30 Days'
-//                ],
-//                'loadingStyle' => true
-//            ]) ?>
-<!--        </div>-->
-<!--    </div>-->
-<!---->
-<!--    <div class="row">-->
-<!--        <div class="col-lg-4 col-md-6 col-sm-6 col-12">-->
-<!--            --><?php //= \hail812\adminlte\widgets\SmallBox::widget([
-//                'title' => '150',
-//                'text' => 'New Orders',
-//                'icon' => 'fas fa-shopping-cart',
-//            ]) ?>
-<!--        </div>-->
-<!--        <div class="col-lg-4 col-md-6 col-sm-6 col-12">-->
-<!--            --><?php //$smallBox = \hail812\adminlte\widgets\SmallBox::begin([
-//                'title' => '150',
-//                'text' => 'New Orders',
-//                'icon' => 'fas fa-shopping-cart',
-//                'theme' => 'success'
-//            ]) ?>
-<!--            --><?php //= \hail812\adminlte\widgets\Ribbon::widget([
-//                'id' => $smallBox->id.'-ribbon',
-//                'text' => 'Ribbon',
-//                'theme' => 'warning',
-//                'size' => 'lg',
-//                'textSize' => 'lg'
-//            ]) ?>
-<!--            --><?php //\hail812\adminlte\widgets\SmallBox::end() ?>
-<!--        </div>-->
-<!--        <div class="col-lg-4 col-md-6 col-sm-6 col-12">-->
-<!--            --><?php //= \hail812\adminlte\widgets\SmallBox::widget([
-//                'title' => '44',
-//                'text' => 'User Registrations',
-//                'icon' => 'fas fa-user-plus',
-//                'theme' => 'gradient-success',
-//                'loadingStyle' => true
-//            ]) ?>
-<!--        </div>-->
+        <div class="col-lg-6">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                    <?= \hail812\adminlte\widgets\SmallBox::widget([
+                        'title' => '673',
+                        'text' => 'Sales',
+                        'icon' => 'fas fa-solid fa-certificate',
+                        'theme' => 'success',
+                    ]) ?>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                    <?= \hail812\adminlte\widgets\SmallBox::widget([
+                        'title' => '10',
+                        'text' => 'Service',
+                        'icon' => 'fas fa-solid fa-bell-concierge',
+                        'theme' => 'primary',
+                    ]) ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                    <?= \hail812\adminlte\widgets\SmallBox::widget([
+                        'title' => '542',
+                        'text' => 'Total Service',
+                        'icon' => 'fas fa-solid fa-receipt',
+                    ]) ?>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                    <?= \hail812\adminlte\widgets\SmallBox::widget([
+                        'title' => '64',
+                        'text' => 'Booking',
+                        'icon' => 'fas fa-solid fa-hand-sparkles',
+                        'theme' => 'warning',
+                    ]) ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card text-center">
+                <div class="card-header">
+                    <ul class="nav nav-pills card-header-pills">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">Active</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Link</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body text-start">
+                    <h5 class="card-title">Special title treatment</h5>
+                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

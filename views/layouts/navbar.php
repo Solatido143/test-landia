@@ -4,19 +4,31 @@ use yii\helpers\Html;
 
 ?>
 <!-- Navbar -->
-<nav class="main-header navbar navbar-expand navbar-white navbar-light">
+<nav class="main-header navbar navbar-expand navbar-white navbar-light px-2">
     <!-- Left navbar links -->
     <ul class="navbar-nav">
-        <li class="nav-item">
-            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        <li class="nav-item d-sm-none d-lg-inline-block">
+            <a class="nav-link px-3" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-
             <a href="<?=\yii\helpers\Url::home()?>" class="nav-link">
                 <i class="fa fa-home"></i>
                 Dashboard
             </a>
         </li>
+
+        <li class="nav-item d-none d-sm-inline-block d-lg-none">
+            <a href="site/login" class="nav-link">
+                <i class="fa fa-sign-in-alt"></i>
+                Login
+            </a>
+        </li>
+<!--        <li class="nav-item d-none d-sm-inline-block d-lg-none">-->
+<!--            <a href="site/login" class="nav-link">-->
+<!--                <i class="fa fa-sign-in-alt"></i>-->
+<!--                Register-->
+<!--            </a>-->
+<!--        </li>-->
     </ul>
 
 <!--     SEARCH FORM -->

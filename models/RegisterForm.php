@@ -24,7 +24,6 @@ class RegisterForm extends Model
             ['username', UniqueValidator::class, 'targetClass' => User::class, 'message' => 'This username has already been taken.'], // Add the unique validator for username
         ];
     }
-
     public function register()
     {
         if ($this->validate()) {
