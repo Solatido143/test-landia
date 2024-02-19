@@ -2,10 +2,8 @@
 
 namespace app\models;
 
-use app\models\query\EmployeesQuery;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "employees".
@@ -45,7 +43,7 @@ use yii\db\ActiveRecord;
  * @property Regions $fkRegion
  * @property Provinces $fkRegionArea
  */
-class Employees extends ActiveRecord
+class EmployeesApi extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -69,11 +67,11 @@ class Employees extends ActiveRecord
             [['suffix'], 'string', 'max' => 10],
             [['bday', 'contact_number', 'date_hired', 'end_of_contract', 'logged_by', 'logged_time', 'updated_by', 'updated_time'], 'string', 'max' => 100],
             [['emergency_contact_persons', 'emergency_contact_numbers', 'emergency_contact_relations'], 'string', 'max' => 255],
-//            [['fk_cluster'], 'exist', 'skipOnError' => true, 'targetClass' => Clusters::class, 'targetAttribute' => ['fk_cluster' => 'id']],
-//            [['fk_region'], 'exist', 'skipOnError' => true, 'targetClass' => Regions::class, 'targetAttribute' => ['fk_region' => 'id']],
-//            [['fk_region_area'], 'exist', 'skipOnError' => true, 'targetClass' => Provinces::class, 'targetAttribute' => ['fk_region_area' => 'id']],
-//            [['fk_city'], 'exist', 'skipOnError' => true, 'targetClass' => Cities::class, 'targetAttribute' => ['fk_city' => 'id']],
-//            [['fk_position'], 'exist', 'skipOnError' => true, 'targetClass' => Positions::class, 'targetAttribute' => ['fk_position' => 'id']],
+            [['fk_cluster'], 'exist', 'skipOnError' => true, 'targetClass' => Clusters::class, 'targetAttribute' => ['fk_cluster' => 'id']],
+            [['fk_region'], 'exist', 'skipOnError' => true, 'targetClass' => Regions::class, 'targetAttribute' => ['fk_region' => 'id']],
+            [['fk_region_area'], 'exist', 'skipOnError' => true, 'targetClass' => Provinces::class, 'targetAttribute' => ['fk_region_area' => 'id']],
+            [['fk_city'], 'exist', 'skipOnError' => true, 'targetClass' => Cities::class, 'targetAttribute' => ['fk_city' => 'id']],
+            [['fk_position'], 'exist', 'skipOnError' => true, 'targetClass' => Positions::class, 'targetAttribute' => ['fk_position' => 'id']],
         ];
     }
 
@@ -112,6 +110,8 @@ class Employees extends ActiveRecord
         ];
     }
 
+
+
     public function behaviors()
     {
         return [
@@ -126,7 +126,7 @@ class Employees extends ActiveRecord
     /**
      * Gets query for [[Attendances]].
      *
-     * @return \yii\db\ActiveQuery|AttendancesQuery
+     * @return \yii\db\ActiveQuery|\app\models\query\AttendancesQuery
      */
     public function getAttendances()
     {
@@ -136,7 +136,7 @@ class Employees extends ActiveRecord
     /**
      * Gets query for [[EmployeesServices]].
      *
-     * @return \yii\db\ActiveQuery|EmployeesServicesQuery
+     * @return \yii\db\ActiveQuery|\app\models\query\EmployeesServicesQuery
      */
     public function getEmployeesServices()
     {
@@ -146,7 +146,7 @@ class Employees extends ActiveRecord
     /**
      * Gets query for [[FkCity]].
      *
-     * @return \yii\db\ActiveQuery|CitiesQuery
+     * @return \yii\db\ActiveQuery|\app\models\query\CitiesQuery
      */
     public function getFkCity()
     {
@@ -156,8 +156,9 @@ class Employees extends ActiveRecord
     /**
      * Gets query for [[FkCluster]].
      *
-     * @return \yii\db\ActiveQuery|ClustersQuery
+     * @return \yii\db\ActiveQuery|\app\models\query\ClustersQuery
      */
+
     public function getFkCluster()
     {
         return $this->hasOne(Clusters::class, ['id' => 'fk_cluster']);
@@ -166,7 +167,7 @@ class Employees extends ActiveRecord
     /**
      * Gets query for [[FkPosition]].
      *
-     * @return \yii\db\ActiveQuery|PositionsQuery
+     * @return \yii\db\ActiveQuery|\app\models\query\PositionsQuery
      */
     public function getFkPosition()
     {
@@ -176,7 +177,7 @@ class Employees extends ActiveRecord
     /**
      * Gets query for [[FkRegion]].
      *
-     * @return \yii\db\ActiveQuery|RegionsQuery
+     * @return \yii\db\ActiveQuery|\app\models\query\RegionsQuery
      */
     public function getFkRegion()
     {
@@ -186,7 +187,7 @@ class Employees extends ActiveRecord
     /**
      * Gets query for [[FkRegionArea]].
      *
-     * @return \yii\db\ActiveQuery|ProvincesQuery
+     * @return \yii\db\ActiveQuery|\app\models\query\ProvincesQuery
      */
     public function getFkRegionArea()
     {
@@ -195,10 +196,10 @@ class Employees extends ActiveRecord
 
     /**
      * {@inheritdoc}
-     * @return EmployeesQuery the active query used by this AR class.
+     * @return \app\models\query\EmployeesAPIQuery the active query used by this AR class.
      */
     public static function find()
     {
-        return new EmployeesQuery(get_called_class());
+        return new \app\models\query\EmployeesAPIQuery(get_called_class());
     }
 }

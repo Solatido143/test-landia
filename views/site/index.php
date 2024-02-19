@@ -8,8 +8,8 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
         <div class="col-lg-8">
 
             <div class="row g-3 mb-3">
-                <div >
-                    <button type="button" class="btn btn-outline-warning btn-block d-lg-none">
+                <div class="d-lg-none">
+                    <button type="button" class="btn btn-warning btn-block">
                         <i class="fas fa-plus"></i>
                         Add Reservation
                     </button>
@@ -142,7 +142,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
         </div>
 
         <div class="col">
-            <button type="button" class="btn btn-outline-warning btn-block mb-3 d-none d-lg-block">
+            <button type="button" class="btn btn-warning btn-block mb-3 d-none d-lg-block">
                 <i class="fas fa-plus"></i>
                 Add Reservation
             </button>
