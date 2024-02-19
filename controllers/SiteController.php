@@ -63,17 +63,11 @@ class SiteController extends Controller
     /**
      * Displays homepage.
      *
-     * @return string
+     * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new Search();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+        return $this->render('index');
     }
 
     /**
@@ -168,14 +162,4 @@ class SiteController extends Controller
         return $this->redirect(['/site/login']); // Redirects the user to the login page after logout.
     }
 
-
-//    /**
-//     * Displays about page.
-//     *
-//     * @return string
-//     */
-//    public function actionAbout()
-//    {
-//        return $this->render('about');
-//    }
 }

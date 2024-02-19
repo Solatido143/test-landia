@@ -8,8 +8,15 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
         <div class="col-lg-8">
 
             <div class="row g-3 mb-3">
+                <div >
+                    <button type="button" class="btn btn-outline-warning btn-block d-lg-none">
+                        <i class="fas fa-plus"></i>
+                        Add Reservation
+                    </button>
+                </div>
 
                 <div class="col-lg-4 col-md-4 col-sm-4 col-12">
+
                     <?= \hail812\adminlte\widgets\SmallBox::widget([
                         'title' => '10',
                         'text' => 'Service',
@@ -44,26 +51,41 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         </div>
 
                         <div class="card-body">
-                            <?php
-                            // Example Yii2 ActiveForm for the search bar
-                            use yii\widgets\ActiveForm;
-                            use yii\helpers\Html;
+                            <form>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" placeholder="Search...">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-primary" type="button">Search</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>John Doe</td>
+                                    <td>john@example.com</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Jane Smith</td>
+                                    <td>jane@example.com</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Michael Johnson</td>
+                                    <td>michael@example.com</td>
+                                </tr>
+                                </tbody>
+                            </table>
 
-                            // Start ActiveForm
-                            $form = ActiveForm::begin([
-                                'action' => ['index'],
-                                'method' => 'get',
-                                'options' => ['class' => 'form-inline'],
-                            ]);
-                            ?>
-
-                            <?= $form->field($searchModel, 'search')->textInput(['class' => 'form-control mr-2', 'placeholder' => 'Search'])->label(false) ?>
-
-                            <div class="form-group">
-                                <?= Html::submitButton('search', ['class' => 'btn btn-primary']) ?>
-                            </div>
-
-                            <?php ActiveForm::end(); // End ActiveForm ?>
                         </div>
                     </div>
 
@@ -77,8 +99,41 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         </div>
 
                         <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            <form>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" placeholder="Search...">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-primary" type="button">Search</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>John Doe</td>
+                                    <td>john@example.com</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Jane Smith</td>
+                                    <td>jane@example.com</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Michael Johnson</td>
+                                    <td>michael@example.com</td>
+                                </tr>
+                                </tbody>
+                            </table>
+
                         </div>
                     </div>
                 </div>
@@ -87,7 +142,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
         </div>
 
         <div class="col">
-            <button type="button" class="btn btn-warning btn-block mb-3">
+            <button type="button" class="btn btn-outline-warning btn-block mb-3 d-none d-lg-block">
                 <i class="fas fa-plus"></i>
                 Add Reservation
             </button>
