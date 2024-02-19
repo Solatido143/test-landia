@@ -32,6 +32,9 @@ $this->registerJsFile($publishedRes[1].'/control_sidebar.js', ['depends' => '\ha
         a {
             text-decoration: none;
         }
+        .small-box {
+            margin-bottom: 0;
+        }
     </style>
 </head>
 <body class="hold-transition sidebar-mini">

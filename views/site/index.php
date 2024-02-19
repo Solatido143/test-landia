@@ -4,79 +4,119 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
 ?>
 <div class="container-fluid">
     <div class="row mb-3">
-        <div class="col-lg-6">
 
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-6 col-12">
-                    <?= \hail812\adminlte\widgets\SmallBox::widget([
-                        'title' => '673',
-                        'text' => 'Sales',
-                        'icon' => 'fas fa-solid fa-certificate',
-                        'theme' => 'success',
-                    ]) ?>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+        <div class="col-lg-8">
+
+            <div class="row g-3 mb-3">
+
+                <div class="col-lg-4 col-md-4 col-sm-4 col-12">
                     <?= \hail812\adminlte\widgets\SmallBox::widget([
                         'title' => '10',
                         'text' => 'Service',
                         'icon' => 'fas fa-solid fa-bell-concierge',
-                        'theme' => 'primary',
+                        'theme' => 'light',
                     ]) ?>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                <div class="col-lg-4 col-md-4 col-sm-4 col-12">
                     <?= \hail812\adminlte\widgets\SmallBox::widget([
                         'title' => '542',
                         'text' => 'Total Service',
                         'icon' => 'fas fa-solid fa-receipt',
+                        'theme' => 'light',
                     ]) ?>
                 </div>
-                <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                <div class="col-lg-4 col-md-4 col-sm-4 col-12">
                     <?= \hail812\adminlte\widgets\SmallBox::widget([
                         'title' => '64',
                         'text' => 'Booking',
                         'icon' => 'fas fa-solid fa-hand-sparkles',
-                        'theme' => 'warning',
+                        'theme' => 'light',
                     ]) ?>
                 </div>
             </div>
-        </div>
 
-        <div class="col-lg-6">
-            <div class="card text-center">
-                <div class="card-header">
-                    <ul class="nav nav-pills card-header-pills">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#">Active</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Link</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="card-body text-start">
-                    <h5 class="card-title">Special title treatment</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-6">
-            <div class="card-body">
-                <div class="services-box card border border-5 border-secondary text-center" style="">
-                    <a href="#" class="text-decoration-none">
-                        <div class="card-body py-5 services-body" style="">
-                            <div class="card-img-top pt-3">
-<!--                                            <img src="./pictures/bambanglogo.png" alt="ehe" height="100" width="100">-->
-                            </div>
-                            <h4 class="card-title"></h4>
-                            <p class="card-text services-box-clamp"></p>
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header d-flex align-items-center">
+                            <h5 class="flex-grow-1">In queue</h5> <!-- Use flex-grow-1 to allow the title to grow and take up the remaining space -->
+                            <a href="#" class="text-decoration-none">View all</a>
                         </div>
-                    </a>
+
+                        <div class="card-body">
+                            <?php
+                            // Example Yii2 ActiveForm for the search bar
+                            use yii\widgets\ActiveForm;
+                            use yii\helpers\Html;
+
+                            // Start ActiveForm
+                            $form = ActiveForm::begin([
+                                'action' => ['index'],
+                                'method' => 'get',
+                                'options' => ['class' => 'form-inline'],
+                            ]);
+                            ?>
+
+                            <?= $form->field($searchModel, 'search')->textInput(['class' => 'form-control mr-2', 'placeholder' => 'Search'])->label(false) ?>
+
+                            <div class="form-group">
+                                <?= Html::submitButton('search', ['class' => 'btn btn-primary']) ?>
+                            </div>
+
+                            <?php ActiveForm::end(); // End ActiveForm ?>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header d-flex align-items-center">
+                            <h5>Payments</h5>
+                            <a href="#" class="text-decoration-none ms-auto">View all</a>
+                        </div>
+
+                        <div class="card-body">
+                            <h5 class="card-title">Card title</h5>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
+
         </div>
+
+        <div class="col">
+            <button type="button" class="btn btn-warning btn-block mb-3">
+                <i class="fas fa-plus"></i>
+                Add Reservation
+            </button>
+
+            <div class="card">
+                <div class="card-header d-flex align-items-center">
+                    <h5>Services</h5>
+                    <a href="#" class="text-decoration-none ms-auto">View all</a>
+                </div>
+
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header d-flex align-items-center">
+                    <h5>Out of Stocks</h5>
+                    <a href="#" class="text-decoration-none ms-auto">View all</a>
+                </div>
+
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 </div>

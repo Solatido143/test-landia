@@ -7,7 +7,7 @@ use yii\helpers\Html;
 <nav class="main-header navbar navbar-expand navbar-white navbar-light px-2">
     <!-- Left navbar links -->
     <ul class="navbar-nav">
-        <li class="nav-item d-sm-none d-lg-inline-block">
+        <li class="nav-item">
             <a class="nav-link px-3" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
     </ul>
 

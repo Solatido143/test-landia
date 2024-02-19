@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\models\query\EmployeesQuery;
 use Yii;
 
 /**
@@ -42,7 +43,7 @@ use Yii;
  * @property Regions $fkRegion
  * @property Provinces $fkRegionArea
  */
-class Employee extends \yii\db\ActiveRecord
+class Employees extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -66,11 +67,11 @@ class Employee extends \yii\db\ActiveRecord
             [['suffix'], 'string', 'max' => 10],
             [['bday', 'contact_number', 'date_hired', 'end_of_contract', 'logged_by', 'logged_time', 'updated_by', 'updated_time'], 'string', 'max' => 100],
             [['emergency_contact_persons', 'emergency_contact_numbers', 'emergency_contact_relations'], 'string', 'max' => 255],
-            [['fk_cluster'], 'exist', 'skipOnError' => true, 'targetClass' => Clusters::class, 'targetAttribute' => ['fk_cluster' => 'id']],
-            [['fk_region'], 'exist', 'skipOnError' => true, 'targetClass' => Regions::class, 'targetAttribute' => ['fk_region' => 'id']],
-            [['fk_region_area'], 'exist', 'skipOnError' => true, 'targetClass' => Provinces::class, 'targetAttribute' => ['fk_region_area' => 'id']],
-            [['fk_city'], 'exist', 'skipOnError' => true, 'targetClass' => Cities::class, 'targetAttribute' => ['fk_city' => 'id']],
-            [['fk_position'], 'exist', 'skipOnError' => true, 'targetClass' => Positions::class, 'targetAttribute' => ['fk_position' => 'id']],
+//            [['fk_cluster'], 'exist', 'skipOnError' => true, 'targetClass' => Clusters::class, 'targetAttribute' => ['fk_cluster' => 'id']],
+//            [['fk_region'], 'exist', 'skipOnError' => true, 'targetClass' => Regions::class, 'targetAttribute' => ['fk_region' => 'id']],
+//            [['fk_region_area'], 'exist', 'skipOnError' => true, 'targetClass' => Provinces::class, 'targetAttribute' => ['fk_region_area' => 'id']],
+//            [['fk_city'], 'exist', 'skipOnError' => true, 'targetClass' => Cities::class, 'targetAttribute' => ['fk_city' => 'id']],
+//            [['fk_position'], 'exist', 'skipOnError' => true, 'targetClass' => Positions::class, 'targetAttribute' => ['fk_position' => 'id']],
         ];
     }
 
@@ -112,70 +113,79 @@ class Employee extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Attendances]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery|AttendancesQuery
      */
-    public function getAttendances()
-    {
-        return $this->hasMany(Attendances::class, ['fk_employee' => 'id']);
-    }
+//    public function getAttendances()
+//    {
+//        return $this->hasMany(Attendances::class, ['fk_employee' => 'id']);
+//    }
+//
+//    /**
+//     * Gets query for [[EmployeesServices]].
+//     *
+//     * @return \yii\db\ActiveQuery|EmployeesServicesQuery
+//     */
+//    public function getEmployeesServices()
+//    {
+//        return $this->hasMany(EmployeesServices::class, ['fk_employee' => 'id']);
+//    }
+//
+//    /**
+//     * Gets query for [[FkCity]].
+//     *
+//     * @return \yii\db\ActiveQuery|CitiesQuery
+//     */
+//    public function getFkCity()
+//    {
+//        return $this->hasOne(Cities::class, ['id' => 'fk_city']);
+//    }
+
+//    /**
+//     * Gets query for [[FkCluster]].
+//     *
+//     * @return \yii\db\ActiveQuery|ClustersQuery
+//     */
+//    public function getFkCluster()
+//    {
+//        return $this->hasOne(Clusters::class, ['id' => 'fk_cluster']);
+//    }
+
+//    /**
+//     * Gets query for [[FkPosition]].
+//     *
+//     * @return \yii\db\ActiveQuery|PositionsQuery
+//     */
+//    public function getFkPosition()
+//    {
+//        return $this->hasOne(Positions::class, ['id' => 'fk_position']);
+//    }
+
+//    /**
+//     * Gets query for [[FkRegion]].
+//     *
+//     * @return \yii\db\ActiveQuery|RegionsQuery
+//     */
+//    public function getFkRegion()
+//    {
+//        return $this->hasOne(Regions::class, ['id' => 'fk_region']);
+//    }
+//
+//    /**
+//     * Gets query for [[FkRegionArea]].
+//     *
+//     * @return \yii\db\ActiveQuery|ProvincesQuery
+//     */
+//    public function getFkRegionArea()
+//    {
+//        return $this->hasOne(Provinces::class, ['id' => 'fk_region_area']);
+//    }
 
     /**
-     * Gets query for [[EmployeesServices]].
-     *
-     * @return \yii\db\ActiveQuery
+     * {@inheritdoc}
+     * @return EmployeesQuery the active query used by this AR class.
      */
-    public function getEmployeesServices()
+    public static function find()
     {
-        return $this->hasMany(EmployeesServices::class, ['fk_employee' => 'id']);
-    }
-
-    /**
-     * Gets query for [[FkCity]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getFkCity()
-    {
-        return $this->hasOne(Cities::class, ['id' => 'fk_city']);
-    }
-
-    /**
-     * Gets query for [[FkCluster]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getFkCluster()
-    {
-        return $this->hasOne(Clusters::class, ['id' => 'fk_cluster']);
-    }
-
-    /**
-     * Gets query for [[FkPosition]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getFkPosition()
-    {
-        return $this->hasOne(Positions::class, ['id' => 'fk_position']);
-    }
-
-    /**
-     * Gets query for [[FkRegion]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getFkRegion()
-    {
-        return $this->hasOne(Regions::class, ['id' => 'fk_region']);
-    }
-
-    /**
-     * Gets query for [[FkRegionArea]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getFkRegionArea()
-    {
-        return $this->hasOne(Provinces::class, ['id' => 'fk_region_area']);
+        return new EmployeesQuery(get_called_class());
     }
 }
