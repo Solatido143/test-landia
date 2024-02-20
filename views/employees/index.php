@@ -1,9 +1,11 @@
 <?php
 
+use app\models\Positions;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
+/* @var $searchModel app\models\EmployeesSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Employees';
@@ -21,33 +23,33 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
 
 
+                    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
                     <?= GridView::widget([
                         'dataProvider' => $dataProvider,
+//                        'filterModel' => $searchModel,
+                        'headerRowOptions' => ['class' => 'text-nowrap'],
                         'columns' => [
 //                            ['class' => 'yii\grid\SerialColumn'],
 
                             'id',
                             'employee_id',
-//                            'fk_position',
-                            'fname',
-                            'mname',
-
                             [
-                                'header' => 'Actions',
-                                'content' => function ($model, $key, $index, $column) {
-                                    $viewButton = Html::a(Html::tag('i', '', ['class' => 'fas fa-eye']), ['employees/view', 'id' => $model->id], ['class' => 'btn btn-primary py-0']);
-                                    $updateButton = Html::a(Html::tag('i', '', ['class' => 'fas fa-pencil']), ['employees/update', 'id' => $model->id], ['class' => 'btn btn-warning py-0']);
-                                    $deleteButton = Html::a(Html::tag('i', '', ['class' => 'fas fa-trash']), ['employees/delete', 'id' => $model->id], ['class' => 'btn btn-danger py-0', 'data-confirm' => 'Are you sure you want to delete this item?', 'data-method' => 'post',]);
-
-                                    return $viewButton . ' ' . $updateButton . ' ' . $deleteButton;
+                                'attribute' => 'fk_position',
+                                'label' => 'Position',
+                                'value' => function ($model) {
+                                    // Fetch the position name based on the fk_position value
+                                    $position = Positions::findOne($model->fk_position);
+                                    return $position ? $position->position : null;
                                 },
                             ],
-                            //'lname',
+                            'fname',
+                            'lname',
+                            //'mname',
                             //'suffix',
                             //'bday',
                             //'gender',
-                            //'contact_number',
+                            'contact_number',
                             //'fk_cluster',
                             //'fk_region',
                             //'fk_region_area',
@@ -55,7 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             //'house_address:ntext',
                             //'date_hired',
                             //'end_of_contract',
-                            //'employment_status',
+                            'employment_status',
                             //'emergency_contact_persons',
                             //'emergency_contact_numbers',
                             //'emergency_contact_relations',
@@ -65,14 +67,26 @@ $this->params['breadcrumbs'][] = $this->title;
                             //'updated_by',
                             //'updated_time',
 
-                            //['class' => 'hail812\adminlte3\yii\grid\ActionColumn'],
+//                            ['class' => 'hail812\adminlte3\yii\grid\ActionColumn'],
 
+                            [
+                                'header' => 'Actions',
+                                'headerOptions' => ['class' => 'text-danger'],
+                                'contentOptions' => ['class' => 'text-nowrap'],
+                                'content' => function ($model) {
+                                    $viewButton = Html::a(Html::tag('i', '', ['class' => 'fas fa-eye']), ['employees/view', 'id' => $model->id], ['class' => 'btn btn-primary py-0']);
+                                    $updateButton = Html::a(Html::tag('i', '', ['class' => 'fas fa-pencil']), ['employees/update', 'id' => $model->id], ['class' => 'btn btn-warning py-0']);
+
+                                    return $viewButton . ' ' . $updateButton;
+                                },
+                            ],
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],
                         'pager' => [
                             'class' => 'yii\bootstrap4\LinkPager',
                         ]
                     ]); ?>
+
 
                 </div>
                 <!--.card-body-->

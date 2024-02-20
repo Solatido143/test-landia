@@ -12,7 +12,7 @@ class EmployeesApi extends \app\models\EmployeesApi
             'fname',
             'lname',
             'fk_cluster',
-            'fkCluster',
+//            'fkCluster',
         ];
     }
 

@@ -2,24 +2,17 @@
 
 namespace app\controllers;
 
-use app\models\Cities;
-use app\models\Clusters;
-use app\models\Provinces;
-use app\models\Regions;
-use app\utility\ModelHelper;
 use Yii;
-use app\models\Employees;
-use app\models\EmployeesSearch;
-
+use app\models\Products;
+use app\models\ProductsSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-
 use yii\filters\VerbFilter;
 
 /**
- * EmployeesController implements the CRUD actions for Employees model.
+ * ProductsController implements the CRUD actions for Products model.
  */
-class EmployeesController extends Controller
+class ProductsController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -37,12 +30,12 @@ class EmployeesController extends Controller
     }
 
     /**
-     * Lists all Employees models.
+     * Lists all Products models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new EmployeesSearch();
+        $searchModel = new ProductsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -52,29 +45,29 @@ class EmployeesController extends Controller
     }
 
     /**
-     * Displays a single Employees model.
-     * @param int $id ID
+     * Displays a single Products model.
+     * @param int $product_id Product ID
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView($product_id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findModel($product_id),
         ]);
     }
 
     /**
-     * Creates a new Employees model.
+     * Creates a new Products model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Employees();
+        $model = new Products();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view', 'product_id' => $model->product_id]);
         }
 
         return $this->render('create', [
@@ -83,18 +76,18 @@ class EmployeesController extends Controller
     }
 
     /**
-     * Updates an existing Employees model.
+     * Updates an existing Products model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
+     * @param int $product_id Product ID
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($product_id)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($product_id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view', 'product_id' => $model->product_id]);
         }
 
         return $this->render('update', [
@@ -103,29 +96,29 @@ class EmployeesController extends Controller
     }
 
     /**
-     * Deletes an existing Employees model.
+     * Deletes an existing Products model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
+     * @param int $product_id Product ID
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete($product_id)
     {
-        $this->findModel($id)->delete();
+        $this->findModel($product_id)->delete();
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Employees model based on its primary key value.
+     * Finds the Products model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return Employees the loaded model
+     * @param int $product_id Product ID
+     * @return Products the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($product_id)
     {
-        if (($model = Employees::findOne($id)) !== null) {
+        if (($model = Products::findOne($product_id)) !== null) {
             return $model;
         }
 

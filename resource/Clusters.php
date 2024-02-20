@@ -9,6 +9,7 @@ class Clusters extends \app\models\Clusters
         return [
             'id',
             'cluster',
+//            'employees',
         ];
     }
 

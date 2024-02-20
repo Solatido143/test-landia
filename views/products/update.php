@@ -1,13 +1,12 @@
 <?php
 
-use yii\helpers\Html;
-
 /* @var $this yii\web\View */
-/* @var $model app\models\Employees */
+/* @var $model app\models\Products */
 
-$this->title = 'Create Employee';
-$this->params['breadcrumbs'][] = ['label' => 'Employees', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Update Products: ' . $model->name;
+$this->params['breadcrumbs'][] = ['label' => 'Products', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'product_id' => $model->product_id]];
+$this->params['breadcrumbs'][] = 'Update';
 ?>
 
 <div class="container-fluid">

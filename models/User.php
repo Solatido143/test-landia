@@ -79,21 +79,6 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
-    {
-        return [
-            [
-                'class' => TimestampBehavior::class,
-                'createdAtAttribute' => 'created_at',
-                'updatedAtAttribute' => 'updated_at',
-                'value' => new \yii\db\Expression('NOW()'),
-            ],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public static function findIdentity($id)
     {
         return self::findOne($id);

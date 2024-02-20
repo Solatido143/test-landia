@@ -31,21 +31,24 @@
                         'icon' => 'home',
                         'visible' => $isGuest
                     ],
+
                     [
                         'label' => 'Pos',
-                        'url' => ['site/pos'],
+                        'url' => ['/pos'],
                         'icon' => 'chart-simple',
                         'visible' => $isGuest,
 //                        'options' => ['style' => 'border-bottom: 1px solid #4b545c;']
                     ],
+
 
                     [
                         'label' => 'Sales',
                         'icon' => 'sack-dollar',
                         'visible' => $isGuest,
                         'items' => [
-                            ['label' => 'Booking', 'url' => ['site/bookings'], 'icon' => 'check-to-slot'],
-                            ['label' => 'Sales Receipt', 'url' => ['site/receipts'], 'icon' => 'receipt'],
+                            ['label' => 'Booking', 'url' => ['bookings'], 'icon' => 'check-to-slot'],
+                            ['label' => 'Sales Receipt', 'url' => ['receipts'], 'icon' => 'receipt'],
+                            ['label' => 'Services', 'url' => ['services'], 'icon' => 'scroll'],
 
                         ]
                     ],
@@ -54,12 +57,12 @@
                         'icon' => 'list',
                         'visible' => $isGuest,
                         'items' => [
-                            ['label' => 'Products', 'url' => ['site/products'], 'icon' => 'box'],
+                            ['label' => 'Products', 'url' => ['/products'], 'icon' => 'box'],
                         ]
                     ],
 
-                    ['label' => 'Reports', 'url' => ['site/reports'], 'visible' => $isGuest, 'icon' => 'file-lines'],
-                    ['label' => 'Employee\'s', 'url' => ['site/team'], 'visible' => $isGuest, 'icon' => 'user-group'],
+                    ['label' => 'Reports', 'url' => ['reports'], 'visible' => $isGuest, 'icon' => 'file-lines'],
+                    ['label' => 'Employee\'s', 'url' => ['/employees'], 'visible' => $isGuest, 'icon' => 'user-group'],
 
 
 //                    user

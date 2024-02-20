@@ -61,16 +61,12 @@ $config = [
             'rules' => [
                 [
                     'class' => 'yii\rest\UrlRule',
-                    'controller' => ['employees' => 'employees-api'],
+                    'controller' => ['employed' => 'employees-api'],
                 ],
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => ['cluster' => 'clusters']
                 ],
-                [
-                    'pattern' => 'employees/<id:\d+>/cluster',
-                    'route' => 'employees/cluster',
-                ]
             ],
         ],
     ],
