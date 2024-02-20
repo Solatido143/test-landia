@@ -2,13 +2,21 @@
 
 namespace app\resource;
 
-use app\models\EmployeesApi;
-
 class Clusters extends \app\models\Clusters
 {
     public function fields()
     {
-        return [ 'id', 'cluster'];
+        return [
+            'id',
+            'cluster',
+        ];
+    }
+
+    public function extraFields()
+    {
+        return [
+            'employees',
+        ];
     }
 
     public function getEmployees()

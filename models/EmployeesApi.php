@@ -158,7 +158,6 @@ class EmployeesApi extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery|\app\models\query\ClustersQuery
      */
-
     public function getFkCluster()
     {
         return $this->hasOne(Clusters::class, ['id' => 'fk_cluster']);

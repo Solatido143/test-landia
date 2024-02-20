@@ -59,7 +59,18 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                ['class' => UrlRule::class, 'controller' => ['employed' => 'employees-api', 'cluster' => 'clusters']]
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => ['employees' => 'employees-api'],
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => ['cluster' => 'clusters']
+                ],
+                [
+                    'pattern' => 'employees/<id:\d+>/cluster',
+                    'route' => 'employees/cluster',
+                ]
             ],
         ],
     ],
