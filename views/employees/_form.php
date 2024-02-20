@@ -10,13 +10,13 @@ use yii\widgets\MaskedInput;
 
 $Cluster = \app\models\Clusters::find()->select('id, cluster')->asArray()->all();
 $Cluster = \yii\helpers\ArrayHelper::map($Cluster, 'id', 'cluster');
-
+//
 $Region = \app\models\Regions::find()->select('id, region')->asArray()->all();
 $Region = \yii\helpers\ArrayHelper::map($Region, 'id', 'region');
-
+//
 $Region_area = \app\models\Provinces::find()->select('id, province')->asArray()->all();
 $Region_area = \yii\helpers\ArrayHelper::map($Region_area, 'id', 'province');
-
+//
 $City = \app\models\Cities::find()->select('id, city')->asArray()->all();
 $City = \yii\helpers\ArrayHelper::map($City, 'id', 'city');
 ?>
