@@ -2,7 +2,7 @@
 
 namespace app\resource;
 
-class EmployeesApi extends \app\models\EmployeesApi
+class EmployeesApi extends \app\models\Employees
 {
     public function fields()
     {

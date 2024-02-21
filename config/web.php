@@ -80,14 +80,14 @@ $config = [
 //            ],
 ////            api's
 //            [
-//                'actions' => ['login-user', 'attendance', 'get-preferences', 'save-location', 'admin-request'],
+//                'actions' => ['login-user', 'attendance', 'get-preferences', 'save-location', 'admin-request', 'employed'],
 //                'allow' => true,
 //            ],
-////            controllers
-//            [
-//                'controllers' => ['email-report', 'tracker'],
-//                'allow' => true,
-//            ],
+//////            controllers
+////            [
+////                'controllers' => ['email-report', 'tracker'],
+////                'allow' => true,
+////            ],
 //            [
 //                'allow' => true,
 //                'roles' => ['@'],
