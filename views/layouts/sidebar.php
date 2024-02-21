@@ -11,7 +11,8 @@
         <?php if (!Yii::$app->user->isGuest): ?>
             <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                 <div class="info">
-                    <a href="#" class="d-block"><?= \yii\helpers\Inflector::camelize(Yii::$app->user->identity->username) ?></a>
+                    <i class="fas fa-user fa-lg" style="color: #fff"></i>
+                    <a href="#"><?= \yii\helpers\Inflector::camelize(Yii::$app->user->identity->username) ?></a>
                 </div>
             </div>
         <?php endif; ?>
@@ -54,12 +55,12 @@
                         'icon' => 'list',
                         'visible' => $isGuest,
                         'items' => [
-                            ['label' => 'Products', 'url' => ['/products'], 'icon' => 'box'],
+                            ['label' => 'Products', 'url' => ['/products/index'], 'icon' => 'box'],
                         ]
                     ],
 
                     ['label' => 'Reports', 'url' => ['reports'], 'visible' => $isGuest, 'icon' => 'file-lines'],
-                    ['label' => 'Employee\'s', 'url' => ['/employees'], 'visible' => $isGuest, 'icon' => 'user-group'],
+                    ['label' => 'Employee\'s', 'url' => ['/employees/index'], 'visible' => $isGuest, 'icon' => 'user-group'],
 
 
 //                    user

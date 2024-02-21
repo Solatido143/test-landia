@@ -8,31 +8,19 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="row mt-2">
-    <div class="col-md-12">
-
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'product_id') ?>
+    <div class="d-flex">
+    <?= $form->field($model, 'searchField')->label(false)->textInput(['placeholder' => 'Search'])->label(false) ?>
 
-    <?= $form->field($model, 'name') ?>
-
-    <?= $form->field($model, 'description') ?>
-
-    <?= $form->field($model, 'price') ?>
-
-    <?= $form->field($model, 'stock_quantity') ?>
-
-    <div class="form-group">
+    <div class="form-group ms-3">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
         <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
     </div>
-
+    </div>
     <?php ActiveForm::end(); ?>
 
-    </div>
-    <!--.col-md-12-->
-</div>
+
