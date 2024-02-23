@@ -2,19 +2,17 @@
 
 namespace app\controllers;
 
-use app\models\SubProducts;
 use Yii;
-use app\models\Products;
-use app\models\searches\ProductsSearch;
-use yii\data\ActiveDataProvider;
+use app\models\SubProducts;
+use app\models\searches\SubProductsSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * ProductsController implements the CRUD actions for Products model.
+ * SubProductsController implements the CRUD actions for SubProducts model.
  */
-class ProductsController extends Controller
+class SubProductsController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -32,12 +30,12 @@ class ProductsController extends Controller
     }
 
     /**
-     * Lists all Products models.
+     * Lists all SubProducts models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new ProductsSearch();
+        $searchModel = new SubProductsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -47,7 +45,7 @@ class ProductsController extends Controller
     }
 
     /**
-     * Displays a single Products model.
+     * Displays a single SubProducts model.
      * @param int $id ID
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -59,35 +57,14 @@ class ProductsController extends Controller
         ]);
     }
 
-    public function actionSubProducts($id)
-    {
-        // Fetch the Product model based on its ID
-        $model = Products::findOne($id);
-
-        if ($model === null) {
-            throw new NotFoundHttpException('The requested product does not exist.');
-        }
-
-        // Retrieve the sub-products related to the main product
-        $dataProvider = new ActiveDataProvider([
-            'query' => $model->getSubProducts(),
-        ]);
-
-        return $this->render('sub-products/index', [
-            'model' => $model,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-
-
     /**
-     * Creates a new Products model.
+     * Creates a new SubProducts model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Products();
+        $model = new SubProducts();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -99,7 +76,7 @@ class ProductsController extends Controller
     }
 
     /**
-     * Updates an existing Products model.
+     * Updates an existing SubProducts model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return mixed
@@ -119,33 +96,32 @@ class ProductsController extends Controller
     }
 
     /**
-     * Deletes an existing Products model.
+     * Deletes an existing SubProducts model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param int $id ID
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete()
+    public function actionDelete($id)
     {
-        Yii::$app->session->setFlash('error', [
-            'title' => 'Sad!',
-            'body' => 'You do not have permission to delete this item..',
-        ]);
-        return $this->redirect(['/products']);
+        $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Products model based on its primary key value.
+     * Finds the SubProducts model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Products the loaded model
+     * @return SubProducts the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Products::findOne($id)) !== null) {
+        if (($model = SubProducts::findOne($id)) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-
-
 }

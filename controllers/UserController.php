@@ -40,15 +40,30 @@ class UserController extends ActiveController
         $model = new RegisterForm();
         $model->load(Yii::$app->getRequest()->getBodyParams(), '');
 
-        if ($model->register()) {
-            Yii::$app->getResponse()->setStatusCode(201); // Created
-            Yii::$app->getResponse()->format = Response::FORMAT_JSON;
-            return $model;
+        if ($model->validate()) {
+            if ($model->register()) {
+                Yii::$app->getResponse()->setStatusCode(201); // Created
+                Yii::$app->getResponse()->format = Response::FORMAT_JSON;
+                return $model;
+            } else {
+                Yii::$app->getResponse()->setStatusCode(500); // Internal Server Error
+                return ['error' => 'Failed to register user.', 'success' => false];
+            }
         } else {
-            Yii::$app->getResponse()->format = Response::FORMAT_JSON;
-            return ['errors' => $model->errors];
+            $errors = $model->errors;
+            if (isset($errors['username']) && strpos($errors['username'][0], 'This username has already been taken.') !== false) {
+                Yii::$app->getResponse()->setStatusCode(400); // Bad request
+                return ['error' => 'Username already exists.', 'success' => false];
+            } elseif (isset($errors['email']) && strpos($errors['email'][0], 'is not a valid email address.') !== false) {
+                Yii::$app->getResponse()->setStatusCode(400); // Bad request
+                return ['error' => 'Invalid email address.', 'success' => false];
+            } else {
+                Yii::$app->getResponse()->setStatusCode(422); // Unprocessable Entity
+                return ['errors' => $errors];
+            }
         }
     }
+
 
     // Custom action to view a single user
     public function actionViewUsers()

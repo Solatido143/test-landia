@@ -10,11 +10,10 @@ use Yii;
  * @property int $id
  * @property string $name
  * @property string $description
- * @property float $price
  * @property int $stock_quantity
  * @property int $isRemove
  *
- * @property SubProducts[] $subProducts
+ * @property SubProducts[] $sub-products
  */
 class Products extends \yii\db\ActiveRecord
 {
@@ -32,9 +31,8 @@ class Products extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'description', 'price', 'stock_quantity', 'isRemove'], 'required'],
+            [['name', 'description', 'stock_quantity'], 'required'],
             [['description'], 'string'],
-            [['price'], 'number'],
             [['stock_quantity', 'isRemove'], 'integer'],
             [['name'], 'string', 'max' => 100],
         ];
@@ -49,7 +47,6 @@ class Products extends \yii\db\ActiveRecord
             'id' => 'ID',
             'name' => 'Name',
             'description' => 'Description',
-            'price' => 'Price',
             'stock_quantity' => 'Stock Quantity',
             'isRemove' => 'Is Remove',
         ];

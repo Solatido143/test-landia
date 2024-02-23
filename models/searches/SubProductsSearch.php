@@ -4,23 +4,21 @@ namespace app\models\searches;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Products;
+use app\models\SubProducts;
 
 /**
- * ProductsSearch represents the model behind the search form of `app\models\Products`.
+ * SubProductsSearch represents the model behind the search form of `app\models\SubProducts`.
  */
-class ProductsSearch extends Products
+class SubProductsSearch extends SubProducts
 {
-    public $searchQuery; // Define a new property to hold the search query
-
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'stock_quantity', 'isRemove'], 'integer'],
-            [['name', 'description', 'searchQuery'], 'safe'],
+            [['id', 'sub_product_id', 'quantity'], 'integer'],
+            [['name', 'description'], 'safe'],
         ];
     }
 
@@ -42,7 +40,7 @@ class ProductsSearch extends Products
      */
     public function search($params)
     {
-        $query = Products::find();
+        $query = SubProducts::find();
 
         // add conditions that should always apply here
 
@@ -61,15 +59,12 @@ class ProductsSearch extends Products
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'stock_quantity' => $this->stock_quantity,
+            'sub_product_id' => $this->sub_product_id,
+            'quantity' => $this->quantity,
         ]);
 
-        // Perform a generalized search across multiple attributes
-        $query->andFilterWhere(['or',
-            ['like', 'name', $this->searchQuery],
-            ['like', 'id', $this->searchQuery],
-            ['like', 'description', $this->searchQuery],
-        ]);
+        $query->andFilterWhere(['like', 'name', $this->name])
+            ->andFilterWhere(['like', 'description', $this->description]);
 
         return $dataProvider;
     }

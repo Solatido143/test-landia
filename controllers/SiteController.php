@@ -138,6 +138,7 @@ class SiteController extends Controller
         }
 
         $model->password = '';
+        $model->confirmPassword = '';
         return $this->render('register', [
             'model' => $model,
         ]);

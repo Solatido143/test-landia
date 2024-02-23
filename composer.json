@@ -20,7 +20,8 @@
         "yiisoft/yii2-symfonymailer": "~2.0.3",
         "hail812/yii2-adminlte3": "~1.1",
         "exocet/yii2-chart-widget": "~1.0",
-        "scotthuangzl/yii2-google-chart": "dev-master"
+        "scotthuangzl/yii2-google-chart": "dev-master",
+        "microinginer/yii2-dropdown-action-column": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",
