@@ -1,11 +1,12 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $model \app\models\Employees */
+/* @var $model app\models\Employees */
 
-$this->title = 'Create Employee';
+$this->title = 'Update Employees: ' . $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Employees', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = 'Update';
 ?>
 
 <div class="container-fluid">

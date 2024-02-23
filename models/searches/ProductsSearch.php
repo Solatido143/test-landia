@@ -2,24 +2,34 @@
 
 namespace app\models\searches;
 
-use app\models\Products;
+use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use app\models\Products;
 
 /**
  * ProductsSearch represents the model behind the search form of `app\models\Products`.
  */
 class ProductsSearch extends Products
 {
-    public $searchField; // Define a new attribute to hold the combined search field
-
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['searchField'], 'safe'], // Make the search field safe for input
+            [['id', 'stock_quantity', 'isRemove'], 'integer'],
+            [['name', 'description'], 'safe'],
+            [['price'], 'number'],
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function scenarios()
+    {
+        // bypass scenarios() implementation in the parent class
+        return Model::scenarios();
     }
 
     /**
@@ -33,22 +43,30 @@ class ProductsSearch extends Products
     {
         $query = Products::find();
 
+        // add conditions that should always apply here
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
 
-        if (!($this->load($params) && $this->validate())) {
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
             return $dataProvider;
         }
 
-        // Adjust the query to search for records where any of the specified fields closely match the user input
-        $query->andFilterWhere(['or',
-            ['like', 'id', $this->searchField],
-            ['like', 'name', $this->searchField],
-            ['like', 'description', $this->searchField],
-            ['like', 'price', $this->searchField],
-            ['like', 'stock_quantity', $this->searchField],
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'id' => $this->id,
+            'price' => $this->price,
+            'stock_quantity' => $this->stock_quantity,
+            'isRemove' => $this->isRemove,
         ]);
+
+        $query->andFilterWhere(['like', 'name', $this->name])
+            ->andFilterWhere(['like', 'description', $this->description]);
 
         return $dataProvider;
     }

@@ -51,11 +51,33 @@ class UserController extends ActiveController
     }
 
     // Custom action to view a single user
-    public function actionViewUsers($id)
+    public function actionViewUsers()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $user = User::findOne($id);
+        // Fetch query parameters
+        $queryParams = Yii::$app->request->queryParams;
+
+        // Check if there are any query parameters
+        if (empty($queryParams)) {
+            return [
+                'error' => true,
+                'message' => 'No query parameters provided.'
+            ];
+        }
+
+        // Initialize the query with the User model
+        $query = User::find();
+
+        // Apply conditions based on query parameters
+        foreach ($queryParams as $attribute => $value) {
+            $query->andWhere([$attribute => $value]);
+        }
+
+        // Execute the query
+        $user = $query->all();
+
+        // Check if user is found
         if ($user === null) {
             return [
                 'isUserExist' => false,
@@ -63,6 +85,7 @@ class UserController extends ActiveController
                 'message' => 'User not found.'
             ];
         }
+
         return $user;
     }
 

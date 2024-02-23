@@ -1,7 +1,9 @@
 <?php
 
-namespace app\models;
+namespace app\controllers;
 
+use app\models\Employees;
+use app\models\searches\EmployeesSearch;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;

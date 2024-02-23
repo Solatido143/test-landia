@@ -2,12 +2,12 @@
 
 namespace app\controllers;
 
+use Yii;
 use app\models\Products;
 use app\models\searches\ProductsSearch;
-use Yii;
-use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\filters\VerbFilter;
 
 /**
  * ProductsController implements the CRUD actions for Products model.
@@ -46,7 +46,7 @@ class ProductsController extends Controller
 
     /**
      * Displays a single Products model.
-     * @param int $id Product ID
+     * @param int $id ID
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -78,7 +78,7 @@ class ProductsController extends Controller
     /**
      * Updates an existing Products model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id Product ID
+     * @param int $id ID
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -98,22 +98,21 @@ class ProductsController extends Controller
     /**
      * Deletes an existing Products model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id Product ID
+     * @param int $id ID
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
     {
-        $model = $this->findModel($id);
-        $model->isRemove = 1; // Set isRemove attribute to 1
-        $model->save(false); // Save the model without validation
+        $this->findModel($id)->delete();
+
         return $this->redirect(['index']);
     }
 
     /**
      * Finds the Products model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id Product ID
+     * @param int $id ID
      * @return Products the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */

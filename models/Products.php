@@ -12,10 +12,12 @@ use Yii;
  * @property string $description
  * @property float $price
  * @property int $stock_quantity
+ * @property int $isRemove
+ *
+ * @property SubProducts[] $subProducts
  */
 class Products extends \yii\db\ActiveRecord
 {
-    public $color;
     /**
      * {@inheritdoc}
      */
@@ -30,10 +32,10 @@ class Products extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'description', 'price', 'stock_quantity'], 'required'],
+            [['name', 'description', 'price', 'stock_quantity', 'isRemove'], 'required'],
             [['description'], 'string'],
             [['price'], 'number'],
-            [['stock_quantity'], 'integer'],
+            [['stock_quantity', 'isRemove'], 'integer'],
             [['name'], 'string', 'max' => 100],
         ];
     }
@@ -49,15 +51,17 @@ class Products extends \yii\db\ActiveRecord
             'description' => 'Description',
             'price' => 'Price',
             'stock_quantity' => 'Stock Quantity',
+            'isRemove' => 'Is Remove',
         ];
     }
 
     /**
-     * {@inheritdoc}
-     * @return \app\models\query\ProductsQuery the active query used by this AR class.
+     * Gets query for [[SubProducts]].
+     *
+     * @return \yii\db\ActiveQuery
      */
-    public static function find()
+    public function getSubProducts()
     {
-        return new \app\models\query\ProductsQuery(get_called_class());
+        return $this->hasMany(SubProducts::class, ['sub_product_id' => 'id']);
     }
 }

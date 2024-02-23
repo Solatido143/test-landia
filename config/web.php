@@ -59,11 +59,19 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+//                api
                 'product-list/products' => 'products-api/get-products',
                 'product-list/create' => 'products-api/create-products',
                 'product-list/view' => 'products-api/view-products',
                 'product-list/update' => 'products-api/update-products',
                 'product-list/delete' => 'products-api/delete-products',
+
+                'user/view' => 'user/view-users',
+                'user/all' => 'user/get-users',
+                'user/create' => 'user/create-users',
+                'user/update' => 'user/update-users',
+                'user/delete' => 'user/delete-users',
+                'user/user-login' => 'user/validate-login',
             ],
         ],
     ],

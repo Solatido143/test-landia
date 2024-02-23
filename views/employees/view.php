@@ -4,10 +4,10 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\User */
+/* @var $model app\models\Employees */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Employees', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -31,19 +31,31 @@ $this->params['breadcrumbs'][] = $this->title;
                         'model' => $model,
                         'attributes' => [
                             'id',
-                            'username',
-                            'fk_employee_id',
-                            'email:email',
-                            'password_hash',
-                            'status',
-                            'password_reset_token',
-                            'user_access',
+                            'employee_id',
+                            'fk_position',
+                            'fname',
+                            'mname',
+                            'lname',
+                            'suffix',
+                            'bday',
+                            'gender',
+                            'contact_number',
+                            'fk_cluster',
+                            'fk_region',
+                            'fk_region_area',
+                            'fk_city',
+                            'house_address:ntext',
+                            'date_hired',
+                            'end_of_contract',
+                            'fk_employment_status',
+                            'emergency_contact_persons',
+                            'emergency_contact_numbers',
+                            'emergency_contact_relations',
                             'availability',
-                            'created_at',
-                            'updated_at',
-                            'auth_key',
-                            'verification_token',
-                            'managers_code',
+                            'logged_by',
+                            'logged_time',
+                            'updated_by',
+                            'updated_time',
                         ],
                     ]) ?>
                 </div>

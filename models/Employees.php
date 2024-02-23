@@ -38,6 +38,7 @@ use Yii;
  * @property EmployeesServices[] $employeesServices
  * @property Cities $fkCity
  * @property Clusters $fkCluster
+ * @property EmployeesStatus $fkEmploymentStatus
  * @property Positions $fkPosition
  * @property Regions $fkRegion
  * @property Provinces $fkRegionArea
@@ -59,7 +60,7 @@ class Employees extends \yii\db\ActiveRecord
     {
         return [
             [['employee_id', 'fk_position', 'fname', 'lname', 'bday', 'gender', 'contact_number', 'fk_cluster', 'fk_region', 'fk_region_area', 'fk_city', 'house_address', 'date_hired', 'fk_employment_status', 'logged_by', 'logged_time'], 'required'],
-            [['fk_position', 'fk_cluster', 'fk_region', 'fk_region_area', 'fk_city', 'availability', 'fk_employment_status'], 'integer'],
+            [['fk_position', 'fk_cluster', 'fk_region', 'fk_region_area', 'fk_city', 'fk_employment_status', 'availability'], 'integer'],
             [['gender', 'house_address'], 'string'],
             [['employee_id'], 'string', 'max' => 30],
             [['fname', 'mname', 'lname'], 'string', 'max' => 50],
@@ -71,6 +72,7 @@ class Employees extends \yii\db\ActiveRecord
             [['fk_region_area'], 'exist', 'skipOnError' => true, 'targetClass' => Provinces::class, 'targetAttribute' => ['fk_region_area' => 'id']],
             [['fk_city'], 'exist', 'skipOnError' => true, 'targetClass' => Cities::class, 'targetAttribute' => ['fk_city' => 'id']],
             [['fk_position'], 'exist', 'skipOnError' => true, 'targetClass' => Positions::class, 'targetAttribute' => ['fk_position' => 'id']],
+            [['fk_employment_status'], 'exist', 'skipOnError' => true, 'targetClass' => EmployeesStatus::class, 'targetAttribute' => ['fk_employment_status' => 'id']],
         ];
     }
 
@@ -97,7 +99,7 @@ class Employees extends \yii\db\ActiveRecord
             'house_address' => 'House Address',
             'date_hired' => 'Date Hired',
             'end_of_contract' => 'End Of Contract',
-            'fk_employment_status' => 'Employment Status',
+            'fk_employment_status' => 'Fk Employment Status',
             'emergency_contact_persons' => 'Emergency Contact Persons',
             'emergency_contact_numbers' => 'Emergency Contact Numbers',
             'emergency_contact_relations' => 'Emergency Contact Relations',
@@ -107,19 +109,6 @@ class Employees extends \yii\db\ActiveRecord
             'updated_by' => 'Updated By',
             'updated_time' => 'Updated Time',
         ];
-    }
-
-    public function beforeSave($insert)
-    {
-        date_default_timezone_set('Asia/Manila');
-        if ($this->isNewRecord) {
-            $this->logged_time = date('m-d-Y h:i:s a');
-        } else {
-            $this->updated_by = Yii::$app->user->identity->username;
-            $this->updated_time = date('m-d-Y h:i:s a');
-        }
-
-        return parent::beforeSave($insert);
     }
 
     /**
@@ -160,6 +149,16 @@ class Employees extends \yii\db\ActiveRecord
     public function getFkCluster()
     {
         return $this->hasOne(Clusters::class, ['id' => 'fk_cluster']);
+    }
+
+    /**
+     * Gets query for [[FkEmploymentStatus]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFkEmploymentStatus()
+    {
+        return $this->hasOne(EmployeesStatus::class, ['id' => 'fk_employment_status']);
     }
 
     /**
