@@ -1,22 +1,11 @@
 <?php
 
-namespace app\controllers;
+namespace app\models;
 
 use Yii;
-
-use app\models\Cities;
-use app\models\Clusters;
-use app\models\Provinces;
-use app\models\Regions;
-
-use app\utility\ModelHelper;
-use app\models\Employees;
-use app\models\EmployeesSearch;
-
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-
-use yii\filters\VerbFilter;
 
 /**
  * EmployeesController implements the CRUD actions for Employees model.

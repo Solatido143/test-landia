@@ -1,24 +1,25 @@
 <?php
 
-use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
+use yii\helpers\Html;
 use yii\widgets\MaskedInput;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Employees */
+/* @var $model \app\models\Employees */
 /* @var $form yii\bootstrap5\ActiveForm */
 
-$Cluster = \app\models\Clusters::find()->select('id, cluster')->asArray()->all();
-$Cluster = \yii\helpers\ArrayHelper::map($Cluster, 'id', 'cluster');
-//
-$Region = \app\models\Regions::find()->select('id, region')->asArray()->all();
-$Region = \yii\helpers\ArrayHelper::map($Region, 'id', 'region');
-//
-$Region_area = \app\models\Provinces::find()->select('id, province')->asArray()->all();
-$Region_area = \yii\helpers\ArrayHelper::map($Region_area, 'id', 'province');
-//
-$City = \app\models\Cities::find()->select('id, city')->asArray()->all();
-$City = \yii\helpers\ArrayHelper::map($City, 'id', 'city');
+// Function to fetch data from database and map it
+function fetchAndMapData($modelClass, $valueField, $textField)
+{
+    $data = $modelClass::find()->select([$valueField, $textField])->asArray()->all();
+    return \yii\helpers\ArrayHelper::map($data, $valueField, $textField);
+}
+$Clusters = fetchAndMapData(\app\models\Clusters::class, 'id', 'cluster');
+$Regions = fetchAndMapData(\app\models\Regions::class, 'id', 'region');
+$RegionAreas = fetchAndMapData(\app\models\Provinces::class, 'id', 'province');
+$Cities = fetchAndMapData(\app\models\Cities::class, 'id', 'city');
+$Positions = fetchAndMapData(\app\models\Positions::class, 'id', 'position');
+$Status = fetchAndMapData(\app\models\EmployeesStatus::class, 'id', 'status');
 ?>
 
 <div class="employees-form">
@@ -27,18 +28,18 @@ $City = \yii\helpers\ArrayHelper::map($City, 'id', 'city');
         'layout' => 'horizontal', // Set form layout to horizontal
         'fieldConfig' => [
             'horizontalCssClasses' => [
-                'label' => 'col-sm-3', // Label column width
-                'offset' => 'col-sm-offset-3', // Offset for the entire row
-                'wrapper' => 'col-sm-9', // Input field column width
-                'error' => '', // No error message column
-                'hint' => '', // No hint message column
+                'label' => 'col-sm-3',
+                'offset' => 'col-sm-offset-3',
+                'wrapper' => 'col-sm-9',
+                'error' => '',
+                'hint' => '',
             ],
         ],
     ]); ?>
 
     <?= $form->field($model, 'employee_id')->textInput(['maxlength' => true, 'disabled' => true]) ?>
 
-    <?= $form->field($model, 'fk_position')->label('Position')->textInput() ?>
+    <?= $form->field($model, 'fk_position')->label('Position')->dropDownList($Positions, ['prompt' => '- Select Position']) ?>
 
     <?= $form->field($model, 'fname')->label('First Name')->textInput(['maxlength' => true]) ?>
 
@@ -50,20 +51,19 @@ $City = \yii\helpers\ArrayHelper::map($City, 'id', 'city');
 
     <?= $form->field($model, 'bday')->label('Birthday')->widget(MaskedInput::className(), [
         'mask' => '99/99/9999',
-        'options' => ['class' => 'form-control'],
     ]); ?>
 
     <?= $form->field($model, 'gender')->dropDownList([ 'Male' => 'Male', 'Female' => 'Female', ], ['prompt' => 'Choose...']) ?>
 
     <?= $form->field($model, 'contact_number')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'fk_cluster')->label('Cluster')->dropDownList($Cluster, ['prompt' => '- Select Cluster']) ?>
+    <?= $form->field($model, 'fk_cluster')->label('Cluster')->dropDownList($Clusters, ['prompt' => '- Select Cluster']) ?>
 
-    <?= $form->field($model, 'fk_region')->label('Region')->dropDownList($Region, ['prompt' => '- Select Region']) ?>
+    <?= $form->field($model, 'fk_region')->label('Region')->dropDownList($Regions, ['prompt' => '- Select Region']) ?>
 
-    <?= $form->field($model, 'fk_region_area')->label('Region Area')->dropDownList($Region_area, ['prompt' => '- Select Area']) ?>
+    <?= $form->field($model, 'fk_region_area')->label('Region Area')->dropDownList($RegionAreas, ['prompt' => '- Select Area']) ?>
 
-    <?= $form->field($model, 'fk_city')->label('City')->dropDownList($City, ['prompt' => '- Select City']) ?>
+    <?= $form->field($model, 'fk_city')->label('City')->dropDownList($Cities, ['prompt' => '- Select City']) ?>
 
     <?= $form->field($model, 'house_address')->textarea(['rows' => 1]) ?>
 
@@ -71,7 +71,7 @@ $City = \yii\helpers\ArrayHelper::map($City, 'id', 'city');
 
     <?= $form->field($model, 'end_of_contract')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'employment_status')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'fk_employment_status')->label('Employment Status')->dropDownList($Status, ['prompt' => '- Select Status']) ?>
 
     <?= $form->field($model, 'emergency_contact_persons')->textInput(['maxlength' => true]) ?>
 
@@ -79,7 +79,7 @@ $City = \yii\helpers\ArrayHelper::map($City, 'id', 'city');
 
     <?= $form->field($model, 'emergency_contact_relations')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'availability')->textInput() ?>
+    <?= $form->field($model, 'availability')->textInput(['disabled' => true]) ?>
 
 <!--    --><?php //= $form->field($model, 'logged_by')->textInput(['maxlength' => true]) ?>
 <!---->

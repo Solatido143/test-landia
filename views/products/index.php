@@ -1,51 +1,59 @@
 <?php
-
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\ProductsSearch */
+/* @var $searchModel app\models\searches\ProductsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Products';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="row mb-2">
 
-                        <div class="col-auto me-auto">
-                            <?= Html::a('Create Products', ['create'], ['class' => 'btn btn-success']) ?>
+                    <div class="row">
+                        <div class="col-12 col-md-6 mb-3 mb-md-0">
+                            <?= Html::a('Create Products', ['create'], ['class' => 'btn btn-success text-nowrap']) ?>
                         </div>
-
-                        <div class="col-auto">
+                        <div class="col-12 col-md-6">
                             <?= $this->render('_search', ['model' => $searchModel]); ?>
                         </div>
-
                     </div>
 
 
-
-                    <?= GridView::widget([
+                    <?php
+                    $dataProvider->query->andWhere(['isRemove' => 0]); // Filter out rows where 'isRemove' is true
+                    echo GridView::widget([
                         'dataProvider' => $dataProvider,
-//                        'filterModel' => $searchModel,
+                        'tableOptions' => ["class" => "table-responsive-md table table-striped table-bordered"],
                         'columns' => [
-//                            ['class' => 'yii\grid\SerialColumn'],
-
                             [
                                 'header' => 'Actions',
                                 'contentOptions' => ['style' => 'white-space: nowrap;'], // Prevent content from wrapping
                                 'content' => function ($model) {
-                                    $viewButton = Html::a(Html::tag('i', '', ['class' => 'fas fa-eye']), ['products/view', 'product_id' => $model->product_id], ['class' => 'btn btn-primary py-0', 'style' => 'display: inline-block;']);
-                                    $updateButton = Html::a(Html::tag('i', '', ['class' => 'fas fa-pencil']), ['products/update', 'product_id' => $model->product_id], ['class' => 'btn btn-warning py-0', 'style' => 'display: inline-block;']);
+                                    $viewButton = Html::a(Html::tag('i', '', ['class' => 'fas fa-eye']), ['products/view', 'id' => $model->id], ['class' => 'btn btn-primary py-0', 'style' => 'display: inline-block;']);
+                                    $updateButton = Html::a(Html::tag('i', '', ['class' => 'fas fa-pencil']), ['products/update', 'id' => $model->id], ['class' => 'btn btn-warning py-0', 'style' => 'display: inline-block;']);
+                                    $deleteButton = Html::a(Html::tag('i', '', ['class' => 'fas fa-trash']), ['products/delete', 'id' => $model->id], [
+                                        'class' => 'btn btn-danger py-0',
+                                        'style' => 'display: inline-block;',
+                                        'data' => [
+                                            'confirm' => 'Are you sure you want to delete this item?',
+                                            'method' => 'post',
+                                        ],
+                                    ]);
 
-                                    return $viewButton . ' ' . $updateButton;
+                                    return $viewButton . ' ' . $updateButton . ' ' . $deleteButton;
                                 },
                             ],
-                            'product_id',
+                            [
+                                'attribute' => 'id',
+                                'label' => 'ID',
+                            ],
                             'name',
                             [
                                 'attribute' => 'description',
@@ -54,27 +62,18 @@ $this->params['breadcrumbs'][] = $this->title;
                                     return \yii\helpers\StringHelper::truncate($model->description, 50); // Adjust the number of characters as needed
                                 },
                             ],
-
                             'price',
                             'stock_quantity',
-
-
-
-//                            ['class' => 'hail812\adminlte3\yii\grid\ActionColumn'],
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],
                         'pager' => [
                             'class' => 'yii\bootstrap4\LinkPager',
-                        ]
-                    ]); ?>
+                        ],
+                    ]);
+                    ?>
 
-
-                </div>
-                <!--.card-body-->
-            </div>
-            <!--.card-->
-        </div>
-        <!--.col-md-12-->
-    </div>
-    <!--.row-->
-</div>
+                </div><!-- .card-body -->
+            </div><!-- .card -->
+        </div><!-- .col-md-12 -->
+    </div><!-- .row -->
+</div><!-- .container -->

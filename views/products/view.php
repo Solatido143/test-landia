@@ -17,20 +17,40 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="card-body">
             <div class="row">
                 <div class="col-md-12">
-                    <p>
-                        <?= Html::a('Update', ['update', 'product_id' => $model->product_id], ['class' => 'btn btn-primary']) ?>
-                        <?= Html::button('Back', ['class' => 'btn btn-danger', 'id' => 'backButton']) ?>
-                    </p>
+                    <div class="d-flex justify-content-between mb-3">
+                        <div>
+                            <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+                            <?php if (!$model->isRemove): ?>
+                                <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+                                    'class' => 'btn btn-danger',
+                                    'data' => [
+                                        'confirm' => 'Are you sure you want to delete this item?',
+                                        'method' => 'post',
+                                    ],
+                                ]) ?>
+                            <?php endif; ?>
+                        </div>
+                        <div class="text-end">
+                            <?= Html::a('Back', ['products/index'], ['class' => 'btn btn-outline-danger']) ?>
+                        </div>
+                    </div>
+
+
                     <?= DetailView::widget([
                         'model' => $model,
                         'attributes' => [
-                            'product_id',
+                            'id',
                             'name',
                             'description:ntext',
                             'price',
                             'stock_quantity',
+                            [
+                                'attribute' => 'isRemove',
+                                'format' => 'boolean', // Use the 'boolean' format to display true/false
+                            ],
                         ],
                     ]) ?>
+
                 </div>
                 <!--.col-md-12-->
             </div>

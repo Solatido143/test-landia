@@ -3,11 +3,8 @@
 namespace app\models;
 
 use Yii;
-use yii\behaviors\BlameableBehavior;
-use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
-use yii\validators\UniqueValidator;
 
 /**
  * This is the model class for table "user".

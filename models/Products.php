@@ -7,7 +7,7 @@ use Yii;
 /**
  * This is the model class for table "products".
  *
- * @property int $product_id
+ * @property int $id
  * @property string $name
  * @property string $description
  * @property float $price
@@ -15,6 +15,7 @@ use Yii;
  */
 class Products extends \yii\db\ActiveRecord
 {
+    public $color;
     /**
      * {@inheritdoc}
      */
@@ -43,7 +44,7 @@ class Products extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'product_id' => 'ID',
+            'id' => 'ID',
             'name' => 'Name',
             'description' => 'Description',
             'price' => 'Price',

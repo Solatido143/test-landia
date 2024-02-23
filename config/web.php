@@ -59,14 +59,11 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                [
-                    'class' => 'yii\rest\UrlRule',
-                    'controller' => ['employed' => 'employees-api'],
-                ],
-                [
-                    'class' => 'yii\rest\UrlRule',
-                    'controller' => ['cluster' => 'clusters']
-                ],
+                'product-list/products' => 'products-api/get-products',
+                'product-list/create' => 'products-api/create-products',
+                'product-list/view' => 'products-api/view-products',
+                'product-list/update' => 'products-api/update-products',
+                'product-list/delete' => 'products-api/delete-products',
             ],
         ],
     ],
@@ -78,16 +75,16 @@ $config = [
 //                'actions' => ['login', 'error', 'register', 'forgot-password', 'change-password'],
 //                'allow' => true,
 //            ],
-////            api's
+////            api controller actions
 //            [
-//                'actions' => ['login-user', 'attendance', 'get-preferences', 'save-location', 'admin-request', 'employed'],
+//                'actions' => ['login-user', 'attendance', 'get-preferences', 'save-location', 'admin-request', 'get-users', 'post-users'],
 //                'allow' => true,
 //            ],
-//////            controllers
-////            [
-////                'controllers' => ['email-report', 'tracker'],
-////                'allow' => true,
-////            ],
+////            controllers
+//            [
+//                'controllers' => ['email-report', 'tracker', 'employees-api'],
+//                'allow' => true,
+//            ],
 //            [
 //                'allow' => true,
 //                'roles' => ['@'],

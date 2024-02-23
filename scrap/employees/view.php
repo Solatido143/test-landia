@@ -5,7 +5,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Employees */
+/* @var $model \app\models\Employees */
 
 $this->title = $model->lname . ', ' . $model->fname;
 $this->params['breadcrumbs'][] = ['label' => 'Employees', 'url' => ['index']];
@@ -90,7 +90,7 @@ $this->params['breadcrumbs'][] = $model->employee_id;
                             'house_address:ntext',
                             'date_hired',
                             'end_of_contract',
-                            'employment_status',
+                            'fk_employment_status',
                             'emergency_contact_persons',
                             'emergency_contact_numbers',
                             'emergency_contact_relations',

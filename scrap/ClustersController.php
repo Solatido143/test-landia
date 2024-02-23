@@ -1,11 +1,9 @@
 <?php
 
-namespace app\controllers;
+namespace app\models;
 
-use Yii;
 use app\resource\Clusters;
 use yii\rest\ActiveController;
-use yii\web\NotFoundHttpException;
 
 class ClustersController extends ActiveController
 {

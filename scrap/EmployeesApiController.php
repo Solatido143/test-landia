@@ -1,6 +1,6 @@
 <?php
 
-namespace app\controllers;
+namespace app\models;
 
 use app\resource\EmployeesApi;
 use yii\rest\ActiveController;

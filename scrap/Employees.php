@@ -3,7 +3,6 @@
 namespace app\models;
 
 use Yii;
-use app\utility\ModelHelper;
 
 /**
  * This is the model class for table "employees".
@@ -25,7 +24,7 @@ use app\utility\ModelHelper;
  * @property string $house_address
  * @property string $date_hired
  * @property string|null $end_of_contract
- * @property string $employment_status
+ * @property int $fk_employment_status
  * @property string|null $emergency_contact_persons
  * @property string|null $emergency_contact_numbers
  * @property string|null $emergency_contact_relations
@@ -59,11 +58,11 @@ class Employees extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['employee_id', 'fk_position', 'fname', 'lname', 'bday', 'gender', 'contact_number', 'fk_cluster', 'fk_region', 'fk_region_area', 'fk_city', 'house_address', 'date_hired', 'employment_status', 'logged_by', 'logged_time'], 'required'],
-            [['fk_position', 'fk_cluster', 'fk_region', 'fk_region_area', 'fk_city', 'availability'], 'integer'],
+            [['employee_id', 'fk_position', 'fname', 'lname', 'bday', 'gender', 'contact_number', 'fk_cluster', 'fk_region', 'fk_region_area', 'fk_city', 'house_address', 'date_hired', 'fk_employment_status', 'logged_by', 'logged_time'], 'required'],
+            [['fk_position', 'fk_cluster', 'fk_region', 'fk_region_area', 'fk_city', 'availability', 'fk_employment_status'], 'integer'],
             [['gender', 'house_address'], 'string'],
             [['employee_id'], 'string', 'max' => 30],
-            [['fname', 'mname', 'lname', 'employment_status'], 'string', 'max' => 50],
+            [['fname', 'mname', 'lname'], 'string', 'max' => 50],
             [['suffix'], 'string', 'max' => 10],
             [['bday', 'contact_number', 'date_hired', 'end_of_contract', 'logged_by', 'logged_time', 'updated_by', 'updated_time'], 'string', 'max' => 100],
             [['emergency_contact_persons', 'emergency_contact_numbers', 'emergency_contact_relations'], 'string', 'max' => 255],
@@ -98,7 +97,7 @@ class Employees extends \yii\db\ActiveRecord
             'house_address' => 'House Address',
             'date_hired' => 'Date Hired',
             'end_of_contract' => 'End Of Contract',
-            'employment_status' => 'Employment Status',
+            'fk_employment_status' => 'Employment Status',
             'emergency_contact_persons' => 'Emergency Contact Persons',
             'emergency_contact_numbers' => 'Emergency Contact Numbers',
             'emergency_contact_relations' => 'Emergency Contact Relations',

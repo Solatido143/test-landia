@@ -33,7 +33,6 @@ class RegisterForm extends Model
             $user->password_hash = Yii::$app->security->generatePasswordHash($this->password);
             $user->password_reset_token = NULL;
 
-
             if ($user->save()) {
                 return true;
             } else {

@@ -1,10 +1,9 @@
 <?php
 
-namespace app\models;
+namespace app\models\searches;
 
-use yii\base\Model;
-use yii\data\ActiveDataProvider;
 use app\models\Products;
+use yii\data\ActiveDataProvider;
 
 /**
  * ProductsSearch represents the model behind the search form of `app\models\Products`.
@@ -44,7 +43,7 @@ class ProductsSearch extends Products
 
         // Adjust the query to search for records where any of the specified fields closely match the user input
         $query->andFilterWhere(['or',
-            ['like', 'product_id', $this->searchField],
+            ['like', 'id', $this->searchField],
             ['like', 'name', $this->searchField],
             ['like', 'description', $this->searchField],
             ['like', 'price', $this->searchField],

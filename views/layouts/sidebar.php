@@ -30,26 +30,26 @@
                         'visible' => $isGuest
                     ],
 
-                    [
-                        'label' => 'Pos',
-                        'url' => ['/pos'],
-                        'icon' => 'chart-simple',
-                        'visible' => $isGuest,
-//                        'options' => ['style' => 'border-bottom: 1px solid #4b545c;']
-                    ],
+//                    [
+//                        'label' => 'Pos',
+//                        'url' => ['/pos'],
+//                        'icon' => 'chart-simple',
+//                        'visible' => $isGuest,
+////                        'options' => ['style' => 'border-bottom: 1px solid #4b545c;']
+//                    ],
 
 
-                    [
-                        'label' => 'Sales',
-                        'icon' => 'sack-dollar',
-                        'visible' => $isGuest,
-                        'items' => [
-                            ['label' => 'Booking', 'url' => ['bookings'], 'icon' => 'check-to-slot'],
-                            ['label' => 'Sales Receipt', 'url' => ['receipts'], 'icon' => 'receipt'],
-                            ['label' => 'Services', 'url' => ['services'], 'icon' => 'scroll'],
-
-                        ]
-                    ],
+//                    [
+//                        'label' => 'Sales',
+//                        'icon' => 'sack-dollar',
+//                        'visible' => $isGuest,
+//                        'items' => [
+//                            ['label' => 'Booking', 'url' => ['bookings'], 'icon' => 'check-to-slot'],
+//                            ['label' => 'Sales Receipt', 'url' => ['receipts'], 'icon' => 'receipt'],
+//                            ['label' => 'Services', 'url' => ['services'], 'icon' => 'scroll'],
+//
+//                        ]
+//                    ],
                     [
                         'label' => 'Items',
                         'icon' => 'list',
@@ -59,7 +59,8 @@
                         ]
                     ],
 
-                    ['label' => 'Reports', 'url' => ['reports'], 'visible' => $isGuest, 'icon' => 'file-lines'],
+//                    ['label' => 'Reports', 'url' => ['reports'], 'visible' => $isGuest, 'icon' => 'file-lines'],
+
                     ['label' => 'Employee\'s', 'url' => ['/employees/index'], 'visible' => $isGuest, 'icon' => 'user-group'],
 
 
