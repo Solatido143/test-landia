@@ -58,7 +58,7 @@ class SubProducts extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery|\app\models\query\ProductsQuery
      */
-    public function getSubProduct()
+    public function getProducts()
     {
         return $this->hasOne(Products::class, ['id' => 'sub_product_id']);
     }

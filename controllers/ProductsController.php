@@ -2,8 +2,9 @@
 
 namespace app\controllers;
 
-use app\models\SubProducts;
 use Yii;
+use app\models\SubProducts;
+use app\models\searches\SubProductsSearch;
 use app\models\Products;
 use app\models\searches\ProductsSearch;
 use yii\data\ActiveDataProvider;
@@ -55,30 +56,9 @@ class ProductsController extends Controller
     public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findProductsModel($id),
         ]);
     }
-
-    public function actionSubProducts($id)
-    {
-        // Fetch the Product model based on its ID
-        $model = Products::findOne($id);
-
-        if ($model === null) {
-            throw new NotFoundHttpException('The requested product does not exist.');
-        }
-
-        // Retrieve the sub-products related to the main product
-        $dataProvider = new ActiveDataProvider([
-            'query' => $model->getSubProducts(),
-        ]);
-
-        return $this->render('sub-products/index', [
-            'model' => $model,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-
 
     /**
      * Creates a new Products model.
@@ -107,7 +87,7 @@ class ProductsController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model = $this->findProductsModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -138,7 +118,7 @@ class ProductsController extends Controller
      * @return Products the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findProductsModel($id)
     {
         if (($model = Products::findOne($id)) !== null) {
             return $model;
@@ -148,4 +128,63 @@ class ProductsController extends Controller
     }
 
 
+    public function actionSubItems($id = NULL)
+    {
+        $searchModel = new SubProductsSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        if (!empty($id))
+        {
+            return $this->render('viewsub', [
+                'model' => $this->findSubItemsModel($id),
+            ]);
+        }
+
+        return $this->render('subproducts', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionSubItemsUpdate($id){
+
+        $model = $this->findSubItemsModel($id);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['sub-items', 'id' => $model->id]);
+        }
+
+        return $this->render('updatesub', [
+            'model' => $model,
+        ]);
+    }
+    public function actionSubItemsDelete(){
+        Yii::$app->session->setFlash('error', [
+            'title' => 'Sad!',
+            'body' => 'You do not have permission to delete this item..',
+        ]);
+        return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
+    }
+
+    public function actionSubItemsCreate(){
+
+        $model = new SubProducts();
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['sub-items', 'id' => $model->id]);
+        }
+
+        return $this->render('createsub', [
+            'model' => $model,
+        ]);
+    }
+
+    protected function findSubItemsModel($id)
+    {
+        if (($model = SubProducts::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
 }

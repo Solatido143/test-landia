@@ -19,11 +19,13 @@ class RegisterForm extends Model
         return [
             [['username', 'password', 'email', 'confirmPassword'], 'required'],
             ['username', 'string', 'min' => 3, 'max' => 255],
+            ['password', 'string', 'min' => 3],
             ['email', 'email'],
             ['confirmPassword', 'compare', 'compareAttribute' => 'password', 'message' => 'Passwords do not match.'],
-            ['username', UniqueValidator::class, 'targetClass' => User::class, 'message' => 'This username has already been taken.'], // Add the unique validator for username
+            ['username', UniqueValidator::class, 'targetClass' => User::class, 'message' => 'This username has already been taken.'],
         ];
     }
+
     public function register()
     {
         if ($this->validate()) {

@@ -1,12 +1,13 @@
 <?php
 
-/* @var $this yii\web\View */
-/* @var $model app\models\Products */
+use yii\helpers\Html;
 
-$this->title = 'Update Products: ' . $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Products', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+/* @var $this yii\web\View */
+/* @var $model app\models\SubProducts */
+
+$this->title = 'Create Sub Items';
+$this->params['breadcrumbs'][] = ['label' => 'Sub Products', 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="container-fluid">
@@ -16,7 +17,7 @@ $this->params['breadcrumbs'][] = 'Update';
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <?=$this->render('_form', [
+                            <?=$this->render('_formsub', [
                                 'model' => $model
                             ]) ?>
                         </div>
@@ -26,6 +27,6 @@ $this->params['breadcrumbs'][] = 'Update';
             </div>
             <!--.card-->
         </div>
-    </div>
 
+    </div>
 </div>

@@ -64,10 +64,15 @@ $config = [
                 'product-list/create' => 'products-api/create-products',
                 'product-list/view' => 'products-api/view-products',
                 'product-list/update' => 'products-api/update-products',
-                'product-list/delete' => 'products-api/delete-products',
+
+                'product-list/subprod' => 'products-api/get-sub-products',
+                'product-list/createsubprod' => 'products-api/create-sub-products',
+                'product-list/viewsubprod' => 'products-api/view-sub-products',
+                'product-list/updatesubprod' => 'products-api/update-sub-products',
+
 
                 'user/view' => 'user/view-users',
-                'user/all' => 'user/get-users',
+                'user/list' => 'user/get-users',
                 'user/create' => 'user/create-users',
                 'user/update' => 'user/update-users',
                 'user/delete' => 'user/delete-users',

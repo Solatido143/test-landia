@@ -23,7 +23,7 @@ use yii\bootstrap4\ActiveForm;
         <?= $form->field($model, 'stock_quantity')->textInput(['type' => 'number']) ?>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-12">
         <?= $form->field($model, 'description')->label('Remarks')->textarea(['rows' => 6]) ?>
     </div>
 
