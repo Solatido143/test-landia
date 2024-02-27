@@ -20,7 +20,7 @@ use yii\bootstrap4\ActiveForm;
     </div>
 
     <div class="col-md-6">
-        <?= $form->field($model, 'stock_quantity')->textInput(['type' => 'number']) ?>
+        <?= $form->field($model, 'stock_quantity')->textInput(['type' => 'number', 'value' => 0]) ?>
     </div>
 
     <div class="col-md-12">

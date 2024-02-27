@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Positions;
+use microinginer\dropDownActionColumn\DropDownActionColumn;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
@@ -25,47 +26,47 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                     </div>
 
-
-                    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
                     <?= GridView::widget([
                         'dataProvider' => $dataProvider,
-                        'tableOptions' => ["class" => "table-responsive-md table table-striped table-bordered text-nowrap"],
+                        'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
+                        'tableOptions' => ["class" => "table table-striped table-bordered text-nowrap"],
                         'columns' => [
                             [
+                                'class' => DropDownActionColumn::className(),
                                 'header' => 'Actions',
-                                'contentOptions' => ['style' => 'white-space: nowrap;'], // Prevent content from wrapping
-                                'content' => function ($model) {
-                                    $viewButton = Html::a(Html::tag('i', '', ['class' => 'fas fa-eye']), ['employees/view', 'id' => $model->id], ['class' => 'btn btn-primary py-0', 'style' => 'display: inline-block;']);
-                                    $updateButton = Html::a(Html::tag('i', '', ['class' => 'fas fa-pencil']), ['employees/update', 'id' => $model->id], ['class' => 'btn btn-warning py-0', 'style' => 'display: inline-block;']);
-                                    $deleteButton = Html::a(
-                                        Html::tag('i', '', ['class' => 'fas fa-trash']),
-                                        ['employees/delete', 'id' => $model->id],
-                                        [
-                                            'class' => 'btn btn-danger py-0 d-inline-block',
-                                            'data' => [
-                                                'confirm' => 'Are you sure you want to delete this item?',
-                                                'method' => 'post',
-                                            ],
-                                        ]
-                                    );
+                                'contentOptions' => ['style' => 'white-space: nowrap;'],
+                                'items' => [
+                                    [
+                                        'label' => 'Views',
+                                        'url' => ['view']
+                                    ],
+                                    [
+                                        'label' => 'Edit',
+                                        'url' => ['update']
+                                    ],
+                                    [
+                                        'label' => 'Delete',
+                                        'url' => ['delete'],
+                                        'linkOptions' => [
+                                            'class' => 'dropdown-item contextDelete',
+                                            'data-method' => 'post',
+                                        ],
+                                        'visible' => true,
 
-
-                                    return $viewButton . ' ' . $updateButton . ' ' . $deleteButton;
-                                },
+                                    ]
+                                ],
                             ],
                             'id',
                             'employee_id',
                             [
                                 'attribute' => 'fk_position',
                                 'label' => 'Position',
-                                'value' => function ($model) {
-                                    // Fetch the position name based on the fk_position value
-                                    $position = Positions::findOne($model->fk_position);
-                                    return $position ? $position->position : null;
-                                },
+//                                'value' => function ($model) {
+//                                    // Fetch the position name based on the fk_position value
+//                                    $position = Positions::findOne($model->fk_position);
+//                                    return $position ? $position->position : null;
+//                                },
                             ],
-
                             [
                                 'attribute' => 'fname',
                                 'label' => 'First Name',
@@ -74,16 +75,14 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'attribute' => 'lname',
                                 'label' => 'Last Name',
                             ],
-
-
                             [
                                 'attribute' => 'fk_employment_status',
                                 'label' => 'Employment Status',
-                                'value' => function ($model) {
-                                    // Fetch the position name based on the fk_position value
-                                    $status = \app\models\EmployeesStatus::findOne($model->fk_employment_status);
-                                    return $status ? $status->status : null;
-                                },
+//                                'value' => function ($model) {
+//                                    // Fetch the position name based on the fk_position value
+//                                    $status = \app\models\EmployeesStatus::findOne($model->fk_employment_status);
+//                                    return $status ? $status->status : null;
+//                                },
                             ],
 
                             //'mname',

@@ -31,10 +31,11 @@ class Products extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'description', 'stock_quantity'], 'required'],
+            [['name', 'description'], 'required'],
+            [['name'], 'string', 'max' => 100],
             [['description'], 'string'],
             [['stock_quantity', 'isRemove'], 'integer'],
-            [['name'], 'string', 'max' => 100],
+            ['stock_quantity', 'integer', 'min' => 0], // Ensure stock_quantity is an integer with a minimum value of 0
         ];
     }
 
@@ -59,6 +60,6 @@ class Products extends \yii\db\ActiveRecord
      */
     public function getSubProducts()
     {
-        return $this->hasMany(SubProducts::class, ['sub_product_id' => 'id']);
+        return $this->hasMany(SubProducts::class, ['product_id' => 'id']);
     }
 }

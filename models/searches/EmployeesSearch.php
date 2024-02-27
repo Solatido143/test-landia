@@ -62,12 +62,15 @@ class EmployeesSearch extends Employees
         $query->andFilterWhere([
             'id' => $this->id,
             'fk_position' => $this->fk_position,
+            'availability' => $this->availability,
+
+            'fk_employment_status' => $this->fk_employment_status,
+
             'fk_cluster' => $this->fk_cluster,
             'fk_region' => $this->fk_region,
             'fk_region_area' => $this->fk_region_area,
             'fk_city' => $this->fk_city,
-            'fk_employment_status' => $this->fk_employment_status,
-            'availability' => $this->availability,
+
         ]);
 
         // Filter based on searchField

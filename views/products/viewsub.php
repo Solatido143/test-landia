@@ -5,14 +5,15 @@ use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\SubProducts */
+/* @var $productmodel app\models\Products */
+
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Products', 'url' => ['index']];
 $this->params['breadcrumbs'][] = [
-    'label' => isset($model->sub_product_id) ? \app\models\Products::findOne($model->sub_product_id)->name : '',
-    'url' => ['view', 'id' => $model->sub_product_id],
+    'label' => isset($model->product_id) ? \app\models\Products::findOne($model->product_id)->name : '',
+    'url' => ['view', 'id' => $model->product_id],
 ];
-$this->params['breadcrumbs'][] = ['label' => 'Sub Items', 'url' => ['sub-items']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -36,13 +37,14 @@ $this->params['breadcrumbs'][] = $this->title;
                             </p>
                             <?= DetailView::widget([
                                 'model' => $model,
+                                'options' => ['class' => 'table table-striped table-bordered'], // Optional: Add a responsive class to the table
                                 'attributes' => [
                                     'id',
                                     [
-                                        'attribute' => 'sub_product_id',
+                                        'attribute' => 'product_id',
                                         'label' => 'Main Product',
                                         'value' => function ($model) {
-                                            return isset($model->sub_product_id) ? \app\models\Products::findOne($model->sub_product_id)->name : null;
+                                            return isset($model->product_id) ? \app\models\Products::findOne($model->product_id)->name : null;
                                         },
                                     ],
                                     'name',

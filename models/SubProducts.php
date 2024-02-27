@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "sub_products".
  *
  * @property int $id
- * @property int $sub_product_id
+ * @property int $product_id
  * @property string $name
  * @property string $description
  * @property int $quantity
@@ -17,6 +17,8 @@ use Yii;
  */
 class SubProducts extends \yii\db\ActiveRecord
 {
+    public $calcu;
+
     /**
      * {@inheritdoc}
      */
@@ -31,11 +33,11 @@ class SubProducts extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['sub_product_id', 'name', 'description', 'quantity'], 'required'],
-            [['sub_product_id', 'quantity'], 'integer'],
+            [['product_id', 'name', 'description', 'quantity'], 'required'],
+            [['product_id', 'quantity', 'calcu'], 'integer'],
             [['name'], 'string', 'max' => 50],
             [['description'], 'string', 'max' => 100],
-            [['sub_product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Products::class, 'targetAttribute' => ['sub_product_id' => 'id']],
+            [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Products::class, 'targetAttribute' => ['product_id' => 'id']],
         ];
     }
 
@@ -46,7 +48,7 @@ class SubProducts extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'sub_product_id' => 'Sub Product ID',
+            'product_id' => 'Sub Product ID',
             'name' => 'Name',
             'description' => 'Description',
             'quantity' => 'Quantity',
@@ -60,7 +62,7 @@ class SubProducts extends \yii\db\ActiveRecord
      */
     public function getProducts()
     {
-        return $this->hasOne(Products::class, ['id' => 'sub_product_id']);
+        return $this->hasOne(Products::class, ['id' => 'product_id']);
     }
 
     /**

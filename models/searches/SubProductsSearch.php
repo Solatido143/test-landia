@@ -11,13 +11,14 @@ use app\models\SubProducts;
  */
 class SubProductsSearch extends SubProducts
 {
+    public $searchField;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'sub_product_id', 'quantity'], 'integer'],
+            [['id', 'product_id', 'quantity'], 'integer'],
             [['name', 'description'], 'safe'],
         ];
     }
@@ -59,7 +60,7 @@ class SubProductsSearch extends SubProducts
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'sub_product_id' => $this->sub_product_id,
+            'product_id' => $this->product_id,
             'quantity' => $this->quantity,
         ]);
 

@@ -23,10 +23,18 @@ class ProductsApiController extends ActiveController
         return $actions;
     }
 
+//    ---------- Products -----------
+
     // Custom action to retrieve all products
-    public function actionGetProducts()
+    public function actionGetProducts($id = NULL)
     {
+
         Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if (!empty($id))
+        {
+            return $this->actionViewProducts($id);
+        }
 
         $products = Products::find()->with('subProducts')->all();
 
@@ -45,40 +53,6 @@ class ProductsApiController extends ActiveController
         return $formattedProducts;
     }
 
-    /**
-     * Formats a product along with its subproducts.
-     *
-     * @param Products $product The product model instance
-     * @return array The formatted product data
-     */
-    private function getFormattedProduct($product)
-    {
-        $formattedProduct = [
-            'id' => $product->id,
-            'name' => $product->name,
-            'description' => $product->description,
-            'stock_quantity' => $product->stock_quantity,
-        ];
-
-        // Check if 'expand' parameter is provided and set to 'subProducts'
-        $expandSubProducts = Yii::$app->request->get('expand') === 'subproducts';
-
-        // Include subproducts if 'expand' parameter is provided and set to 'subProducts'
-        if ($expandSubProducts) {
-            $formattedProduct['subProducts'] = NULL;
-            foreach ($product->subProducts as $subProduct) {
-                $formattedProduct['subProducts'][] = [
-                    'id' => $subProduct->id,
-                    'name' => $subProduct->name,
-                    'description' => $subProduct->description,
-                    'quantity' => $subProduct->quantity,
-                ];
-            }
-        }
-
-        return $formattedProduct;
-    }
-
     // Custom action to create a new product
     public function actionCreateProducts()
     {
@@ -95,20 +69,36 @@ class ProductsApiController extends ActiveController
         }
     }
 
-    // Custom action to Create Sub Products
-    public function actionCreateSubProducts()
+    // Custom action to view a single product
+    public function actionViewProducts($id = null)
     {
-        $model = new SubProducts();
-        $model->load(Yii::$app->getRequest()->getBodyParams(), '');
-
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        if ($model->save()) {
-            Yii::$app->response->setStatusCode(201); // Created
-            return $model;
-        } else {
-            return ['errors' => $model->errors];
+        // Check if $id is provided
+        if ($id === null) {
+            return [
+                'success' => false,
+                'name' => 'Bad Request',
+                'message' => 'Missing required parameter: id'
+            ];
         }
+
+        // Find the product by $id
+        $product = Products::findOne($id);
+
+        // Check if the product is found
+        if ($product === null) {
+            return [
+                'isProductExist' => false,
+                'name' => 'Not Found',
+                'message' => 'Product not found.'
+            ];
+        }
+
+        // Prepare an array to hold the formatted product data
+        $formattedProduct = $this->getFormattedProduct($product);
+
+        return $formattedProduct;
     }
 
     // Custom action to update a product
@@ -145,45 +135,34 @@ class ProductsApiController extends ActiveController
         }
     }
 
-    public function actionUpdateSubProducts($id = null)
-    {
-        Yii::$app->getResponse()->format = Response::FORMAT_JSON;
+//    ---------- Sub Products -----------
 
-        if ($id === null) {
-            return [
-                'success' => false,
-                'error' => 'Missing parameter',
-                'message' => 'The required parameter id is missing.'
-            ];
-        }
-
-        $model = SubProducts::findOne($id);
-        if ($model === null) {
-            return [
-                'success' => false,
-                'error' => 'Product not found',
-                'message' => 'Product not found for the given ID.'
-            ];
-        }
-
-        $model->load(Yii::$app->getRequest()->getBodyParams(), '');
-        if ($model->save()) {
-            return $model;
-        } else {
-            return [
-                'success' => false,
-                'errors' => $model->errors,
-                'message' => 'Failed to update product.'
-            ];
-        }
-    }
-
-    // Custom action to view a single product
-    public function actionViewProducts($id = null)
+    public function actionGetSubProducts()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if $id is provided
+        $subProducts = SubProducts::find()->with('products')->all();
+
+        // Prepare an array to hold the formatted sub-product data
+        $formattedSubProducts = [];
+
+        // Loop through each sub-product
+        foreach ($subProducts as $subProduct) {
+            // Prepare an array to hold the formatted sub-product data
+            $formattedSubProduct = $this->getFormattedSubProduct($subProduct);
+
+            // Add the formatted sub-product to the array of formatted products
+            $formattedSubProducts[] = $formattedSubProduct;
+        }
+
+        return $formattedSubProducts;
+    }
+
+    // Custom action to Create Sub Products
+    public function actionCreateSubProducts($id = NULL)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
         if ($id === null) {
             return [
                 'success' => false,
@@ -192,25 +171,22 @@ class ProductsApiController extends ActiveController
             ];
         }
 
-        // Find the product by $id
-        $product = Products::findOne($id);
+        $model = new SubProducts();
+        $model->load(Yii::$app->getRequest()->getBodyParams(), '');
 
-        // Check if the product is found
-        if ($product === null) {
-            return [
-                'isProductExist' => false,
-                'name' => 'Not Found',
-                'message' => 'Product not found.'
-            ];
+        $modelProducts = Products::findOne($id); // Assuming you have a method to find the products model by ID
+
+        if ($model->save()) {
+            $modelProducts->stock_quantity = intval($modelProducts->stock_quantity) + intval($model->quantity);
+            $modelProducts->save();
+            Yii::$app->response->setStatusCode(201); // Created
+            return $model;
+        } else {
+            return ['errors' => $model->errors];
         }
-
-        // Prepare an array to hold the formatted product data
-        $formattedProduct = $this->getFormattedProduct($product);
-
-        return $formattedProduct;
     }
 
-    // Custom action to view a single product
+    // Custom action to view a single sub product
     public function actionViewSubProducts($id = null)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -242,25 +218,82 @@ class ProductsApiController extends ActiveController
         return $formattedProduct;
     }
 
-    public function actionGetSubProducts()
+    // Custom action to update a single sub product
+    public function actionUpdateSubProducts($id = null)
     {
-        Yii::$app->response->format = Response::FORMAT_JSON;
+        Yii::$app->getResponse()->format = Response::FORMAT_JSON;
 
-        $subProducts = SubProducts::find()->with('products')->all();
-
-        // Prepare an array to hold the formatted sub-product data
-        $formattedSubProducts = [];
-
-        // Loop through each sub-product
-        foreach ($subProducts as $subProduct) {
-            // Prepare an array to hold the formatted sub-product data
-            $formattedSubProduct = $this->getFormattedSubProduct($subProduct);
-
-            // Add the formatted sub-product to the array of formatted products
-            $formattedSubProducts[] = $formattedSubProduct;
+        if ($id === null) {
+            return [
+                'success' => false,
+                'error' => 'Missing parameter',
+                'message' => 'The required parameter id is missing.'
+            ];
         }
 
-        return $formattedSubProducts;
+        $subProductsModel = SubProducts::findOne($id);
+
+        if ($subProductsModel === null) {
+            return [
+                'success' => false,
+                'error' => 'Product not found',
+                'message' => 'Product not found for the given ID.'
+            ];
+        }
+
+        $modelProducts = $subProductsModel->product_id;
+        $modelProducts = Products::findOne($modelProducts);
+
+        $modelProducts->stock_quantity = intval($modelProducts->stock_quantity) - intval($subProductsModel->quantity);
+
+        $subProductsModel->load(Yii::$app->getRequest()->getBodyParams(), '');
+        if ($subProductsModel->save()) {
+            $modelProducts->stock_quantity = intval($modelProducts->stock_quantity) + intval($subProductsModel->quantity);
+            $modelProducts->save();
+            return $subProductsModel;
+        } else {
+            return [
+                'success' => false,
+                'errors' => $subProductsModel->errors,
+                'message' => 'Failed to update product.'
+            ];
+        }
+    }
+
+//    ---------- Formats -----------
+
+    /**
+     * Formats a product along with its subproducts.
+     *
+     * @param Products $product The product model instance
+     * @return array The formatted product data
+     */
+    private function getFormattedProduct($product)
+    {
+        $formattedProduct = [
+            'id' => $product->id,
+            'name' => $product->name,
+            'description' => $product->description,
+            'stock_quantity' => $product->stock_quantity,
+        ];
+
+        // Check if 'expand' parameter is provided and set to 'subProducts'
+        $expandSubProducts = Yii::$app->request->get('expand') === 'subprod';
+
+        // Include subproducts if 'expand' parameter is provided and set to 'subProducts'
+        if ($expandSubProducts) {
+            $formattedProduct['subProducts'] = NULL;
+            foreach ($product->subProducts as $subProduct) {
+                $formattedProduct['subProducts'][] = [
+                    'id' => $subProduct->id,
+                    'name' => $subProduct->name,
+                    'description' => $subProduct->description,
+                    'quantity' => $subProduct->quantity,
+                ];
+            }
+        }
+
+        return $formattedProduct;
     }
 
     /**

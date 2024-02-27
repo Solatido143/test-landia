@@ -8,24 +8,20 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="row mt-2">
+<div class="row">
     <div class="col col-md-12">
+
         <?php $form = ActiveForm::begin([
             'action' => ['index'],
             'method' => 'get',
-            'options' => ['class' => 'd-flex justify-content-end'],
+            'options' => ['class' => 'd-md-flex justify-content-end'],
         ]); ?>
 
-        <div class="input-group">
-            <?= $form->field($model, 'searchField', [
-                'options' => ['tag' => false], // Do not wrap with <div class="form-group">
-                'inputOptions' => ['class' => 'form-control', 'placeholder' => "Search"],
-            ])->label(false) ?>
+        <?= $form->field($model, 'searchField', ['options' => ['class' => 'mb-2']])->textInput(['placeholder' => 'Search'])->label(false) ?>
 
-            <div class="input-group-append">
-                <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-                <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
-            </div>
+        <div class="form-group ms-md-1 text-nowrap">
+            <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
+            <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>

@@ -55,8 +55,13 @@ class ProductsController extends Controller
      */
     public function actionView($id)
     {
+        $searchModelSubProduct = new SubProductsSearch();
+        $dataProvider = $searchModelSubProduct->search(Yii::$app->request->queryParams);
+
         return $this->render('view', [
             'model' => $this->findProductsModel($id),
+            'searchModel' => $searchModelSubProduct,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -69,8 +74,13 @@ class ProductsController extends Controller
     {
         $model = new Products();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+            if (empty($model->stock_quantity)) {
+                $model->stock_quantity = 0;
+            }
+            if ($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
 
         return $this->render('create', [
@@ -105,10 +115,10 @@ class ProductsController extends Controller
     public function actionDelete()
     {
         Yii::$app->session->setFlash('error', [
-            'title' => 'Sad!',
+            'title' => 'Oh no!',
             'body' => 'You do not have permission to delete this item..',
         ]);
-        return $this->redirect(['/products']);
+        return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
     }
 
     /**
@@ -128,54 +138,69 @@ class ProductsController extends Controller
     }
 
 
-    public function actionSubItems($id = NULL)
+//    SUB ITEMS!!!
+    public function actionSubItemsView($id = NULL)
     {
-        $searchModel = new SubProductsSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
         if (!empty($id))
         {
             return $this->render('viewsub', [
                 'model' => $this->findSubItemsModel($id),
             ]);
         }
-
-        return $this->render('subproducts', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
     }
 
-    public function actionSubItemsUpdate($id){
+    public function actionSubItemsUpdate($id)
+    {
+        $modelSubItems = $this->findSubItemsModel($id);
+        $modelProducts = $this->findProductsModel($modelSubItems->product_id);
 
-        $model = $this->findSubItemsModel($id);
+//        if ($modelSubItems->calcu != NULL)
+//        {
+//            $modelSubItems->quantity = intval($modelSubItems->quantity) - intval($modelSubItems->calcu);
+//            $modelSubItems->save();
+//            return 1;
+//        }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['sub-items', 'id' => $model->id]);
+        $modelProducts->stock_quantity = intval($modelProducts->stock_quantity) - intval($modelSubItems->quantity);
+
+        if ($modelSubItems->load(Yii::$app->request->post()) && $modelSubItems->save()) {
+            if ($modelSubItems->calcu != NULL)
+            {
+                $modelSubItems->quantity = intval($modelSubItems->quantity) + intval($modelSubItems->calcu);
+                $modelSubItems->save();
+            }
+            $modelProducts->stock_quantity = intval($modelProducts->stock_quantity) + intval($modelSubItems->quantity);
+            $modelProducts->save();
+
+            return $this->redirect(['sub-items-view', 'id' => $modelSubItems->id]);
         }
 
         return $this->render('updatesub', [
-            'model' => $model,
+            'model' => $modelSubItems,
         ]);
     }
+
     public function actionSubItemsDelete(){
         Yii::$app->session->setFlash('error', [
-            'title' => 'Sad!',
-            'body' => 'You do not have permission to delete this item..',
+            'title' => 'Oh no!',
+            'body' => 'You do not have permission to delete this item.',
         ]);
         return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
     }
 
-    public function actionSubItemsCreate(){
+    public function actionSubItemsCreate($id){
 
         $model = new SubProducts();
-
+        $modelProducts = $this->findProductsModel($id);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['sub-items', 'id' => $model->id]);
+            $modelProducts->stock_quantity = intval($modelProducts->stock_quantity) + intval($model->quantity);
+            $modelProducts->save();
+            return $this->redirect(['sub-items-view', 'id' => $model->id]);
         }
 
         return $this->render('createsub', [
             'model' => $model,
+            'productmodel' => $modelProducts,
         ]);
     }
 

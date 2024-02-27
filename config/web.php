@@ -60,16 +60,20 @@ $config = [
             'showScriptName' => false,
             'rules' => [
 //                api
+
+//               viewall
                 'product-list/products' => 'products-api/get-products',
+
                 'product-list/create' => 'products-api/create-products',
                 'product-list/view' => 'products-api/view-products',
                 'product-list/update' => 'products-api/update-products',
 
+//                view all
                 'product-list/subprod' => 'products-api/get-sub-products',
+
                 'product-list/createsubprod' => 'products-api/create-sub-products',
                 'product-list/viewsubprod' => 'products-api/view-sub-products',
                 'product-list/updatesubprod' => 'products-api/update-sub-products',
-
 
                 'user/view' => 'user/view-users',
                 'user/list' => 'user/get-users',
@@ -80,30 +84,52 @@ $config = [
             ],
         ],
     ],
-//    'as beforeRequest' => [  //if guest user access site so, redirect to login page.
-//        'class' => 'yii\filters\AccessControl',
-//        'rules' => [
-//            [
-////                controller actions
-//                'actions' => ['login', 'error', 'register', 'forgot-password', 'change-password'],
-//                'allow' => true,
-//            ],
-////            api controller actions
-//            [
-//                'actions' => ['login-user', 'attendance', 'get-preferences', 'save-location', 'admin-request', 'get-users', 'post-users'],
-//                'allow' => true,
-//            ],
-////            controllers
-//            [
-//                'controllers' => ['email-report', 'tracker', 'employees-api'],
-//                'allow' => true,
-//            ],
-//            [
-//                'allow' => true,
-//                'roles' => ['@'],
-//            ],
-//        ],
-//    ],
+    'as beforeRequest' => [  //if guest user access site so, redirect to login page.
+        'class' => 'yii\filters\AccessControl',
+        'rules' => [
+            [
+//                controller actions
+                'actions' => [
+                    'login',
+                    'error',
+                    'register',
+                    'forgot-password',
+                    'change-password',
+                ],
+                'allow' => true,
+            ],
+//            api controller actions
+            [
+                'actions' => [
+                    'login-user',
+                    'attendance',
+                    'get-preferences',
+                    'save-location',
+                    'admin-request',
+
+                    'get-products',
+                    'create-products',
+                    'view-products',
+                    'update-products',
+
+                    'get-sub-products',
+                    'create-sub-products',
+                    'view-sub-products',
+                    'update-sub-products',
+                ],
+                'allow' => true,
+            ],
+//            controllers
+            [
+                'controllers' => ['products'],
+                'allow' => true,
+            ],
+            [
+                'allow' => true,
+                'roles' => ['@'],
+            ],
+        ],
+    ],
     'params' => $params,
 ];
 

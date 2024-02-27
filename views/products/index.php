@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="card-body">
                     <div class="row">
                         <div class="col-12 col-md-6 mb-3 mb-md-0">
-                            <?= Html::a('Create Products', ['create'], ['class' => 'btn btn-success text-nowrap']) ?>
+                            <?= Html::a('<i class="fas fa-plus"></i>&nbspCreate Products', ['create'], ['class' => 'btn btn-success text-nowrap']) ?>
                         </div>
                         <div class="col-12 col-md-6">
                             <?= $this->render('_search', ['model' => $searchModel]); ?>
@@ -28,8 +28,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php
                     $dataProvider->query->andWhere(['isRemove' => 0]);
                     echo GridView::widget([
-                        'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
                         'dataProvider' => $dataProvider,
+                        'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
                         'tableOptions' => ["class" => "table table-striped table-bordered"],
                         'columns' => [
                             [

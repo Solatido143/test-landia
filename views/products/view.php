@@ -6,6 +6,7 @@ use yii\widgets\DetailView;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
+/* @var $searchModel app\models\searches\SubProductsSearch */
 /* @var $model app\models\Products */
 
 $this->title = $model->name;
@@ -16,13 +17,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="container-fluid">
 
-    <div class="row">
-        <div class="col-md-6">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12">
-
 
                             <div class="row">
                                 <div class="col-md-12">
@@ -61,16 +61,23 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <!--.card-->
         </div>
+
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="d-flex justify-content-between">
-                                <h4 class="mb-0 me-2">Sub Items</h4>
-                                <div class="text-end">
-                                    <?= Html::a('<i class="fas fa-eye"></i> View all', ['sub-items'], ['class' => 'btn btn-success']) ?>
-                                    <?= Html::a('<i class="fas fa-plus"></i> Add sub-product', ['sub-products/create', 'id' => $model->id], ['class' => 'btn btn-outline-success']) ?>
+                            <div class="d-md-flex justify-content-md-between">
+                                <div class="d-flex justify-content-between justify-content-md-start">
+                                    <h4 class="mb-3 me-2">Sub Items</h4>
+                                    <div>
+                                        <?= Html::a('<i class="fas fa-plus"></i> Add sub-items', ['sub-items-create', 'id' => $model->id], ['class' => 'btn btn-outline-success']) ?>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <?= $this->render('_searchsub', ['model' => $searchModel]); ?>
+                                    </div>
                                 </div>
                             </div>
                             <?= GridView::widget([
@@ -92,7 +99,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         'items' => [
                                             [
                                                 'label' => 'Views',
-                                                'url' => ['sub-items']
+                                                'url' => ['sub-items-view']
                                             ],
                                             [
                                                 'label' => 'Edit',

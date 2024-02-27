@@ -52,19 +52,15 @@ use yii\bootstrap4\ActiveForm;
 
     <?= $form->field($model, 'emergency_contact_relations')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'availability')->textInput() ?>
-
-<!--    --><?php //= $form->field($model, 'logged_by')->textInput(['maxlength' => true]) ?>
-<!---->
-<!--    --><?php //= $form->field($model, 'logged_time')->textInput(['maxlength' => true]) ?>
-<!---->
-<!--    --><?php //= $form->field($model, 'updated_by')->textInput(['maxlength' => true]) ?>
-<!---->
-<!--    --><?php //= $form->field($model, 'updated_time')->textInput(['maxlength' => true]) ?>
-
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>
+
+    <!--    --><?php //= $form->field($model, 'availability')->textInput() ?>
+    <!--    --><?php //= $form->field($model, 'logged_by')->textInput(['maxlength' => true]) ?>
+    <!--    --><?php //= $form->field($model, 'logged_time')->textInput(['maxlength' => true]) ?>
+    <!--    --><?php //= $form->field($model, 'updated_by')->textInput(['maxlength' => true]) ?>
+    <!--    --><?php //= $form->field($model, 'updated_time')->textInput(['maxlength' => true]) ?>
 
     <?php ActiveForm::end(); ?>
 

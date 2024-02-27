@@ -8,7 +8,7 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="row mt-2">
+<div class="row">
     <div class="col-md-12">
 
         <?php $form = ActiveForm::begin([
