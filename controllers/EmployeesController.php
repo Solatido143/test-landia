@@ -2,10 +2,16 @@
 
 namespace app\controllers;
 
+use app\models\Cities;
+use app\models\Clusters;
 use app\models\Employees;
+use app\models\Positions;
+use app\models\Provinces;
+use app\models\Regions;
 use app\models\searches\EmployeesSearch;
 use Yii;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -65,6 +71,10 @@ class EmployeesController extends Controller
     public function actionCreate()
     {
         $model = new Employees();
+        $model->logged_by = Yii::$app->user->identity->username;
+        $model->logged_time = date('Y-m-d H:i:s');
+        $model->updated_by = NULL;
+        $model->updated_time = NULL;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -104,9 +114,11 @@ class EmployeesController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        Yii::$app->session->setFlash('error', [
+            'title' => 'Oh no!',
+            'body' => 'You do not have permission to delete this item..',
+        ]);
+        return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
     }
 
     /**
@@ -124,4 +136,61 @@ class EmployeesController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    public function actionGetPositionAvailability($id)
+    {
+        $position = Positions::findOne($id);
+        if ($position) {
+            $availabilityText = $position->availability ? 'True' : 'False';
+            return $availabilityText;
+        } else {
+            return '';
+        }
+    }
+
+    public function actionGetRegions($id)
+    {
+        // Fetch regions associated with the selected cluster
+        $regions = Regions::find()->where(['fk_cluster' => $id])->all();
+
+        // Generate dropdown options
+        $options = '<option value>-- Select Region</option>';
+        foreach ($regions as $region) {
+            $options .= '<option value="' . $region->id . '">' . $region->region . '</option>';
+        }
+
+        // Return dropdown options
+        return $options;
+    }
+
+    public function actionGetProvinces($id)
+    {
+        // Fetch regions associated with the selected cluster
+        $provinces = Provinces::find()->where(['fk_region' => $id])->all();
+
+        // Generate dropdown options
+        $options = '<option value>-- Select Province</option>';
+        foreach ($provinces as $province) {
+            $options .= '<option value="' . $province->id . '">' . $province->province . '</option>';
+        }
+
+        // Return dropdown options
+        return $options;
+    }
+
+    public function actionGetCities($id)
+    {
+        // Fetch regions associated with the selected cluster
+        $cities = Cities::find()->where(['fk_province' => $id])->all();
+
+        // Generate dropdown options
+        $options = '<option value>-- Select City</option>';
+        foreach ($cities as $city) {
+            $options .= '<option value="' . $city->id . '">' . $city->city . '</option>';
+        }
+
+        // Return dropdown options
+        return $options;
+    }
+
 }

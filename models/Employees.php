@@ -84,22 +84,22 @@ class Employees extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'employee_id' => 'Employee ID',
-            'fk_position' => 'Fk Position',
-            'fname' => 'Fname',
-            'mname' => 'Mname',
-            'lname' => 'Lname',
+            'fk_position' => 'Position',
+            'fname' => 'First Name',
+            'mname' => 'Middle Name',
+            'lname' => 'Last Name',
             'suffix' => 'Suffix',
-            'bday' => 'Bday',
+            'bday' => 'Birthday',
             'gender' => 'Gender',
             'contact_number' => 'Contact Number',
-            'fk_cluster' => 'Fk Cluster',
-            'fk_region' => 'Fk Region',
-            'fk_region_area' => 'Fk Region Area',
-            'fk_city' => 'Fk City',
+            'fk_cluster' => 'Cluster',
+            'fk_region' => 'Region',
+            'fk_region_area' => 'Province',
+            'fk_city' => 'City',
             'house_address' => 'House Address',
             'date_hired' => 'Date Hired',
             'end_of_contract' => 'End Of Contract',
-            'fk_employment_status' => 'Fk Employment Status',
+            'fk_employment_status' => 'Employment Status',
             'emergency_contact_persons' => 'Emergency Contact Persons',
             'emergency_contact_numbers' => 'Emergency Contact Numbers',
             'emergency_contact_relations' => 'Emergency Contact Relations',
@@ -189,5 +189,11 @@ class Employees extends \yii\db\ActiveRecord
     public function getFkRegionArea()
     {
         return $this->hasOne(Provinces::class, ['id' => 'fk_region_area']);
+    }
+
+    public function fetchAndMapData($modelClass, $valueField, $textField)
+    {
+        $data = $modelClass::find()->select([$valueField, $textField])->asArray()->all();
+        return \yii\helpers\ArrayHelper::map($data, $valueField, $textField);
     }
 }

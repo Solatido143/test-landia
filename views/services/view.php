@@ -4,10 +4,10 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Employees */
+/* @var $model app\models\Services */
 
-$this->title = $model->fname . ' ' . $model->lname;
-$this->params['breadcrumbs'][] = ['label' => 'Employees', 'url' => ['index']];
+$this->title = $model->id;
+$this->params['breadcrumbs'][] = ['label' => 'services', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -31,27 +31,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         'model' => $model,
                         'attributes' => [
                             'id',
-                            'employee_id',
-                            'fk_position',
-                            'fname',
-                            'mname',
-                            'lname',
-                            'suffix',
-                            'bday',
-                            'gender',
-                            'contact_number',
-                            'fk_cluster',
-                            'fk_region',
-                            'fk_region_area',
-                            'fk_city',
-                            'house_address:ntext',
-                            'date_hired',
-                            'end_of_contract',
-                            'fk_employment_status',
-                            'emergency_contact_persons',
-                            'emergency_contact_numbers',
-                            'emergency_contact_relations',
-                            'availability',
+                            'service_name',
+                            'service_fee',
+                            'completion_time:datetime',
                             'logged_by',
                             'logged_time',
                             'updated_by',

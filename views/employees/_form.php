@@ -6,62 +6,222 @@ use yii\bootstrap4\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model app\models\Employees */
 /* @var $form yii\bootstrap4\ActiveForm */
+
+$employeesModel = new \app\models\Employees();
+$clusters = $employeesModel->fetchAndMapData(\app\models\Clusters::class, 'id', 'cluster');
+$regions = $employeesModel->fetchAndMapData(\app\models\Regions::class, 'id', 'region');
+$provinces = $employeesModel->fetchAndMapData(\app\models\Provinces::class, 'id', 'province');
+$cities = $employeesModel->fetchAndMapData(\app\models\Cities::class, 'id', 'city');
+$position = $employeesModel->fetchAndMapData(\app\models\Positions::class, 'id', 'position');
+$Status = $employeesModel->fetchAndMapData(\app\models\EmployeesStatus::class, 'id', 'status');
 ?>
 
 <div class="employees-form">
-
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'employee_id')->textInput(['maxlength' => true]) ?>
+    <!-- Personal Information -->
+    <div class="row">
+        <div class="col-12 col-md-4">
+            <label for="personal_info">Personal Information</label>
+        </div>
+        <div class="col-12 col-md-8" id="personal_info">
+            <?= $form->field($model, 'employee_id')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm']) ?>
+            <?= $form->field($model, 'fname')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('First Name') ?>
+            <?= $form->field($model, 'mname')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('Middle Name') ?>
+            <?= $form->field($model, 'lname')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('Last Name') ?>
+            <?= $form->field($model, 'suffix')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm']) ?>
+            <?= $form->field($model, 'bday')->label('Birthday <span class="text-body-tertiary">(MM/dd/yyyy)</span>')->widget(yii\jui\DatePicker::className(), [
+                'dateFormat' => 'MM/dd/yyyy',
+                'options' => [
+                    'class' => 'form-control form-control-sm',
+                    'autocomplete' => 'off', // Disable autocomplete to prevent browser suggestions
+                ],
+                'clientOptions' => [
+                    'changeMonth' => true,
+                    'changeYear' => true,
+                    'showButtonPanel' => true,
+                    'yearRange' => '-100:+0',
+                ],
+            ]) ?>
 
-    <?= $form->field($model, 'fk_position')->textInput() ?>
+            <?= $form->field($model, 'gender')->dropDownList([ 'Male' => 'Male', 'Female' => 'Female', ], ['prompt' => '-- Select', 'class' => 'form-control form-control-sm']) ?>
+        </div>
+    </div>
 
-    <?= $form->field($model, 'fname')->textInput(['maxlength' => true]) ?>
+    <hr>
 
-    <?= $form->field($model, 'mname')->textInput(['maxlength' => true]) ?>
+    <div class="row">
+        <div class="col-12 col-md-4">
+            <label for="contact_info">Contact Information</label>
+        </div>
+        <div class="col-12 col-md-8" id="contact_info">
+            <?= $form->field($model, 'contact_number')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm']) ?>
 
-    <?= $form->field($model, 'lname')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'fk_cluster')->dropDownList($clusters,
+                ['prompt' => '-- Select Cluster', 'class' => 'form-control form-control-sm', 'id' => 'fk_cluster']
+            )->label('Cluster') ?>
 
-    <?= $form->field($model, 'suffix')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'fk_region')->dropDownList($regions,
+                ['prompt' => '-- Select Region', 'class' => 'form-control form-control-sm', 'id' => 'fk_region'],
+            )->label('Region') ?>
 
-    <?= $form->field($model, 'bday')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'fk_region_area')->dropDownList($provinces,
+                ['prompt' => '-- Select Province', 'class' => 'form-control form-control-sm', 'id' => 'fk_province']
+            )->label('Province') ?>
 
-    <?= $form->field($model, 'gender')->dropDownList([ 'Male' => 'Male', 'Female' => 'Female', ], ['prompt' => '']) ?>
+            <?= $form->field($model, 'fk_city')->dropDownList($cities,
+                ['prompt' => '-- Select City', 'class' => 'form-control form-control-sm', 'id' => 'fk_city']
+            )->label('City') ?>
 
-    <?= $form->field($model, 'contact_number')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'house_address')->textarea(['rows' => 6, 'class' => 'form-control form-control-sm']) ?>
+        </div>
+    </div>
 
-    <?= $form->field($model, 'fk_cluster')->textInput() ?>
+    <hr>
 
-    <?= $form->field($model, 'fk_region')->textInput() ?>
+    <!-- Employment Details -->
+    <div class="row">
+        <div class="col-12 col-md-4">
+            <label for="employ_dtls">Employment Details</label>
+        </div>
+        <div class="col-12 col-md-8" id="employ_dtls">
+            <?= $form->field($model, 'fk_position')->dropDownList($position, ['prompt' => '-- Select Position', 'class' => 'form-control form-control-sm', 'id' => 'employees-fk_position'])->label('Position') ?>
 
-    <?= $form->field($model, 'fk_region_area')->textInput() ?>
+            <?= $form->field($model, 'date_hired')->label('Date Hired <span class="text-body-tertiary">(MM/dd/yyyy)</span>')->widget(yii\jui\DatePicker::className(), [
+                'dateFormat' => 'MM/dd/yyyy',
+                'options' => [
+                    'class' => 'form-control form-control-sm',
+                    'autocomplete' => 'off', // Disable autocomplete to prevent browser suggestions
+                ],
+                'clientOptions' => [
+                    'changeMonth' => true,
+                    'changeYear' => true,
+                    'showButtonPanel' => true,
+                    'yearRange' => '-100:+0',
+                ],
+            ]) ?>
+            <?= $form->field($model, 'end_of_contract')->label('End Of Contract <span class="text-body-tertiary">(MM/dd/yyyy)</span>')->widget(yii\jui\DatePicker::className(), [
+                'dateFormat' => 'MM/dd/yyyy',
+                'options' => [
+                    'class' => 'form-control form-control-sm',
+                    'autocomplete' => 'off', // Disable autocomplete to prevent browser suggestions
+                ],
+                'clientOptions' => [
+                    'changeMonth' => true,
+                    'changeYear' => true,
+                    'showButtonPanel' => true,
+                    'yearRange' => '-100:+0',
+                ],
+            ]) ?>
 
-    <?= $form->field($model, 'fk_city')->textInput() ?>
+            <?= $form->field($model, 'fk_employment_status')->dropDownList($Status, ['prompt' => '-- Select Status', 'class' => 'form-control form-control-sm'])->label('Status') ?>
+            <?= $form->field($model, 'availability')->textInput(['class' => 'form-control form-control-sm', 'id' => 'availability-field', 'disabled' => true])->label('Availability') ?>
+        </div>
+    </div>
 
-    <?= $form->field($model, 'house_address')->textarea(['rows' => 6]) ?>
+    <hr>
 
-    <?= $form->field($model, 'date_hired')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'end_of_contract')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'fk_employment_status')->textInput() ?>
-
-    <?= $form->field($model, 'emergency_contact_persons')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'emergency_contact_numbers')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'emergency_contact_relations')->textInput(['maxlength' => true]) ?>
+    <!-- Emergency Contact -->
+    <div class="row">
+        <div class="col-12 col-md-4">
+            <label for="emrgncy_contact">Emergency Contact</label>
+        </div>
+        <div class="col-12 col-md-8" id="emrgncy_contact">
+            <?= $form->field($model, 'emergency_contact_persons')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('Person') ?>
+            <?= $form->field($model, 'emergency_contact_numbers')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('Phone Number') ?>
+            <?= $form->field($model, 'emergency_contact_relations')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('Relationship') ?>
+        </div>
+    </div>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>
 
-    <!--    --><?php //= $form->field($model, 'availability')->textInput() ?>
-    <!--    --><?php //= $form->field($model, 'logged_by')->textInput(['maxlength' => true]) ?>
-    <!--    --><?php //= $form->field($model, 'logged_time')->textInput(['maxlength' => true]) ?>
-    <!--    --><?php //= $form->field($model, 'updated_by')->textInput(['maxlength' => true]) ?>
-    <!--    --><?php //= $form->field($model, 'updated_time')->textInput(['maxlength' => true]) ?>
+
 
     <?php ActiveForm::end(); ?>
-
 </div>
+
+<?php
+$script = <<< JS
+$('#employees-fk_position').change(function(){
+    var id = $(this).val();
+    $.ajax({
+        url: '/employees/get-position-availability',
+        method: 'GET',
+        data: {id: id},
+        success: function(response){
+            $('#availability-field').val(response);
+        },
+        error: function(xhr, status, error){
+            console.error(xhr.responseText);
+        }
+    });
+});
+
+$('#fk_cluster').change(function(){
+    var id = $(this).val();
+    $.ajax({
+        url: '/employees/get-regions', // Update the URL with your actual controller/action
+        method: 'GET',
+        data: {id: id}, // Update the parameter name to match the action parameter
+        success: function(response){
+            $('#fk_region').html(response);
+        },
+        error: function(xhr, status, error){
+            console.error(xhr.responseText);
+        }
+    });
+});
+
+$('#fk_region').change(function(){
+    var id = $(this).val();
+    $.ajax({
+        url: '/employees/get-provinces', // Update the URL with your actual controller/action
+        method: 'GET',
+        data: {id: id}, // Update the parameter name to match the action parameter
+        success: function(response){
+            $('#fk_province').html(response);
+        },
+        error: function(xhr, status, error){
+            console.error(xhr.responseText);
+        }
+    });
+});
+
+$('#fk_province').change(function(){
+    var id = $(this).val();
+    $.ajax({
+        url: '/employees/get-cities', // Update the URL with your actual controller/action
+        method: 'GET',
+        data: {id: id}, // Update the parameter name to match the action parameter
+        success: function(response){
+            $('#fk_city').html(response);
+        },
+        error: function(xhr, status, error){
+            console.error(xhr.responseText);
+        }
+    });
+});
+
+JS;
+
+$this->registerJs("
+    var fieldIds = ['" . Html::getInputId($model, 'bday') . "', '" . Html::getInputId($model, 'date_hired') . "', '" . Html::getInputId($model, 'end_of_contract') . "']; 
+
+    fieldIds.forEach(function(fieldId) {
+        $('#' + fieldId).change(function(){
+            var date = $(this).val();
+            var pattern = /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/\d{4}$/;
+            if (!pattern.test(date)) {
+                $(this).val('');
+            }
+        });
+    });
+");
+
+
+$this->registerJs($script);
+?>
+
+

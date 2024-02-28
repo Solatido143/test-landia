@@ -21,7 +21,8 @@
         "hail812/yii2-adminlte3": "~1.1",
         "exocet/yii2-chart-widget": "~1.0",
         "scotthuangzl/yii2-google-chart": "dev-master",
-        "microinginer/yii2-dropdown-action-column": "dev-master"
+        "microinginer/yii2-dropdown-action-column": "dev-master",
+        "yiisoft/yii2-jui": "~2.0.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

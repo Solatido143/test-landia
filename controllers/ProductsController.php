@@ -116,7 +116,7 @@ class ProductsController extends Controller
     {
         Yii::$app->session->setFlash('error', [
             'title' => 'Oh no!',
-            'body' => 'You do not have permission to delete this item..',
+            'body' => 'You do not have permission to delete this item.',
         ]);
         return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
     }
@@ -154,21 +154,9 @@ class ProductsController extends Controller
         $modelSubItems = $this->findSubItemsModel($id);
         $modelProducts = $this->findProductsModel($modelSubItems->product_id);
 
-//        if ($modelSubItems->calcu != NULL)
-//        {
-//            $modelSubItems->quantity = intval($modelSubItems->quantity) - intval($modelSubItems->calcu);
-//            $modelSubItems->save();
-//            return 1;
-//        }
-
         $modelProducts->stock_quantity = intval($modelProducts->stock_quantity) - intval($modelSubItems->quantity);
 
         if ($modelSubItems->load(Yii::$app->request->post()) && $modelSubItems->save()) {
-            if ($modelSubItems->calcu != NULL)
-            {
-                $modelSubItems->quantity = intval($modelSubItems->quantity) + intval($modelSubItems->calcu);
-                $modelSubItems->save();
-            }
             $modelProducts->stock_quantity = intval($modelProducts->stock_quantity) + intval($modelSubItems->quantity);
             $modelProducts->save();
 

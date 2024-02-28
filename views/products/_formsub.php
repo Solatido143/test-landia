@@ -21,49 +21,18 @@ $id = Yii::$app->request->get('id');
     <?= $form->field($model, 'product_id')->dropDownList($mainProductList, [
         'prompt' => '-- Select Main Product',
         'options' => [$id => ['selected' => true]] // Pre-select the main product based on the provided ID
-    ]) ?>
+    ])->label('Main Product') ?>
 
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'name')->textInput(['maxlength' => true])->label('Sub Item Name') ?>
 
     <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
 
-
-    <div class="row">
-        <div class="col-12">
-            <div class="your-custom-class">
-                <?= Html::label('Quantity', ['class' => 'control-label']) ?>
-                <div class="row">
-                    <div class="col-12 col-md-6">
-                        <?= $form->field($model, 'quantity')->textInput(['type' => 'number'])->label(false) ?>
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <div class="input-group mb-3">
-                            <button class="btn btn-outline-secondary" type="button"><i class="fas fa-minus"></i></button>
-                            <?= $form->field($model, 'calcu', ['options' => ['class' => 'input-group-prepend']])->textInput(['type' => 'text', 'class' => 'form-control', 'placeholder' => "Integer",])->label(false) ?>
-                            <button class="btn btn-outline-secondary" type="button"><i class="fas fa-plus"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-        </div>
-
-
-        <div class="col">
-
-        </div>
-
-
-    </div>
-
-
-
-
+    <?= $form->field($model, 'quantity')->textInput(['type' => 'number']) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
+
 </div>

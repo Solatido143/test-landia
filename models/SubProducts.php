@@ -17,8 +17,6 @@ use Yii;
  */
 class SubProducts extends \yii\db\ActiveRecord
 {
-    public $calcu;
-
     /**
      * {@inheritdoc}
      */
@@ -34,7 +32,7 @@ class SubProducts extends \yii\db\ActiveRecord
     {
         return [
             [['product_id', 'name', 'description', 'quantity'], 'required'],
-            [['product_id', 'quantity', 'calcu'], 'integer'],
+            [['product_id', 'quantity'], 'integer'],
             [['name'], 'string', 'max' => 50],
             [['description'], 'string', 'max' => 100],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Products::class, 'targetAttribute' => ['product_id' => 'id']],

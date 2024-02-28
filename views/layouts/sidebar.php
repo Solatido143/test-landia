@@ -47,7 +47,7 @@
 //                        'items' => [
 //                            ['label' => 'Booking', 'url' => ['bookings'], 'icon' => 'check-to-slot'],
 //                            ['label' => 'Sales Receipt', 'url' => ['receipts'], 'icon' => 'receipt'],
-//                            ['label' => 'Services', 'url' => ['services'], 'icon' => 'scroll'],
+//                            ['label' => 'services', 'url' => ['services'], 'icon' => 'scroll'],
 //
 //                        ]
 //                    ],

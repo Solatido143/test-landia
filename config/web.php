@@ -116,6 +116,13 @@ $config = [
                     'create-sub-products',
                     'view-sub-products',
                     'update-sub-products',
+
+                    'get-users',
+                    'view-users',
+                    'create-users',
+                    'update-users',
+                    'delete-users',
+                    'validate-login',
                 ],
                 'allow' => true,
             ],
