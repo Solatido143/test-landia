@@ -43,6 +43,27 @@ $this->registerJs("
 
     // Initial call to display the clock immediately
     updateClock();
+
+    // Function to handle form submission via AJAX
+    $('#timeInModal').on('beforeSubmit', 'form', function() {
+        var form = $(this);
+        $.ajax({
+            url: form.attr('action'),
+            type: 'post',
+            data: form.serialize(),
+            success: function(response) {
+                // Handle success response here
+                // For example, you can show a success message or close the modal
+                console.log('Form submitted successfully');
+                $('#timeInModal').modal('hide');
+            },
+            error: function(xhr, status, error) {
+                // Handle error response here
+                console.error('Error occurred while submitting the form');
+            }
+        });
+        return false; // Prevent normal form submission
+    });
 ", View::POS_READY);
 ?>
 
@@ -60,10 +81,12 @@ $this->registerJs("
             </div>
             <div class="modal-footer">
                 <!-- Form for the modal -->
+                <?php $form = ActiveForm::begin(['id' => 'timeInForm', 'action' => ['time-in']]); ?>
                 <div class="form-group">
-                    <?= Html::submitButton('Cancel', ['class' => 'btn btn-secondary', 'data-bs-dismiss' => 'modal']) ?>
+                    <?= Html::Button('Cancel', ['class' => 'btn btn-secondary', 'data-bs-dismiss' => 'modal']) ?>
                     <?= Html::submitButton('Confirm', ['class' => 'btn btn-primary']) ?>
                 </div>
+                <?php ActiveForm::end(); ?>
             </div>
         </div>
     </div>

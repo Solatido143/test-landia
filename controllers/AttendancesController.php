@@ -79,6 +79,14 @@ class AttendancesController extends Controller
     {
         $model = new Attendances();
 
+        $model->fk_employee = 'dummy';
+        $model->sign_in = 'dummy';
+        $model->sign_in_log = 'dummy';
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['time-in']);
+        }
+
         return $this->render('time-in', [
             'model' => $model,
         ]);
