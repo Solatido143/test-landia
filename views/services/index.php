@@ -6,6 +6,8 @@ use yii\grid\GridView;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\searches\Services */
 /* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $model app\models\Services */
+
 
 $this->title = 'services';
 $this->params['breadcrumbs'][] = $this->title;
@@ -26,7 +28,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     <?= GridView::widget([
                         'dataProvider' => $dataProvider,
-                        'filterModel' => $searchModel,
                         'columns' => [
                             ['class' => 'yii\grid\SerialColumn'],
 
@@ -34,12 +35,12 @@ $this->params['breadcrumbs'][] = $this->title;
                             'service_name',
                             'service_fee',
                             'completion_time:datetime',
-                            'logged_by',
+//                            'logged_by',
                             //'logged_time',
                             //'updated_by',
                             //'updated_time',
 
-                            ['class' => 'hail812\adminlte3\yii\grid\ActionColumn'],
+//                            ['class' => 'hail812\adminlte3\yii\grid\ActionColumn'],
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],
                         'pager' => [

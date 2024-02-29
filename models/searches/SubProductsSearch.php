@@ -19,7 +19,7 @@ class SubProductsSearch extends SubProducts
     {
         return [
             [['id', 'product_id', 'quantity'], 'integer'],
-            [['name', 'description'], 'safe'],
+            [['sub_products_name', 'description'], 'safe'],
         ];
     }
 
@@ -64,7 +64,7 @@ class SubProductsSearch extends SubProducts
             'quantity' => $this->quantity,
         ]);
 
-        $query->andFilterWhere(['like', 'name', $this->name])
+        $query->andFilterWhere(['like', 'sub_products_name', $this->sub_products_name])
             ->andFilterWhere(['like', 'description', $this->description]);
 
         return $dataProvider;

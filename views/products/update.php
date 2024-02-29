@@ -3,9 +3,9 @@
 /* @var $this yii\web\View */
 /* @var $model app\models\Products */
 
-$this->title = 'Update Products: ' . $model->name;
+$this->title = 'Update Products: ' . $model->product_name;
 $this->params['breadcrumbs'][] = ['label' => 'Products', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = ['label' => $model->product_name, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 

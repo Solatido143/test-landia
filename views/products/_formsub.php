@@ -8,9 +8,9 @@ use yii\bootstrap4\ActiveForm;
 /* @var $form yii\bootstrap4\ActiveForm */
 
 // Fetch all main products
-$mainProducts = \app\models\Products::find()->select(['id', 'name'])->asArray()->all();
+$mainProducts = \app\models\Products::find()->select(['id', 'product_name'])->asArray()->all();
 // Map main products to use in dropdown list
-$mainProductList = \yii\helpers\ArrayHelper::map($mainProducts, 'id', 'name');
+$mainProductList = \yii\helpers\ArrayHelper::map($mainProducts, 'id', 'product_name');
 
 $id = Yii::$app->request->get('id');
 ?>
@@ -23,7 +23,7 @@ $id = Yii::$app->request->get('id');
         'options' => [$id => ['selected' => true]] // Pre-select the main product based on the provided ID
     ])->label('Main Product') ?>
 
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true])->label('Sub Item Name') ?>
+    <?= $form->field($model, 'sub_products_name')->textInput(['maxlength' => true])->label('Sub Item Name') ?>
 
     <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
 

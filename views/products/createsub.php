@@ -10,7 +10,7 @@ use yii\helpers\Html;
 $this->title = 'Create Sub Items';
 $this->params['breadcrumbs'][] = ['label' => 'Products', 'url' => ['/products']];
 $this->params['breadcrumbs'][] = [
-    'label' => isset($productmodel->id) ? \app\models\Products::findOne($productmodel->id)->name : '',
+    'label' => isset($productmodel->id) ? \app\models\Products::findOne($productmodel->id)->product_name : '',
     'url' => ['view', 'id' => $productmodel->id],
 ];
 $this->params['breadcrumbs'][] = $this->title;

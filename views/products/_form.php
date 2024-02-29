@@ -16,7 +16,7 @@ use yii\bootstrap4\ActiveForm;
         ]
     ]); ?>
     <div class="col-md-6">
-        <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'product_name')->textInput(['maxlength' => true]) ?>
     </div>
 
     <div class="col-md-6">

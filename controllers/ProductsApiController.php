@@ -137,9 +137,14 @@ class ProductsApiController extends ActiveController
 
 //    ---------- Sub Products -----------
 
-    public function actionGetSubProducts()
+    public function actionGetSubProducts($id = NULL)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if (!empty($id))
+        {
+            return $this->actionViewSubProducts($id);
+        }
 
         $subProducts = SubProducts::find()->with('products')->all();
 
@@ -272,7 +277,7 @@ class ProductsApiController extends ActiveController
     {
         $formattedProduct = [
             'id' => $product->id,
-            'name' => $product->name,
+            'name' => $product->product_name,
             'description' => $product->description,
             'stock_quantity' => $product->stock_quantity,
         ];
@@ -286,7 +291,7 @@ class ProductsApiController extends ActiveController
             foreach ($product->subProducts as $subProduct) {
                 $formattedProduct['subProducts'][] = [
                     'id' => $subProduct->id,
-                    'name' => $subProduct->name,
+                    'name' => $subProduct->sub_products_name,
                     'description' => $subProduct->description,
                     'quantity' => $subProduct->quantity,
                 ];
@@ -306,7 +311,7 @@ class ProductsApiController extends ActiveController
     {
         $formattedSubProduct = [
             'id' => $subProduct->id,
-            'name' => $subProduct->name,
+            'name' => $subProduct->sub_products_name,
             'description' => $subProduct->description,
             'stock_quantity' => $subProduct->quantity,
         ];
@@ -315,7 +320,7 @@ class ProductsApiController extends ActiveController
         $expandProduct = Yii::$app->request->get('expand') === 'product';
 
         // Include main product by default
-        $formattedSubProduct['main_product'] = $expandProduct ? $subProduct->products->name : null;
+        $formattedSubProduct['main_product'] = $expandProduct ? $subProduct->products->product_name : null;
 
         // If 'expand' parameter is not provided or not set to 'product', hide main product
         if (!$expandProduct) {

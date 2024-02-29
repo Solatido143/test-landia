@@ -37,6 +37,8 @@ class UserController extends ActiveController
     // Custom action to create a new user
     public function actionCreateUsers()
     {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
         $model = new RegisterForm();
         $model->load(Yii::$app->getRequest()->getBodyParams(), '');
 

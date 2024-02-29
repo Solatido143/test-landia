@@ -8,10 +8,10 @@ use yii\widgets\DetailView;
 /* @var $productmodel app\models\Products */
 
 
-$this->title = $model->name;
+$this->title = $model->sub_products_name;
 $this->params['breadcrumbs'][] = ['label' => 'Products', 'url' => ['index']];
 $this->params['breadcrumbs'][] = [
-    'label' => isset($model->product_id) ? \app\models\Products::findOne($model->product_id)->name : '',
+    'label' => isset($model->product_id) ? \app\models\Products::findOne($model->product_id)->product_name : '',
     'url' => ['view', 'id' => $model->product_id],
 ];
 $this->params['breadcrumbs'][] = $this->title;
@@ -44,10 +44,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                         'attribute' => 'product_id',
                                         'label' => 'Main Product',
                                         'value' => function ($model) {
-                                            return isset($model->product_id) ? \app\models\Products::findOne($model->product_id)->name : null;
+                                            return isset($model->product_id) ? \app\models\Products::findOne($model->product_id)->product_name : null;
                                         },
                                     ],
-                                    'name',
+                                    'sub_products_name',
                                     'description',
                                     'quantity',
                                 ],

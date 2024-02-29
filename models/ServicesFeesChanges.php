@@ -58,10 +58,19 @@ class ServicesFeesChanges extends \yii\db\ActiveRecord
     /**
      * Gets query for [[FkService]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery|\app\models\query\ServicesQuery
      */
     public function getFkService()
     {
         return $this->hasOne(Services::class, ['id' => 'fk_service']);
+    }
+
+    /**
+     * {@inheritdoc}
+     * @return \app\models\query\ServicesFeesChangesQuery the active query used by this AR class.
+     */
+    public static function find()
+    {
+        return new \app\models\query\ServicesFeesChangesQuery(get_called_class());
     }
 }

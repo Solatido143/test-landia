@@ -75,12 +75,14 @@ $config = [
                 'product-list/viewsubprod' => 'products-api/view-sub-products',
                 'product-list/updatesubprod' => 'products-api/update-sub-products',
 
-                'user/view' => 'user/view-users',
                 'user/list' => 'user/get-users',
+                'user/view' => 'user/view-users',
                 'user/create' => 'user/create-users',
                 'user/update' => 'user/update-users',
                 'user/delete' => 'user/delete-users',
                 'user/user-login' => 'user/validate-login',
+
+                'attendance' => 'attendances/index'
             ],
         ],
     ],

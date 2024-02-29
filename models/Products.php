@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "products".
  *
  * @property int $id
- * @property string $name
+ * @property string $product_name
  * @property string $description
  * @property int $stock_quantity
  * @property int $isRemove
@@ -31,8 +31,8 @@ class Products extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'description'], 'required'],
-            [['name'], 'string', 'max' => 100],
+            [['product_name', 'description'], 'required'],
+            [['product_name'], 'string', 'max' => 100],
             [['description'], 'string'],
             [['stock_quantity', 'isRemove'], 'integer'],
             ['stock_quantity', 'integer', 'min' => 0], // Ensure stock_quantity is an integer with a minimum value of 0
@@ -46,7 +46,7 @@ class Products extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
+            'product_name' => 'Name',
             'description' => 'Description',
             'stock_quantity' => 'Stock Quantity',
             'isRemove' => 'Is Remove',

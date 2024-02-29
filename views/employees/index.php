@@ -1,5 +1,6 @@
 <?php
 
+use app\models\EmployeesStatus;
 use app\models\Positions;
 use microinginer\dropDownActionColumn\DropDownActionColumn;
 use yii\helpers\Html;
@@ -61,11 +62,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             [
                                 'attribute' => 'fk_position',
                                 'label' => 'Position',
-//                                'value' => function ($model) {
-//                                    // Fetch the position name based on the fk_position value
-//                                    $position = Positions::findOne($model->fk_position);
-//                                    return $position ? $position->position : null;
-//                                },
+                                'value' => function ($model) {
+                                    $position = Positions::findOne($model->fk_position);
+                                    return $position ? $position->position : null;
+                                },
                             ],
                             [
                                 'attribute' => 'fname',
@@ -78,11 +78,11 @@ $this->params['breadcrumbs'][] = $this->title;
                             [
                                 'attribute' => 'fk_employment_status',
                                 'label' => 'Employment Status',
-//                                'value' => function ($model) {
-//                                    // Fetch the position name based on the fk_position value
-//                                    $status = \app\models\EmployeesStatus::findOne($model->fk_employment_status);
-//                                    return $status ? $status->status : null;
-//                                },
+                                'value' => function ($model) {
+                                    // Fetch the position name based on the fk_position value
+                                    $status = EmployeesStatus::findOne($model->fk_employment_status);
+                                    return $status ? $status->status : null;
+                                },
                             ],
 
                             //'mname',

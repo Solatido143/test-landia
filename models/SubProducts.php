@@ -9,7 +9,7 @@ use Yii;
  *
  * @property int $id
  * @property int $product_id
- * @property string $name
+ * @property string sub_products_name
  * @property string $description
  * @property int $quantity
  *
@@ -31,9 +31,9 @@ class SubProducts extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['product_id', 'name', 'description', 'quantity'], 'required'],
+            [['product_id', 'sub_products_name', 'description', 'quantity'], 'required'],
             [['product_id', 'quantity'], 'integer'],
-            [['name'], 'string', 'max' => 50],
+            [['sub_products_name'], 'string', 'max' => 50],
             [['description'], 'string', 'max' => 100],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Products::class, 'targetAttribute' => ['product_id' => 'id']],
         ];
@@ -47,7 +47,7 @@ class SubProducts extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'product_id' => 'Sub Product ID',
-            'name' => 'Name',
+            'sub_products_name' => 'Name',
             'description' => 'Description',
             'quantity' => 'Quantity',
         ];

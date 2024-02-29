@@ -9,7 +9,7 @@ use yii\grid\GridView;
 /* @var $searchModel app\models\searches\SubProductsSearch */
 /* @var $model app\models\Products */
 
-$this->title = $model->name;
+$this->title = $model->product_name;
 $this->params['breadcrumbs'][] = ['label' => 'Products', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         'model' => $model,
                                         'attributes' => [
                                             'id',
-                                            'name',
+                                            'product_name',
                                             'description:ntext',
                                             'stock_quantity',
                                         ],
@@ -118,7 +118,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         ],
                                     ],
                                     'id',
-                                    'name',
+                                    'sub_products_name',
                                     'description',
                                     'quantity',
                                 ],

@@ -58,7 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ],
                             ],
                             'id',
-                            'name',
+                            'product_name',
                             [
                                 'attribute' => 'description',
                                 'format' => 'ntext',

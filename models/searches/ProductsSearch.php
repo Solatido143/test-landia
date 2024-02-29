@@ -20,7 +20,7 @@ class ProductsSearch extends Products
     {
         return [
             [['id', 'stock_quantity', 'isRemove'], 'integer'],
-            [['name', 'description', 'searchQuery'], 'safe'],
+            [['product_name', 'description', 'searchQuery'], 'safe'],
         ];
     }
 
@@ -66,7 +66,7 @@ class ProductsSearch extends Products
 
         // Perform a generalized search across multiple attributes
         $query->andFilterWhere(['or',
-            ['like', 'name', $this->searchQuery],
+            ['like', 'product_name', $this->searchQuery],
             ['like', 'id', $this->searchQuery],
             ['like', 'description', $this->searchQuery],
         ]);

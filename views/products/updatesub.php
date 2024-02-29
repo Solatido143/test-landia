@@ -3,13 +3,13 @@
 /* @var $this yii\web\View */
 /* @var $model app\models\Products */
 
-$this->title = 'Update Sub Item: ' . $model->name;
+$this->title = 'Update Sub Item: ' . $model->sub_products_name;
 $this->params['breadcrumbs'][] = ['label' => 'Products', 'url' => ['products']];
 $this->params['breadcrumbs'][] = [
-    'label' => isset($model->product_id) ? \app\models\Products::findOne($model->product_id)->name : '',
+    'label' => isset($model->product_id) ? \app\models\Products::findOne($model->product_id)->product_name : '',
     'url' => ['view', 'id' => $model->product_id],
 ];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['sub-items-view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = ['label' => $model->sub_products_name, 'url' => ['sub-items-view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 

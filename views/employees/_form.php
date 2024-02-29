@@ -134,7 +134,7 @@ $Status = $employeesModel->fetchAndMapData(\app\models\EmployeesStatus::class, '
     </div>
 
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('<i class="fas fa-save"></i> Save', ['class' => 'btn btn-success']) ?>
     </div>
 
 
@@ -223,5 +223,3 @@ $this->registerJs("
 
 $this->registerJs($script);
 ?>
-
-
