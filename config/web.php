@@ -82,7 +82,7 @@ $config = [
                 'user/delete' => 'user/delete-users',
                 'user/user-login' => 'user/validate-login',
 
-                'attendance' => 'attendances/index'
+//                'attendance' => 'attendances/index'
             ],
         ],
     ],
@@ -108,29 +108,12 @@ $config = [
                     'get-preferences',
                     'save-location',
                     'admin-request',
-
-                    'get-products',
-                    'create-products',
-                    'view-products',
-                    'update-products',
-
-                    'get-sub-products',
-                    'create-sub-products',
-                    'view-sub-products',
-                    'update-sub-products',
-
-                    'get-users',
-                    'view-users',
-                    'create-users',
-                    'update-users',
-                    'delete-users',
-                    'validate-login',
                 ],
                 'allow' => true,
             ],
 //            controllers
             [
-                'controllers' => ['products'],
+                'controllers' => ['products', 'api', 'products-api', 'user'],
                 'allow' => true,
             ],
             [

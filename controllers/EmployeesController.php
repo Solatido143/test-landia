@@ -141,7 +141,7 @@ class EmployeesController extends Controller
     {
         $position = Positions::findOne($id);
         if ($position) {
-            $availabilityText = $position->availability ? 'True' : 'False';
+            $availabilityText = $position->availability ? 'Active' : 'Inactive';
             return $availabilityText;
         } else {
             return '';

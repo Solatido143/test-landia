@@ -67,7 +67,7 @@
                     ],
                     [
                         'label' => 'Attendance',
-                        'url' => ['/attendance/index'],
+                        'url' => ['/attendances/index'],
                         'icon' => 'clock',
                         'visible' => $isGuest,
                     ],

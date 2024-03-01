@@ -1,5 +1,4 @@
 <?php
-
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 use yii\web\View;
@@ -10,6 +9,8 @@ use yii\web\View;
 
 // Register the JavaScript code for the real-time clock and date
 $this->registerJs("
+    console.log('JavaScript code is executing.'); // Check if JavaScript is executing
+
     function updateClock() {
         var now = new Date();
         var hours = now.getHours();
@@ -44,9 +45,9 @@ $this->registerJs("
     // Initial call to display the clock immediately
     updateClock();
 
-    // Function to handle form submission via AJAX
-    $('#timeInModal').on('beforeSubmit', 'form', function() {
-        var form = $(this);
+    // Function to handle form submission via AJAX when the confirm button is clicked
+    $(document).on('click', '#timeInModal .btn-primary', function() {
+        var form = $('#timeInForm');
         $.ajax({
             url: form.attr('action'),
             type: 'post',
@@ -81,7 +82,7 @@ $this->registerJs("
             </div>
             <div class="modal-footer">
                 <!-- Form for the modal -->
-                <?php $form = ActiveForm::begin(['id' => 'timeInForm', 'action' => ['time-in']]); ?>
+                <?php $form = ActiveForm::begin(['id' => 'timeInForm', 'action' => ['create']]); ?>
                 <div class="form-group">
                     <?= Html::Button('Cancel', ['class' => 'btn btn-secondary', 'data-bs-dismiss' => 'modal']) ?>
                     <?= Html::submitButton('Confirm', ['class' => 'btn btn-primary']) ?>

@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
+use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Employees */
@@ -21,30 +22,41 @@ $Status = $employeesModel->fetchAndMapData(\app\models\EmployeesStatus::class, '
 
     <!-- Personal Information -->
     <div class="row">
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-md-12">
             <label for="personal_info">Personal Information</label>
         </div>
-        <div class="col-12 col-md-8" id="personal_info">
-            <?= $form->field($model, 'employee_id')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm']) ?>
-            <?= $form->field($model, 'fname')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('First Name') ?>
-            <?= $form->field($model, 'mname')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('Middle Name') ?>
-            <?= $form->field($model, 'lname')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('Last Name') ?>
-            <?= $form->field($model, 'suffix')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm']) ?>
-            <?= $form->field($model, 'bday')->label('Birthday <span class="text-body-tertiary">(MM/dd/yyyy)</span>')->widget(yii\jui\DatePicker::className(), [
-                'dateFormat' => 'MM/dd/yyyy',
-                'options' => [
-                    'class' => 'form-control form-control-sm',
-                    'autocomplete' => 'off', // Disable autocomplete to prevent browser suggestions
-                ],
-                'clientOptions' => [
-                    'changeMonth' => true,
-                    'changeYear' => true,
-                    'showButtonPanel' => true,
-                    'yearRange' => '-100:+0',
-                ],
-            ]) ?>
+        <div class="col-12" id="personal_info">
+            <div class="row">
+                <div class="col-md-3">
+                    <?= $form->field($model, 'fname')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('First Name') ?>
 
-            <?= $form->field($model, 'gender')->dropDownList([ 'Male' => 'Male', 'Female' => 'Female', ], ['prompt' => '-- Select', 'class' => 'form-control form-control-sm']) ?>
+                </div>
+                <div class="col-md-3">
+                    <?= $form->field($model, 'mname')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('Middle Name') ?>
+
+                </div>
+                <div class="col-md-3">
+                    <?= $form->field($model, 'lname')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('Last Name') ?>
+
+                </div>
+                <div class="col-md-2">
+                    <?= $form->field($model, 'suffix')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm']) ?>
+
+                </div>
+                <div class="col-md-2">
+                    <?= $form->field($model, 'gender')->dropDownList([ 'Male' => 'Male', 'Female' => 'Female', ], ['prompt' => '-- Select', 'class' => 'form-control form-control-sm']) ?>
+
+                </div>
+                <div class="col-md-3">
+                    <?= $form->field($model, 'bday')->label('Birthday <span class="text-body-tertiary">(MM/dd/yyyy)</span>')->textInput([
+                        'class' => 'form-control form-control-sm',
+                        'autocomplete' => 'off',
+                    ]) ?>
+                </div>
+
+            </div>
+
+
         </div>
     </div>
 
@@ -54,26 +66,41 @@ $Status = $employeesModel->fetchAndMapData(\app\models\EmployeesStatus::class, '
         <div class="col-12 col-md-4">
             <label for="contact_info">Contact Information</label>
         </div>
-        <div class="col-12 col-md-8" id="contact_info">
-            <?= $form->field($model, 'contact_number')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm']) ?>
+        <div class="col-md-12" id="contact_info">
+            <div class="row">
 
-            <?= $form->field($model, 'fk_cluster')->dropDownList($clusters,
-                ['prompt' => '-- Select Cluster', 'class' => 'form-control form-control-sm', 'id' => 'fk_cluster']
-            )->label('Cluster') ?>
 
-            <?= $form->field($model, 'fk_region')->dropDownList($regions,
-                ['prompt' => '-- Select Region', 'class' => 'form-control form-control-sm', 'id' => 'fk_region'],
-            )->label('Region') ?>
+            </div>
+            <div class="row">
+                <div class="col-md-3 text-sm">
+                    <?= $form->field($model, 'fk_cluster')->dropDownList($clusters,
+                        ['prompt' => '-- Select Cluster', 'class' => 'form-control form-control-sm', 'id' => 'fk_cluster']
+                    )->label('Cluster') ?>
+                </div>
+                <div class="col-md-3 text-sm">
+                    <?= $form->field($model, 'fk_region')->dropDownList($regions,
+                        ['prompt' => '-- Select Region', 'class' => 'form-control form-control-sm', 'id' => 'fk_region'],
+                    )->label('Region') ?>
+                </div>
+                <div class="col-md-3 text-sm">
+                    <?= $form->field($model, 'fk_region_area')->dropDownList($provinces,
+                        ['prompt' => '-- Select Province', 'class' => 'form-control form-control-sm', 'id' => 'fk_province']
+                    )->label('Province') ?>
+                </div>
+                <div class="col-md-3 text-sm">
+                    <?= $form->field($model, 'fk_city')->dropDownList($cities,
+                        ['prompt' => '-- Select City', 'class' => 'form-control form-control-sm', 'id' => 'fk_city']
+                    )->label('City') ?>
+                </div>
+                <div class="col-md-6">
+                    <?= $form->field($model, 'house_address')->textarea(['rows' => 3, 'class' => 'form-control form-control-sm']) ?>
 
-            <?= $form->field($model, 'fk_region_area')->dropDownList($provinces,
-                ['prompt' => '-- Select Province', 'class' => 'form-control form-control-sm', 'id' => 'fk_province']
-            )->label('Province') ?>
+                </div>
+                <div class="col-md-3 text-sm">
+                    <?= $form->field($model, 'contact_number')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm']) ?>
 
-            <?= $form->field($model, 'fk_city')->dropDownList($cities,
-                ['prompt' => '-- Select City', 'class' => 'form-control form-control-sm', 'id' => 'fk_city']
-            )->label('City') ?>
-
-            <?= $form->field($model, 'house_address')->textarea(['rows' => 6, 'class' => 'form-control form-control-sm']) ?>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -84,38 +111,39 @@ $Status = $employeesModel->fetchAndMapData(\app\models\EmployeesStatus::class, '
         <div class="col-12 col-md-4">
             <label for="employ_dtls">Employment Details</label>
         </div>
-        <div class="col-12 col-md-8" id="employ_dtls">
-            <?= $form->field($model, 'fk_position')->dropDownList($position, ['prompt' => '-- Select Position', 'class' => 'form-control form-control-sm', 'id' => 'employees-fk_position'])->label('Position') ?>
+        <div class="col-md-12" id="employ_dtls">
+            <div class="row">
+                <div class="col-md-3 text-sm">
+                    <?= $form->field($model, 'employee_id')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm']) ?>
 
-            <?= $form->field($model, 'date_hired')->label('Date Hired <span class="text-body-tertiary">(MM/dd/yyyy)</span>')->widget(yii\jui\DatePicker::className(), [
-                'dateFormat' => 'MM/dd/yyyy',
-                'options' => [
-                    'class' => 'form-control form-control-sm',
-                    'autocomplete' => 'off', // Disable autocomplete to prevent browser suggestions
-                ],
-                'clientOptions' => [
-                    'changeMonth' => true,
-                    'changeYear' => true,
-                    'showButtonPanel' => true,
-                    'yearRange' => '-100:+0',
-                ],
-            ]) ?>
-            <?= $form->field($model, 'end_of_contract')->label('End Of Contract <span class="text-body-tertiary">(MM/dd/yyyy)</span>')->widget(yii\jui\DatePicker::className(), [
-                'dateFormat' => 'MM/dd/yyyy',
-                'options' => [
-                    'class' => 'form-control form-control-sm',
-                    'autocomplete' => 'off', // Disable autocomplete to prevent browser suggestions
-                ],
-                'clientOptions' => [
-                    'changeMonth' => true,
-                    'changeYear' => true,
-                    'showButtonPanel' => true,
-                    'yearRange' => '-100:+0',
-                ],
-            ]) ?>
+                </div>
+                <div class="col-md-3 text-sm">
+                    <?= $form->field($model, 'fk_position')->dropDownList($position, ['prompt' => '-- Select Position', 'class' => 'form-control form-control-sm', 'id' => 'employees-fk_position'])->label('Position') ?>
 
-            <?= $form->field($model, 'fk_employment_status')->dropDownList($Status, ['prompt' => '-- Select Status', 'class' => 'form-control form-control-sm'])->label('Status') ?>
-            <?= $form->field($model, 'availability')->textInput(['class' => 'form-control form-control-sm', 'id' => 'availability-field', 'disabled' => true])->label('Availability') ?>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 text-sm">
+                        <?= $form->field($model, 'date_hired')->label('Date Hired <span class="text-body-tertiary">(MM/dd/yyyy)</span>')->textInput([
+                            'class' => 'form-control form-control-sm',
+                            'autocomplete' => 'off',
+                        ]) ?>
+                    </div>
+                    <div class="col-md-3 text-sm">
+                        <?= $form->field($model, 'end_of_contract')->label('End Of Contract <span class="text-body-tertiary">(MM/dd/yyyy)</span>')->textInput([
+                            'class' => 'form-control form-control-sm',
+                            'autocomplete' => 'off',
+                        ]) ?>
+                    </div>
+                    <div class="col-md-3 text-sm">
+                        <?= $form->field($model, 'fk_employment_status')->dropDownList($Status, ['prompt' => '-- Select Status', 'class' => 'form-control form-control-sm'])->label('Status') ?>
+
+                    </div>
+                    <div class="col-md-2">
+                        <?= $form->field($model, 'availability')->textInput(['class' => 'form-control form-control-sm', 'id' => 'availability-field', 'disabled' => true])->label('Availability') ?>
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -126,15 +154,31 @@ $Status = $employeesModel->fetchAndMapData(\app\models\EmployeesStatus::class, '
         <div class="col-12 col-md-4">
             <label for="emrgncy_contact">Emergency Contact</label>
         </div>
-        <div class="col-12 col-md-8" id="emrgncy_contact">
-            <?= $form->field($model, 'emergency_contact_persons')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('Person') ?>
-            <?= $form->field($model, 'emergency_contact_numbers')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('Phone Number') ?>
-            <?= $form->field($model, 'emergency_contact_relations')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('Relationship') ?>
+        <div class="col-md-12" id="emrgncy_contact">
+            <div class="row">
+                <div class="col-md-3">
+                    <?= $form->field($model, 'emergency_contact_persons')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('Person') ?>
+
+                </div>
+                <div class="col-md-3">
+                    <?= $form->field($model, 'emergency_contact_numbers')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('Phone Number') ?>
+
+                </div>
+                <div class="col-md-3">
+                    <?= $form->field($model, 'emergency_contact_relations')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('Relationship') ?>
+
+                </div>
+                <div class="col-md-3">
+
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="form-group">
+        <?= Html::Button('<i class="fas fa-cancel"></i> Cancel', ['class' => 'btn btn-secondary']) ?>
         <?= Html::submitButton('<i class="fas fa-save"></i> Save', ['class' => 'btn btn-success']) ?>
+
     </div>
 
 
@@ -205,21 +249,6 @@ $('#fk_province').change(function(){
 });
 
 JS;
-
-$this->registerJs("
-    var fieldIds = ['" . Html::getInputId($model, 'bday') . "', '" . Html::getInputId($model, 'date_hired') . "', '" . Html::getInputId($model, 'end_of_contract') . "']; 
-
-    fieldIds.forEach(function(fieldId) {
-        $('#' + fieldId).change(function(){
-            var date = $(this).val();
-            var pattern = /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/\d{4}$/;
-            if (!pattern.test(date)) {
-                $(this).val('');
-            }
-        });
-    });
-");
-
 
 $this->registerJs($script);
 ?>

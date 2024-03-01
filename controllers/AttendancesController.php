@@ -65,6 +65,9 @@ class AttendancesController extends Controller
     public function actionCreate()
     {
         $model = new Attendances();
+        $model->fk_employee = 8;
+        $model->sign_in = "12:24:45";
+        $model->sign_in_log = "Time In";
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -75,22 +78,6 @@ class AttendancesController extends Controller
         ]);
     }
 
-    public function actionTimeIn()
-    {
-        $model = new Attendances();
-
-        $model->fk_employee = 'dummy';
-        $model->sign_in = 'dummy';
-        $model->sign_in_log = 'dummy';
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['time-in']);
-        }
-
-        return $this->render('time-in', [
-            'model' => $model,
-        ]);
-    }
 
     /**
      * Updates an existing Attendances model.

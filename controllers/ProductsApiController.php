@@ -23,7 +23,7 @@ class ProductsApiController extends ActiveController
         return $actions;
     }
 
-//    ---------- Products -----------
+//    -- Products --
 
     // Custom action to retrieve all products
     public function actionGetProducts($id = NULL)
@@ -74,7 +74,6 @@ class ProductsApiController extends ActiveController
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Check if $id is provided
         if ($id === null) {
             return [
                 'success' => false,
@@ -83,10 +82,7 @@ class ProductsApiController extends ActiveController
             ];
         }
 
-        // Find the product by $id
         $product = Products::findOne($id);
-
-        // Check if the product is found
         if ($product === null) {
             return [
                 'isProductExist' => false,

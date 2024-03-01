@@ -17,16 +17,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="card-body">
                     <div class="row mb-2">
                         <div class="col-md-12 text-end">
-                            <!-- Button trigger modal -->
-                            <?= Html::a('Time In &nbsp;<i class="fas fa-clock"></i>', null, [
-                                'class' => 'btn btn-success',
-                                'data-bs-toggle' => 'modal',
-                                'data-bs-target' => '#timeInModal'
-                            ]) ?>
-                            <?php require_once ('time-in.php');?>
+                            <?= Html::a('Create Attendance &nbsp; <i class="fas fa-plus"></i>', ['create'], ['class' => 'btn btn-success']) ?>
                         </div>
                     </div>
-
 
                     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
