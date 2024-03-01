@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Employees;
 use Yii;
 use app\models\Attendances;
 use app\models\searches\Attendances as AttendancesSearch;
@@ -64,13 +65,25 @@ class AttendancesController extends Controller
      */
     public function actionCreate()
     {
+        date_default_timezone_set('Asia/Manila');
+        
         $model = new Attendances();
-        $model->fk_employee = 8;
-        $model->sign_in = "12:24:45";
+        $fkEmployeeId = Yii::$app->user->identity->fk_employee_id;
+        $employee = Employees::findOne(['employee_id' => $fkEmployeeId]);
+
+        if ($employee !== null) {
+            $model->fk_employee = $employee->id;
+        } else {
+            Yii::error('No employee found for fk_employee_id: ' . $fkEmployeeId);
+            Yii::$app->session->setFlash('error', 'No employee found. Please contact the admin.');
+            return $this->redirect(['index']); // Redirect to index page or another appropriate page
+        }
+
+        $model->sign_in = date('H:i:s');
         $model->sign_in_log = "Time In";
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         }
 
         return $this->render('create', [
