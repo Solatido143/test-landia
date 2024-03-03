@@ -30,6 +30,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
                             'id',
                             'fk_employee',
+                            [
+                                'attribute' => 'fk_employee',
+                                'label' => 'Position',
+                                'value' => function ($model) {
+                                    $employee = \app\models\Employees::findOne($model->fk_employee);
+                                    return $employee ? $employee->fname . $employee->lname : null;
+                                },
+                            ],
                             'date',
                             'sign_in',
                             'sign_out',
