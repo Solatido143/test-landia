@@ -5,8 +5,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Attendances */
 
-$this->title = 'Create Attendances';
-$this->params['breadcrumbs'][] = ['label' => 'Attendances', 'url' => ['index']];
+$this->title = 'Attendance';
+$this->params['breadcrumbs'][] = ['label' => 'AttendancesSearch', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 

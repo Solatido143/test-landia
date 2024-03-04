@@ -6,6 +6,7 @@ use app\models\Attendances;
 use app\models\Cities;
 use app\models\Clusters;
 use app\models\Employees;
+use app\models\EmployeesStatus;
 use app\models\Positions;
 use app\models\Provinces;
 use app\models\Regions;
@@ -33,20 +34,103 @@ class ApiController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $attendances = Attendances::find()->asArray()->all();
+        $attendances = Attendances::find()->all();
 
-        return (json::encode($attendances));
+        return $attendances;
     }
     public function actionCreateAttendance()
     {
+        date_default_timezone_set('Asia/Manila');
         Yii::$app->response->format = Response::FORMAT_JSON;
 
+        $fkEmployeeId = Yii::$app->request->post('fk_employee_id');
+        if ($fkEmployeeId === null) {
+            return [
+                'errors' => [
+                    'fk_employee_id' => ['Fk Employee cannot be blank.']
+                ]
+            ];
+        }
+        $employee = Employees::findOne(['employee_id' => $fkEmployeeId]);
+        if ($employee === null) {
+            return [
+                'success' => false,
+                'name' => 'Employee Not Found',
+                'message' => 'No employee found for fk_employee_id: ' . $fkEmployeeId];
+        }
+
+        // Check if the employee has an attendance record for today with no sign-out time
+        $existingAttendance = Attendances::find()
+            ->where([
+                'fk_employee' => $employee->id,
+                'date' => date('Y-m-d'),
+                'sign_out' => ''
+            ])
+            ->exists();
+
+        if ($existingAttendance) {
+            return [
+                'success' => false,
+                'message' => 'Employee already has an attendance record for today with no sign-out time.'
+            ];
+        }
+
         $attendances = new Attendances();
+        $attendances->fk_employee = $employee->id;
+        $attendances->date = date('Y-m-d');
+        $attendances->sign_in = date('H:i:s');
+        $attendances->sign_in_log = "Time In";
+        $attendances->sign_out = "";
+        $attendances->remarks = "";
 
         $attendances->load(Yii::$app->getRequest()->getBodyParams(), '');
 
         if ($attendances->save()) {
             Yii::$app->response->setStatusCode(201); // Created
+            return $attendances;
+        } else {
+            return ['errors' => $attendances->errors];
+        }
+    }
+    public function actionUpdateAttendance()
+    {
+        date_default_timezone_set('Asia/Manila');
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $fkEmployeeId = Yii::$app->request->post('fk_employee_id');
+        $employee = Employees::findOne(['employee_id' => $fkEmployeeId]);
+
+        if ($employee === null) {
+            return [
+                'success' => false,
+                'message' => 'Employee not found for fk_employee_id: ' . $fkEmployeeId
+            ];
+        }
+
+        $attendances = Attendances::find()
+            ->where(['fk_employee' => $employee->id])
+            ->orderBy(['id' => SORT_DESC])
+            ->one();
+
+        if ($attendances === null) {
+            return [
+                'success' => false,
+                'message' => 'No attendance record found for the employee.'
+            ];
+        }
+        if (!empty($attendances->sign_out)) {
+            return [
+                'success' => false,
+                'message' => 'Employee has already timed out.'
+            ];
+        }
+
+        // Update sign_out and sign_out_log
+        $attendances->sign_out = date('H:i:s');
+        $attendances->sign_out_log = "Time Out";
+
+        // Perform validation and save the updated record
+        if ($attendances->save()) {
             return $attendances;
         } else {
             return ['errors' => $attendances->errors];
@@ -220,30 +304,62 @@ class ApiController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $region = Regions::find()->all();
+        // Fetch regions along with their associated clusters
+        $regions = Regions::find()->with('fkCluster')->all();
 
-        return $region;
+        // Format the regions data
+        $formattedRegions = [];
+        foreach ($regions as $region) {
+            $formattedRegion = [
+                'id' => $region->id,
+                'fk_cluster' => $region->fkCluster->cluster,
+                'region' => $region->region,
+            ];
+            $formattedRegions[] = $formattedRegion;
+        }
+        return $formattedRegions;
     }
 //      -- PROVINCE / REGION AREA --
     public function actionProvince()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $province = Provinces::find()->all();
+        $provinces = Provinces::find()->with('fkRegion')->all();
 
-        return $province;
+        // Format the provinces data
+        $formattedProvinces = [];
+        foreach ($provinces as $province) {
+            $formattedProvinces[] = [
+                'id' => $province->id,
+                'fk_region' => $province->fkRegion->region,
+                'province' => $province->province,
+            ];
+        }
+        return $formattedProvinces;
     }
+
 //      -- CITY --
     public function actionCity()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $cities = Cities::find()->all();
+        $cities = Cities::find()->with('fkProvince')->all();
 
-        return $cities;
+        // Format the cities data
+        $formattedCities = [];
+        foreach ($cities as $city) {
+            $formattedCities[] = [
+                'id' => $city->id,
+                'fk_province' => $city->fkProvince->province,
+                'city' => $city->city,
+            ];
+        }
+
+        return $formattedCities;
     }
+
 //      -- POSTION --
-    public function actionPosition()
+    public function actionPositions()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -256,7 +372,7 @@ class ApiController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $status = Positions::find()->all();
+        $status = EmployeesStatus::find()->all();
 
         return $status;
     }

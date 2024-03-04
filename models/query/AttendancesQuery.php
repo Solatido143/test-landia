@@ -3,7 +3,7 @@
 namespace app\models\query;
 
 /**
- * This is the ActiveQuery class for [[\app\models\Attendances]].
+ * This is the ActiveQuery class for [[\app\models\AttendancesSearch]].
  *
  * @see \app\models\Attendances
  */

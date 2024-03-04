@@ -138,7 +138,7 @@ $Status = $employeesModel->fetchAndMapData(\app\models\EmployeesStatus::class, '
                         <?= $form->field($model, 'fk_employment_status')->dropDownList($Status, ['prompt' => '-- Select Status', 'class' => 'form-control form-control-sm'])->label('Status') ?>
 
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-2 text-sm">
                         <?= $form->field($model, 'availability')->textInput(['class' => 'form-control form-control-sm', 'id' => 'availability-field', 'disabled' => true])->label('Availability') ?>
 
                     </div>
@@ -168,15 +168,12 @@ $Status = $employeesModel->fetchAndMapData(\app\models\EmployeesStatus::class, '
                     <?= $form->field($model, 'emergency_contact_relations')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('Relationship') ?>
 
                 </div>
-                <div class="col-md-3">
-
-                </div>
             </div>
         </div>
     </div>
 
     <div class="form-group">
-        <?= Html::Button('<i class="fas fa-cancel"></i> Cancel', ['class' => 'btn btn-secondary']) ?>
+        <?= Html::a('<i class="fas fa-times"></i> Cancel', ['index'], ['class' => 'btn btn-secondary']) ?>
         <?= Html::submitButton('<i class="fas fa-save"></i> Save', ['class' => 'btn btn-success']) ?>
 
     </div>

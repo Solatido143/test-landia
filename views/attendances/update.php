@@ -3,10 +3,9 @@
 /* @var $this yii\web\View */
 /* @var $model app\models\Attendances */
 
-$this->title = 'Update Attendances: ' . $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Attendances', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->title = 'Time Out';
+$this->params['breadcrumbs'][] = ['label' => 'Attendance', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Time Out'];
 ?>
 
 <div class="container-fluid">

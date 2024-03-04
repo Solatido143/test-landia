@@ -112,7 +112,7 @@ class Employees extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Attendances]].
+     * Gets query for [[AttendancesSearch]].
      *
      * @return \yii\db\ActiveQuery
      */

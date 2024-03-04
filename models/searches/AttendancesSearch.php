@@ -7,9 +7,9 @@ use yii\data\ActiveDataProvider;
 use app\models\Attendances as AttendancesModel;
 
 /**
- * Attendances represents the model behind the search form of `app\models\Attendances`.
+ * AttendancesSearch represents the model behind the search form of `app\models\AttendancesSearch`.
  */
-class Attendances extends AttendancesModel
+class AttendancesSearch extends AttendancesModel
 {
     /**
      * {@inheritdoc}

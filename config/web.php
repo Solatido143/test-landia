@@ -61,16 +61,12 @@ $config = [
             'rules' => [
 //                api
 
-//               viewall
                 'product-list/products' => 'products-api/get-products',
-
                 'product-list/create' => 'products-api/create-products',
                 'product-list/view' => 'products-api/view-products',
                 'product-list/update' => 'products-api/update-products',
 
-//                view all
                 'product-list/subprod' => 'products-api/get-sub-products',
-
                 'product-list/createsubprod' => 'products-api/create-sub-products',
                 'product-list/viewsubprod' => 'products-api/view-sub-products',
                 'product-list/updatesubprod' => 'products-api/update-sub-products',
@@ -83,6 +79,8 @@ $config = [
                 'user/user-login' => 'user/validate-login',
 
 //                'attendance' => 'attendances/index'
+                'attendance/time-in' => 'attendances/create',
+                'attendance/time-out' => 'attendances/update',
             ],
         ],
     ],
