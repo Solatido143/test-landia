@@ -41,8 +41,8 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             [['username', 'email', 'password_hash',], 'required'],
-            [['status', 'availability'], 'integer'],
-            [['username', 'email', 'password_hash', 'user_access'], 'string', 'max' => 100],
+            [['status', 'availability', 'user_access'], 'integer'],
+            [['username', 'email', 'password_hash'], 'string', 'max' => 100],
             ['email', 'email'],
             ['username', 'unique', 'message' => 'This username has already been taken.'],
             [['fk_employee_id'], 'string', 'max' => 30],

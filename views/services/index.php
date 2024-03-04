@@ -9,7 +9,7 @@ use yii\grid\GridView;
 /* @var $model app\models\Services */
 
 
-$this->title = 'services';
+$this->title = 'Services';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="container-fluid">
@@ -28,13 +28,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     <?= GridView::widget([
                         'dataProvider' => $dataProvider,
+                        'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
                         'columns' => [
                             ['class' => 'yii\grid\SerialColumn'],
 
                             'id',
                             'service_name',
                             'service_fee',
-                            'completion_time:datetime',
+                            'completion_time',
 //                            'logged_by',
                             //'logged_time',
                             //'updated_by',

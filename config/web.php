@@ -78,9 +78,19 @@ $config = [
                 'user/delete' => 'user/delete-users',
                 'user/user-login' => 'user/validate-login',
 
-//                'attendance' => 'attendances/index'
+                'api/user-list' => 'api/user-list',
+                'api/create-user' => 'api/create-users',
+                'api/update-user' => 'api/update-users',
+                'api/delete-user' => 'api/delete-users',
+                'api/user-validation' => 'api/validate-login',
+
                 'attendance/time-in' => 'attendances/create',
                 'attendance/time-out' => 'attendances/update',
+
+                'nailandia' => 'site/index',
+                'attendance' => 'attendances/index',
+                'products' => 'products/index',
+
             ],
         ],
     ],
@@ -111,7 +121,7 @@ $config = [
             ],
 //            controllers
             [
-                'controllers' => ['products', 'api', 'products-api', 'user'],
+                'controllers' => ['products', 'api', 'products-api', 'user', 'attendance'],
                 'allow' => true,
             ],
             [

@@ -10,40 +10,31 @@ use app\models\EmployeesStatus;
 use app\models\Positions;
 use app\models\Provinces;
 use app\models\Regions;
+use app\models\RegisterForm;
+use app\models\User;
 use Yii;
-use yii\helpers\Json;
-use yii\web\Controller;
+use yii\rest\Controller;
 use yii\web\Response;
 
 class ApiController extends Controller
 {
-    // Disabling default CRUD actions
-    public function actions()
+    public function init()
     {
-        $actions = parent::actions();
-        unset($actions['index'], $actions['create'], $actions['view'], $actions['update'], $actions['delete']);
-        return $actions;
+        parent::init();
+        Yii::$app->response->format = Response::FORMAT_JSON;
     }
-
-
-
-
-
 //    -- Attendance --
     public function actionAttendance()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-
-        $attendances = Attendances::find()->all();
-
-        return $attendances;
+        return Attendances::find()->all();
     }
     public function actionCreateAttendance()
     {
         date_default_timezone_set('Asia/Manila');
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $fkEmployeeId = Yii::$app->request->post('fk_employee_id');
+        $fkEmployeeId = Yii::$app->request->getBodyParam('fk_employee_id');
         if ($fkEmployeeId === null) {
             return [
                 'errors' => [
@@ -51,12 +42,14 @@ class ApiController extends Controller
                 ]
             ];
         }
+
         $employee = Employees::findOne(['employee_id' => $fkEmployeeId]);
         if ($employee === null) {
             return [
                 'success' => false,
                 'name' => 'Employee Not Found',
-                'message' => 'No employee found for fk_employee_id: ' . $fkEmployeeId];
+                'message' => 'No employee found for fk_employee_id: ' . $fkEmployeeId
+            ];
         }
 
         // Check if the employee has an attendance record for today with no sign-out time
@@ -83,11 +76,11 @@ class ApiController extends Controller
         $attendances->sign_out = "";
         $attendances->remarks = "";
 
-        $attendances->load(Yii::$app->getRequest()->getBodyParams(), '');
+        $attendances->load(Yii::$app->request->getBodyParams(), '');
 
         if ($attendances->save()) {
             Yii::$app->response->setStatusCode(201); // Created
-            return $attendances;
+            return ['success' => true];
         } else {
             return ['errors' => $attendances->errors];
         }
@@ -97,7 +90,7 @@ class ApiController extends Controller
         date_default_timezone_set('Asia/Manila');
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $fkEmployeeId = Yii::$app->request->post('fk_employee_id');
+        $fkEmployeeId = Yii::$app->request->getBodyParam('fk_employee_id');
         $employee = Employees::findOne(['employee_id' => $fkEmployeeId]);
 
         if ($employee === null) {
@@ -131,7 +124,7 @@ class ApiController extends Controller
 
         // Perform validation and save the updated record
         if ($attendances->save()) {
-            return $attendances;
+            return ['success' => true];
         } else {
             return ['errors' => $attendances->errors];
         }
@@ -142,12 +135,17 @@ class ApiController extends Controller
 
         // Check if $id is provided
         if ($id === null) {
-            return ['success' => false, 'name' => 'Bad Request', 'message' => 'Missing required parameter: id'];
+            return [
+                'success' => false,
+                'name' => 'Bad Request',
+                'message' => 'Missing required parameter: id'];
         }
 
         $attendance = Attendances::findOne($id);
         if ($attendance === null) {
-            return [ 'isAttendanceExist' => false, 'message' => 'Attendance not found.' ];
+            return [
+                'isAttendanceExist' => false,
+                'message' => 'Attendance not found.' ];
         }
 
         return $attendance;
@@ -190,13 +188,20 @@ class ApiController extends Controller
 
         $employees = new Employees();
 
+        $employees->logged_time = date('H:i:s');
+        $employees->logged_by = "marcus";
+
         $employees->load(Yii::$app->getRequest()->getBodyParams(), '');
 
         if ($employees->save()) {
             Yii::$app->response->setStatusCode(201); // Created
-            return $employees;
+            return ['success' => true];
         } else {
-            return ['errors' => $employees->errors];
+            return [
+                'errors' => $employees->errors,
+                'success' => false,
+                'message' => 'Failed to create Employee.'
+            ];
         }
     }
     private function actionViewEmployee($id)
@@ -243,18 +248,18 @@ class ApiController extends Controller
         }
         $employees->load(Yii::$app->getRequest()->getBodyParams(), '');
         if ($employees->save()) {
-            return $employees;
+            return ['success' => true];
         } else {
             return [
                 'success' => false,
                 'errors' => $employees->errors,
-                'message' => 'Failed to update product.'
+                'message' => 'Failed to update employee.'
             ];
         }
     }
     private function getFormattedEmployee($employee)
     {
-        $formattedEmployee = [
+        return [
             'id' => $employee->id,
             'employee_id' => $employee->employee_id,
             'fk_position' => $employee->fkPosition->position,
@@ -282,24 +287,21 @@ class ApiController extends Controller
             'updated_by' => $employee->updated_by,
             'updated_time' => $employee->updated_time,
         ];
-        return $formattedEmployee;
     }
 
 
 
 
 
-//      -- ADDRESS --
-//      -- CLUSTER --
+//      -- CRPC ADDRESS --
+    //-- CLUSTER --
     public function actionCluster()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $cluster = Clusters::find()->all();
-
-        return $cluster;
+        return Clusters::find()->all();
     }
-//      -- REGION --
+    //-- REGION --
     public function actionRegion()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -312,14 +314,14 @@ class ApiController extends Controller
         foreach ($regions as $region) {
             $formattedRegion = [
                 'id' => $region->id,
-                'fk_cluster' => $region->fkCluster->cluster,
+                'fk_cluster' => $region->fk_cluster,
                 'region' => $region->region,
             ];
             $formattedRegions[] = $formattedRegion;
         }
         return $formattedRegions;
     }
-//      -- PROVINCE / REGION AREA --
+    //-- PROVINCE / REGION AREA --
     public function actionProvince()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -331,14 +333,14 @@ class ApiController extends Controller
         foreach ($provinces as $province) {
             $formattedProvinces[] = [
                 'id' => $province->id,
-                'fk_region' => $province->fkRegion->region,
+                'fk_region' => $province->fk_region,
                 'province' => $province->province,
             ];
         }
         return $formattedProvinces;
     }
 
-//      -- CITY --
+    //-- CITY --
     public function actionCity()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -350,7 +352,7 @@ class ApiController extends Controller
         foreach ($cities as $city) {
             $formattedCities[] = [
                 'id' => $city->id,
-                'fk_province' => $city->fkProvince->province,
+                'fk_province' => $city->fk_province,
                 'city' => $city->city,
             ];
         }
@@ -358,23 +360,135 @@ class ApiController extends Controller
         return $formattedCities;
     }
 
-//      -- POSTION --
+    //-- POSTION --
     public function actionPositions()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-
-        $position = Positions::find()->all();
-
-        return $position;
+        return Positions::find()->all();
     }
-//      -- STATUS --
+    //-- STATUS --
     public function actionStatus()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
+        return EmployeesStatus::find()->all();
+    }
 
-        $status = EmployeesStatus::find()->all();
 
-        return $status;
+
+
+    //  ----- User Accounts -----
+    public function actionUserList()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Fetch query parameters
+        $queryParams = Yii::$app->request->queryParams;
+
+        // Check if expand parameter is set
+        $expandFields = [];
+        if (isset($queryParams['expand'])) {
+            $expandFields = explode(',', $queryParams['expand']);
+            unset($queryParams['expand']);
+        }
+
+        // Initialize the query with the User model
+        $query = User::find()->select(['username', 'fk_employee_id', 'email', 'user_access']);
+
+        // Include expanded fields in the query
+        foreach ($expandFields as $field) {
+            $query->addSelect($field);
+        }
+
+        // Apply conditions based on query parameters
+        foreach ($queryParams as $attribute => $value) {
+            $query->andWhere([$attribute => $value]);
+        }
+
+        // Execute the query to fetch users
+        $users = $query->all();
+
+        return $users;
+    }
+
+    public function actionCreateUsers()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $model = new RegisterForm();
+        $model->load(Yii::$app->getRequest()->getBodyParams(), '');
+
+        if ($model->validate()) {
+            if ($model->register()) {
+                Yii::$app->getResponse()->setStatusCode(201); // Created
+                Yii::$app->getResponse()->format = Response::FORMAT_JSON;
+                return $model;
+            } else {
+                Yii::$app->getResponse()->setStatusCode(500); // Internal Server Error
+                return ['error' => 'Failed to register user.', 'success' => false];
+            }
+        } else {
+            $errors = $model->errors;
+            if (isset($errors['username']) && strpos($errors['username'][0], 'This username has already been taken.') !== false) {
+                Yii::$app->getResponse()->setStatusCode(400); // Bad request
+                return ['error' => 'Username already exists.', 'success' => false];
+            } elseif (isset($errors['email']) && strpos($errors['email'][0], 'is not a valid email address.') !== false) {
+                Yii::$app->getResponse()->setStatusCode(400); // Bad request
+                return ['error' => 'Invalid email address.', 'success' => false];
+            } else {
+                Yii::$app->getResponse()->setStatusCode(422); // Unprocessable Entity
+                return ['errors' => $errors];
+            }
+        }
+    }
+    public function actionUpdateUsers($id)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $model = User::findOne($id);
+        if ($model === null) {
+            return [
+                'isUserExist' => false,
+                'name' => 'Not found',
+                'message' => 'User not found.'
+            ];
+        }
+
+        $model->load(Yii::$app->getRequest()->getBodyParams(), '');
+        if ($model->save()) {
+            return $model;
+        } else {
+            return ['errors' => $model->errors];
+        }
+    }
+    public function actionDeleteUsers($id)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $model = User::findOne($id);
+        if ($model === null) {
+            return [
+                'isUserExist' => false,
+                'name' => 'Not found',
+                'message' => 'User not found.'
+            ];
+        }
+        $model->delete();
+        Yii::$app->getResponse()->setStatusCode(204); // No content
+    }
+    public function actionValidateLogin($username, $password)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Find the user by username
+        $user = User::findOne(['username' => $username]);
+        if ($user !== null) {
+            // Validate the password
+            if (Yii::$app->security->validatePassword($password, $user->password_hash)) {
+                // Password is correct
+                return ['success' => true];
+            }
+        }
+        return ['success' => false];
     }
 
 }

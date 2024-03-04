@@ -68,11 +68,19 @@ class RegisterForm extends Model
             $user->auth_key = Yii::$app->security->generateRandomString();
             $user->verification_token = Yii::$app->security->generateRandomString();
             $user->fk_employee_id = $employee->employee_id;
+            $user->password_reset_token = NUll;
+            $user->user_access = 6;
+            $user->status = 10;
+            $user->created_at = date('Y-m-d H:i:s');
 
             if ($user->save()) {
                 return true;
             } else {
-                Yii::error("Unsuccessful account creation: " . VarDumper::dumpAsString($user->errors));
+                Yii::$app->session->setFlash('error', [
+                    'title' => 'Oh no!',
+                    'body' => 'You do not have permission to delete this item.',
+                ]);
+                return false;
             }
         }
 

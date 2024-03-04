@@ -3,38 +3,79 @@ namespace app\controllers;
 
 use app\models\RegisterForm;
 use app\models\User;
-use app\models\LoginForm;
-
 use Yii;
-
-use yii\rest\ActiveController;
-
-use yii\web\NotFoundHttpException;
+use yii\rest\Controller;
 use yii\web\Response;
 
-class UserController extends ActiveController
+class UserController extends Controller
 {
-    public $modelClass = 'app\models\User';
-
-    public function actions()
-    {
-        $actions = parent::actions();
-
-        // Disable default CRUD actions
-        unset($actions['index'], $actions['create'], $actions['view'], $actions['update'], $actions['delete']);
-
-        return $actions;
-    }
-
-    // Custom action to retrieve all users
     public function actionGetUsers()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $users = User::find()->all();
+
+        // Fetch query parameters
+        $queryParams = Yii::$app->request->queryParams;
+
+        // Check if expand parameter is set
+        $expandFields = [];
+        if (isset($queryParams['expand'])) {
+            $expandFields = explode(',', $queryParams['expand']);
+            unset($queryParams['expand']);
+        }
+
+        // Initialize the query with the User model
+        $query = User::find()->select(['id', 'username', 'fk_employee_id', 'email', 'user_access']);
+
+        // Include expanded fields in the query
+        foreach ($expandFields as $field) {
+            $query->addSelect($field);
+        }
+
+        // Apply conditions based on query parameters
+        foreach ($queryParams as $attribute => $value) {
+            $query->andWhere([$attribute => $value]);
+        }
+
+        // Execute the query to fetch users
+        $users = $query->all();
+
         return $users;
     }
+    public function actionViewUsers($queryParams)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
 
-    // Custom action to create a new user
+        // Check if there are any query parameters
+        if (empty($queryParams)) {
+            return [
+                'error' => true,
+                'message' => 'No query parameters provided.'
+            ];
+        }
+        // Initialize the query with the User model
+        $query = User::find();
+        // Select only the required fields
+        $query->select(['id', 'username', 'fk_employee_id', 'email', 'user_access']);
+
+        // Apply conditions based on query parameters
+        foreach ($queryParams as $attribute => $value) {
+            $query->andWhere([$attribute => $value]);
+        }
+
+        // Execute the query to fetch a single user
+        $user = $query->one();
+
+        // Check if user is found
+        if ($user === null) {
+            return [
+                'isUserExist' => false,
+                'name' => 'Not found',
+                'message' => 'User not found.'
+            ];
+        }
+
+        return $user;
+    }
     public function actionCreateUsers()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -65,48 +106,6 @@ class UserController extends ActiveController
             }
         }
     }
-
-
-    // Custom action to view a single user
-    public function actionViewUsers()
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        // Fetch query parameters
-        $queryParams = Yii::$app->request->queryParams;
-
-        // Check if there are any query parameters
-        if (empty($queryParams)) {
-            return [
-                'error' => true,
-                'message' => 'No query parameters provided.'
-            ];
-        }
-
-        // Initialize the query with the User model
-        $query = User::find();
-
-        // Apply conditions based on query parameters
-        foreach ($queryParams as $attribute => $value) {
-            $query->andWhere([$attribute => $value]);
-        }
-
-        // Execute the query
-        $user = $query->all();
-
-        // Check if user is found
-        if ($user === null) {
-            return [
-                'isUserExist' => false,
-                'name' => 'Not found',
-                'message' => 'User not found.'
-            ];
-        }
-
-        return $user;
-    }
-
-    // Custom action to update a user
     public function actionUpdateUsers($id)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -127,8 +126,6 @@ class UserController extends ActiveController
             return ['errors' => $model->errors];
         }
     }
-
-    // Custom action to delete a user
     public function actionDeleteUsers($id)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -144,7 +141,6 @@ class UserController extends ActiveController
         $model->delete();
         Yii::$app->getResponse()->setStatusCode(204); // No content
     }
-
     public function actionValidateLogin($username, $password)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;

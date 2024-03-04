@@ -4,7 +4,7 @@
 /* @var $model app\models\Services */
 
 $this->title = 'Update services: ' . $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'services', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Services', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
