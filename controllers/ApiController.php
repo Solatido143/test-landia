@@ -314,7 +314,7 @@ class ApiController extends Controller
             'gender' => $employee->gender,
             'contact_number' => $employee->contact_number,
             'fk_cluster' => $employee->fk_cluster,
-            'fk_region' => $employee->fk_region->region,
+            'fk_region' => $employee->fk_region,
             'fk_region_area' => $employee->fk_region_area,
             'fk_city' => $employee->fk_city,
             'house_address' => $employee->house_address,
