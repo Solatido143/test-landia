@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\User */
 
-$this->title = $model->id;
+$this->title = $model->username;
 $this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -16,38 +16,45 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-md-12">
-                    <p>
-                        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-                        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-                            'class' => 'btn btn-danger',
-                            'data' => [
-                                'confirm' => 'Are you sure you want to delete this item?',
-                                'method' => 'post',
-                            ],
-                        ]) ?>
-                    </p>
+                <div class="col-md-6">
                     <?= DetailView::widget([
                         'model' => $model,
                         'attributes' => [
-                            'id',
+                            //'id',
                             'username',
                             'fk_employee_id',
                             'email:email',
-                            'password_hash',
-                            'status',
-                            'password_reset_token',
-                            'user_access',
-                            'availability',
-                            'created_at',
-                            'updated_at',
-                            'auth_key',
-                            'verification_token',
-                            'managers_code',
+                            //'password_hash',
+                            [
+                                'label' => 'Status',
+                                'value' => function ($model) {
+                                    return $model->status === 10 ? 'Active' : 'Inactive';
+                                }
+                            ],
+                            //'password_reset_token',
+                            [
+                                'label' => 'User Access',
+                                'value' => function ($model) {
+                                    return $model->roles->name;
+                                }
+                            ],
+                            //'availability',
+                            //'created_at',
+                            //'updated_at',
+                            //'auth_key',
+                            //'verification_token',
+                            //'managers_code',
                         ],
                     ]) ?>
                 </div>
-                <!--.col-md-12-->
+                <!--.col-md-6-->
+                <div class="col-md-6">
+                    <p class="text-end">
+                        <?= Html::a('<i class="fas fa-pencil"></i>&nbspUpdate Details', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+                        <?= Html::a('<i class="fas fa-key"></i>&nbspChange Password', ['update', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+
+                    </p>
+                </div>
             </div>
             <!--.row-->
         </div>

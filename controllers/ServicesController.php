@@ -65,6 +65,10 @@ class ServicesController extends Controller
     public function actionCreate()
     {
         $model = new Services();
+        $model->logged_time = date('H:i:s');
+        $model->logged_by = Yii::$app->user->identity->username;
+        $model->updated_by = "";
+        $model->updated_time = "";
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -104,9 +108,11 @@ class ServicesController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        Yii::$app->session->setFlash('error', [
+            'title' => 'Oh no!',
+            'body' => 'You do not have permission to delete this item.',
+        ]);
+        return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
     }
 
     /**

@@ -2,44 +2,85 @@
 
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
+use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\User */
 /* @var $form yii\bootstrap4\ActiveForm */
+
+$UserModel = new \app\models\User();
+$Roles = $UserModel->fetchAndMapData(\app\models\Roles::class, 'user_access_id', 'name');
+
 ?>
 
 <div class="user-form">
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
+    <div class="row">
+        <div class="col-md-6">
 
-    <?= $form->field($model, 'fk_employee_id')->textInput(['maxlength' => true]) ?>
+            <div class="row">
 
-    <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
+                <div class="col-md-6">
+                    <?= $form->field($model, 'fk_employee_id')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md-6">
+                    <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md-12">
+                    <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md-6">
+                    <?= $form->field($model, 'status')->dropDownList([
+                        10 => 'Active',
+                        0 => 'Inactive',
+                    ]) ?>
+                </div>
+                <div class="col-md-6">
+                    <?= $form->field($model, 'user_access')->dropDownList($Roles) ?>
 
-    <?= $form->field($model, 'password_hash')->textInput(['maxlength' => true]) ?>
+                </div>
 
-    <?= $form->field($model, 'status')->textInput() ?>
+            </div>
 
-    <?= $form->field($model, 'password_reset_token')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-md-6">
+            <?= DetailView::widget([
+                'model' => $model,
+                'attributes' => [
+                    'created_at',
+                    'updated_at',
+                ],
+            ]) ?>
 
-    <?= $form->field($model, 'user_access')->textInput(['maxlength' => true]) ?>
+        </div>
 
-    <?= $form->field($model, 'availability')->textInput() ?>
+    </div>
 
-    <?= $form->field($model, 'created_at')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'updated_at')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'auth_key')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'verification_token')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'managers_code')->textInput(['maxlength' => true]) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+    </div>
+
+    <?php ActiveForm::end(); ?>
+
+    <hr>
+
+    <?php $form = ActiveForm::begin(); ?>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div>
+                <?= $form->field($model, 'old_password')->textInput(['maxlength' => true]) ?>
+                <?= $form->field($model, 'new_password')->textInput(['maxlength' => true]) ?>
+                <?= $form->field($model, 'confirm_new_password')->textInput(['maxlength' => true]) ?>
+            </div>
+            <div class="form-group">
+                <?= Html::submitButton('Change Password', ['class' => 'btn btn-success']) ?>
+            </div>
+        </div>
+
     </div>
 
     <?php ActiveForm::end(); ?>

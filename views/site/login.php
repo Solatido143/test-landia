@@ -1,10 +1,10 @@
 <?php
 /** @var yii\web\View $this */
-/** @var yii\bootstrap4\ActiveForm $form */
+/** @var yii\bootstrap5\ActiveForm $form */
 /** @var app\models\LoginForm $model */
 
-use yii\bootstrap4\ActiveForm;
-use yii\bootstrap4\Html;
+use yii\bootstrap5\ActiveForm;
+use yii\bootstrap5\Html;
 
 $this->title = 'Login';
 $this->params['breadcrumbs'] = [['label' => $this->title]];
@@ -37,19 +37,11 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         ->label(false)
                         ->passwordInput(['placeholder' => $model->getAttributeLabel('password')]) ?>
 
-
                     <div class="row">
                         <div class="col-8">
                             <?= $form->field($model, 'rememberMe')->checkbox([
-                                'template' => '<div class="icheck-primary">{input}{label}</div>',
-                                'style' => 'position: static; margin-left: 0.25rem; margin-right: 0.25rem; ',
-                                'labelOptions' => [
-                                    'class' => '',
-                                    'style' => 'font-weight: normal',
-                                ],
-                                'uncheck' => null,
+                                'template' => "<div class=\"custom-control custom-checkbox\">{input} {label}</div>\n<div class=\"col-lg-8\">{error}</div>",
                             ]) ?>
-
                         </div>
                         <div class="col-4">
                             <?= Html::submitButton('Sign In', ['class' => 'btn btn-primary btn-block']) ?>

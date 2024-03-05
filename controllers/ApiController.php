@@ -27,7 +27,52 @@ class ApiController extends Controller
     public function actionAttendance()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        return Attendances::find()->all();
+
+        // Fetch query parameters if needed
+        $queryParams = Yii::$app->request->queryParams;
+
+        // Check for invalid query parameters
+        foreach ($queryParams as $attribute => $value) {
+            // Assuming 'Attendances' model has attribute names defined in the schema, check if the attribute exists
+            if (!in_array($attribute, ['id', 'fk_employee', 'date', 'sign_in', 'sign_out', 'remarks', 'sign_in_log', 'sign_out_log', 'name'])) {
+                return [
+                    'success' => false,
+                    'error' => "Invalid query parameter: $attribute",
+                ];
+            }
+        }
+        // Initialize the query with the Attendances model
+        $query = Attendances::find();
+
+        // Apply conditions based on query parameters
+        foreach ($queryParams as $attribute => $value) {
+            $query->andWhere([$attribute => $value]);
+        }
+        // Execute the query to fetch attendance records
+        $attendances = $query->all();
+
+        if (empty($attendances)) {
+            return [
+                'success' => false,
+                'error' => 'No attendance records found'
+            ];
+        }
+
+        // Fetch the corresponding employee data for each attendance record
+        foreach ($attendances as &$attendance) {
+            // Retrieve the employee record based on the fk_employee value
+            $employee = Employees::findOne($attendance->fk_employee);
+
+            // If employee record is found, include the first name in the JSON response
+            if ($employee !== null) {
+                $attendanceArray = $attendance->attributes; // Convert attendance record to array
+                $attendanceArray['full_ name'] = $employee->fname; // Add 'name' field with employee's first name
+                unset($attendanceArray['fname']); // Remove 'fname' field if it exists
+                $attendance = $attendanceArray; // Assign the modified array back to $attendance
+            }
+        }
+
+        return $attendances;
     }
     public function actionCreateAttendance()
     {
@@ -199,8 +244,6 @@ class ApiController extends Controller
         } else {
             return [
                 'errors' => $employees->errors,
-                'success' => false,
-                'message' => 'Failed to create Employee.'
             ];
         }
     }
@@ -409,7 +452,6 @@ class ApiController extends Controller
 
         return $users;
     }
-
     public function actionCreateUsers()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
