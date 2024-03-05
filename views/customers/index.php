@@ -5,10 +5,10 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\searches\BookingsSearch */
+/* @var $searchModel app\models\searches\CustomersSeach */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Bookings';
+$this->title = 'Customers';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="container-fluid">
@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="card-body">
                     <div class="row mb-2">
                         <div class="col-md-12">
-                            <?= Html::a('<i class="fas fa-plus"></i>&nbspAdd New Bookings', ['create'], ['class' => 'btn btn-success']) ?>
+                            <?= Html::a('Create Customers', ['create'], ['class' => 'btn btn-success']) ?>
                         </div>
                     </div>
 
@@ -27,8 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= GridView::widget([
                         'dataProvider' => $dataProvider,
                         'columns' => [
-                            ['class' => 'yii\grid\SerialColumn'],
-
+                            //['class' => 'yii\grid\SerialColumn'],
                             [
                                 'class' => DropDownActionColumn::className(),
                                 'header' => 'Actions',
@@ -56,16 +55,12 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],
 
                             'id',
-                            'booking_type',
-                            'schedule_time',
-                            'fk_customer',
-                            'fk_booking_status',
-                            //'remarks:ntext',
-                            //'logged_by',
-                            //'logged_time',
+                            'customer_name',
+                            'contact_number',
+                            'logged_by',
+                            'logged_time',
                             //'updated_by',
                             //'updated_time',
-
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],
                         'pager' => [

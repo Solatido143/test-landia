@@ -12,9 +12,19 @@
     <div class="sidebar">
         <!-- Sidebar user panel (optional)   -->
         <?php if (!Yii::$app->user->isGuest): ?>
-            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <?php
+        $fk_Employee_Id = Yii::$app->user->identity->fk_employee_id;
+        $employee = \app\models\Employees::findOne(['employee_id' => $fk_Employee_Id]);
+
+        ?>
+            <div class="user-panel py-3 d-flex">
                 <div class="info">
-                    <p style="margin:0; color: white"><i class="fa fa-user"></i>&nbsp; <?= \yii\helpers\Inflector::camelize(Yii::$app->user->identity->username) ?></p>
+                    <?php if ($employee !== null): ?>
+                        <p style="margin: 0; color: white;">
+                            <i class="fa fa-user"></i>&nbsp;
+                            <?= $employee->fname . ' ' . $employee->lname ?>
+                        </p>
+                    <?php endif; ?>
                     <p style="margin:0; color: white">
                         <?php
                         $userAccessId = Yii::$app->user->identity->user_access;
@@ -40,13 +50,17 @@
                     ],
 
                     [
-                        'label' => 'Pos',
-                        'url' => ['/pos'],
+                        'label' => 'Bookings',
+                        'url' => ['/bookings'],
                         'icon' => 'chart-simple',
                         'visible' => $isGuest,
-//                        'options' => ['style' => 'border-bottom: 1px solid #4b545c;']
                     ],
-
+                    [
+                        'label' => 'Customer',
+                        'url' => ['/customers'],
+                        'icon' => 'person-circle-plus',
+                        'visible' => $isGuest,
+                    ],
 
 //                    [
 //                        'label' => 'Sales',
@@ -59,6 +73,7 @@
 //
 //                        ]
 //                    ],
+
                     [
                         'label' => 'Inventory',
                         'url' => ['/products/index'],
@@ -70,6 +85,7 @@
                         'url' => ['/attendances/index'],
                         'icon' => 'clock',
                         'visible' => $isGuest,
+                        'options' => ['style' => 'border-bottom: 1px solid #4b545c;']
                     ],
 
 //                    ['label' => 'Reports', 'url' => ['reports'], 'visible' => $isGuest, 'icon' => 'file-lines'],
@@ -78,7 +94,13 @@
                     ['label' => 'Admin', 'header' => true , 'options' => ['style' => 'color: #6c757d'], 'visible' => $isGuest],
                     ['label' => 'Employee\'s', 'url' => ['/employees/index'], 'visible' => $isGuest, 'icon' => 'user-group'],
                     ['label' => 'Services', 'url' => ['/services/index'], 'visible' => $isGuest, 'icon' => 'hand-holding-hand'],
-                    ['label' => 'User Management', 'url' => ['/user-manage/index'], 'visible' => $isGuest, 'icon' => 'user-gear'],
+                    [
+                        'label' => 'User Management',
+                        'url' => ['/user-manage/index'],
+                        'visible' => $isGuest,
+                        'icon' => 'user-gear',
+                        'options' => ['style' => 'border-bottom: 1px solid #4b545c;'],
+                    ],
 
 //                    user
                     ['label' => 'User', 'header' => true , 'options' => ['style' => 'color: #6c757d']],
@@ -103,9 +125,8 @@
                         ]
                     ],
 
-
-
                 ],
+                'options' => ['class' => 'nav nav-pills nav-sidebar flex-column', 'data-widget' => 'treeview']
             ]);
             ?>
         </nav>

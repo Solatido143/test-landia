@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Employees;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -22,8 +23,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= DetailView::widget([
                         'model' => $model,
                         'attributes' => [
-                            //'id',
-                            'fk_employee',
+                            [
+                                'attribute' => 'fk_employee',
+                                'label' => 'Employee',
+                                'value' => function($model) {
+                                    $employee = Employees::findOne($model->fk_employee);
+                                    return $employee ? $employee->fname . " " . $employee->lname : null;
+                                }
+                            ],
                             'sign_in',
                             'sign_out',
                             'remarks:ntext',

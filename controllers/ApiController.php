@@ -11,6 +11,7 @@ use app\models\Positions;
 use app\models\Provinces;
 use app\models\Regions;
 use app\models\RegisterForm;
+use app\models\Services;
 use app\models\User;
 use Yii;
 use yii\rest\Controller;
@@ -41,6 +42,7 @@ class ApiController extends Controller
                 ];
             }
         }
+
         // Initialize the query with the Attendances model
         $query = Attendances::find();
 
@@ -48,6 +50,10 @@ class ApiController extends Controller
         foreach ($queryParams as $attribute => $value) {
             $query->andWhere([$attribute => $value]);
         }
+
+        // Sort the query by 'id' in ascending order
+        $query->orderBy(['id' => SORT_DESC]);
+
         // Execute the query to fetch attendance records
         $attendances = $query->all();
 
@@ -66,7 +72,7 @@ class ApiController extends Controller
             // If employee record is found, include the first name in the JSON response
             if ($employee !== null) {
                 $attendanceArray = $attendance->attributes; // Convert attendance record to array
-                $attendanceArray['full_ name'] = $employee->fname; // Add 'name' field with employee's first name
+                $attendanceArray['full_name'] = $employee->fname; // Add 'full_name' field with employee's first name
                 unset($attendanceArray['fname']); // Remove 'fname' field if it exists
                 $attendance = $attendanceArray; // Assign the modified array back to $attendance
             }
@@ -204,12 +210,10 @@ class ApiController extends Controller
     public function actionEmployees($id = null)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-
         if (!empty($id))
         {
             return $this->actionViewEmployee($id);
         }
-
         $employees = Employees::find()->with(
             'fkPosition',
             'fkEmploymentStatus',
@@ -229,12 +233,12 @@ class ApiController extends Controller
     }
     public function actionCreateEmployees()
     {
+        date_default_timezone_set('Asia/Manila');
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         $employees = new Employees();
 
-        $employees->logged_time = date('H:i:s');
-        $employees->logged_by = "marcus";
+        $employees->logged_time = date('Y-m-d H:i:s');
 
         $employees->load(Yii::$app->getRequest()->getBodyParams(), '');
 
@@ -337,14 +341,15 @@ class ApiController extends Controller
 
 
 //      -- CRPC ADDRESS --
-    //-- CLUSTER --
+//-- CLUSTER --
     public function actionCluster()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
+        $queryParams = Yii::$app->request->queryParams;
 
         return Clusters::find()->all();
     }
-    //-- REGION --
+//-- REGION --
     public function actionRegion()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -364,7 +369,7 @@ class ApiController extends Controller
         }
         return $formattedRegions;
     }
-    //-- PROVINCE / REGION AREA --
+//-- PROVINCE / REGION AREA --
     public function actionProvince()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -382,8 +387,7 @@ class ApiController extends Controller
         }
         return $formattedProvinces;
     }
-
-    //-- CITY --
+//-- CITY --
     public function actionCity()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -402,14 +406,13 @@ class ApiController extends Controller
 
         return $formattedCities;
     }
-
-    //-- POSTION --
+//-- POSTION --
     public function actionPositions()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         return Positions::find()->all();
     }
-    //-- STATUS --
+//-- STATUS --
     public function actionStatus()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -419,7 +422,7 @@ class ApiController extends Controller
 
 
 
-    //  ----- User Accounts -----
+//  ----- User Accounts -----
     public function actionUserList()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -533,4 +536,23 @@ class ApiController extends Controller
         return ['success' => false];
     }
 
+    public function actionServices()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Retrieve query parameters if needed
+        $queryParams = Yii::$app->request->queryParams;
+
+        // Find and return all services
+        $services = Services::find()->all();
+
+        // Check if services are found
+        if ($services) {
+            // Return the services in JSON format
+            return $services;
+        } else {
+            // Return an error message if no services are found
+            return ['error' => 'No services found.'];
+        }
+    }
 }

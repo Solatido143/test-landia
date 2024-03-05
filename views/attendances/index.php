@@ -17,9 +17,10 @@ $attendance = $employee ? Attendances::find()
     ->orderBy(['id' => SORT_DESC])
     ->one() : null;
 
-$today = date('Y-m-d');
+$today = date('m-d-Y');
 $dataProvider->query->andWhere(['date' => $today]);
 
+$dataProvider->sort->defaultOrder = ['id' => SORT_DESC];
 
 $this->title = 'Attendance';
 $this->params['breadcrumbs'][] = $this->title;
@@ -40,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     </div>
 
-                    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+<!--                    --><?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
                     <?= GridView::widget([
                         'dataProvider' => $dataProvider,
@@ -72,9 +73,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ]
                                 ],
                             ],
-                            //['class' => 'yii\grid\SerialColumn'],
-
-                            //'id',
                             [
                                 'attribute' => 'fk_employee',
                                 'label' => 'Employee Name',
@@ -86,14 +84,11 @@ $this->params['breadcrumbs'][] = $this->title;
                             'sign_in',
                             'sign_out',
                             'remarks:ntext',
-                            //'sign_in_log',
-                            //'sign_out_log',
-
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],
                         'pager' => [
                             'class' => 'yii\bootstrap4\LinkPager',
-                        ]
+                        ],
                     ]); ?>
 
 

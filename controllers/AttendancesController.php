@@ -67,7 +67,6 @@ class AttendancesController extends Controller
     {
         date_default_timezone_set('Asia/Manila');
 
-        $model = new Attendances();
         $fkEmployeeId = Yii::$app->user->identity->fk_employee_id;
         if ($fkEmployeeId === null) {
             Yii::$app->session->setFlash('error', [
@@ -103,9 +102,9 @@ class AttendancesController extends Controller
 
         $model = new Attendances();
         $model->fk_employee = $employee->id;
-        $model->sign_in = date('H:i:s');
+        $model->sign_in = date('H:i');
         $model->sign_in_log = "Time In";
-        $model->date = date('Y-m-d');
+        $model->date = date('m-d-Y');
         $model->sign_out = "";
         $model->remarks = "";
 
@@ -160,7 +159,7 @@ class AttendancesController extends Controller
             return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
         }
 
-        $model->sign_out = date('H:i:s');
+        $model->sign_out = date('H:i');
         $model->sign_out_log = "Time Out";
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {

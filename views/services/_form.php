@@ -15,9 +15,8 @@ use yii\bootstrap4\ActiveForm;
 
 
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
             <?= $form->field($model, 'service_name')->textInput(['maxlength' => true]) ?>
-
         </div>
         <div class="col-md-6">
             <?= $form->field($model, 'service_fee')->textInput(['type' => 'number', 'step' => '0.01']) ?>

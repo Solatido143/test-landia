@@ -38,6 +38,11 @@ $this->registerJsFile($publishedRes[1].'/control_sidebar.js', ['depends' => '\ha
         .card-body::-webkit-scrollbar {
             display: none;
         }
+        /*.nav-sidebar .nav-link {*/
+        /*    font-size: 12px; !* Adjust the font size as needed *!*/
+        /*    padding-top: 4px; !* Adjust the padding as needed *!*/
+        /*    padding-bottom: 4px; !* Adjust the padding as needed *!*/
+        /*}*/
     </style>
 </head>
 <body class="hold-transition sidebar-mini">
@@ -54,11 +59,6 @@ $this->registerJsFile($publishedRes[1].'/control_sidebar.js', ['depends' => '\ha
     <!-- Content Wrapper. Contains page content -->
     <?= $this->render('content', ['content' => $content, 'assetDir' => $assetDir]) ?>
     <!-- /.content-wrapper -->
-
-    <!-- Control Sidebar -->
-<!--    --><?php //= $this->render('control-sidebar') ?>
-    <!-- /.control-sidebar -->
-
 </div>
 
 <?php $this->endBody() ?>

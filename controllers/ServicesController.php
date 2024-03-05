@@ -65,7 +65,7 @@ class ServicesController extends Controller
     public function actionCreate()
     {
         $model = new Services();
-        $model->logged_time = date('H:i:s');
+        $model->logged_time = date('h:i:s a');
         $model->logged_by = Yii::$app->user->identity->username;
         $model->updated_by = "";
         $model->updated_time = "";
@@ -78,7 +78,6 @@ class ServicesController extends Controller
             'model' => $model,
         ]);
     }
-
     /**
      * Updates an existing services model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -88,10 +87,16 @@ class ServicesController extends Controller
      */
     public function actionUpdate($id)
     {
+        date_default_timezone_set('Asia/Manila');
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->updated_by = Yii::$app->user->identity->username;
+            $model->updated_time = date('h:i:s a');
+
+            if ($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
 
         return $this->render('update', [

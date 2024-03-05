@@ -1,5 +1,6 @@
 <?php
 
+use microinginer\dropDownActionColumn\DropDownActionColumn;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
@@ -18,26 +19,49 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="card">
                 <div class="card-body">
                     <div class="row mb-2">
-                        <div class="col-md-12">
-                            <?= Html::a('<i class="fas fa-plus"></i>&nbspAdd services', ['create'], ['class' => 'btn btn-success']) ?>
-                        </div>
-                    </div>
-
-                    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-                    <div class="row">
                         <div class="col-md-6">
                             <?= GridView::widget([
                                 'dataProvider' => $dataProvider,
                                 'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
                                 'columns' => [
                                     ['class' => 'yii\grid\SerialColumn'],
+                                    [
+                                        'class' => DropDownActionColumn::className(),
+                                        'header' => 'Actions',
+                                        'contentOptions' => ['style' => 'white-space: nowrap;'],
+                                        'items' => [
+                                            [
+                                                'label' => '<i class="fas fa-eye"></i>&nbsp; View',
+                                                'url' => ['view']
+                                            ],
+                                            [
+                                                'label' => '<i class="fas fa-pencil"></i>&nbsp; Edit',
+                                                'url' => ['update']
+                                            ],
+                                            [
+                                                'label' => '<i class="fas fa-trash"></i>&nbsp; Delete',
+                                                'url' => ['delete'],
+                                                'linkOptions' => [
+                                                    'class' => 'dropdown-item contextDelete',
+                                                    'data-method' => 'post',
+                                                ],
+                                                'visible' => true,
+
+                                            ]
+                                        ],
+                                    ],
+
 
 //                            'id',
                                     'service_name',
                                     'service_fee',
-                                    'completion_time',
-//                            'logged_by',
+                                    [
+                                        'attribute' => 'completion_time',
+                                        'value' => function ($model) {
+                                            return $model->completion_time . ' mins';
+                                        }
+                                    ],
+                                    //'logged_by',
                                     //'logged_time',
                                     //'updated_by',
                                     //'updated_time',
@@ -50,7 +74,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ]
                             ]); ?>
                         </div>
+                        <div class="col-md-6 text-end">
+                            <?= Html::a('<i class="fas fa-plus"></i>&nbspAdd services', ['create'], ['class' => 'btn btn-success']) ?>
+                        </div>
+
                     </div>
+
+                    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
 
                 </div>

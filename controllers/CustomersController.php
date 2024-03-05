@@ -2,18 +2,17 @@
 
 namespace app\controllers;
 
-use app\models\Services;
 use Yii;
-use app\models\Bookings;
-use app\models\searches\BookingsSearch;
+use app\models\Customers;
+use app\models\searches\CustomersSeach;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * BookingsController implements the CRUD actions for Bookings model.
+ * CustomersController implements the CRUD actions for Customers model.
  */
-class BookingsController extends Controller
+class CustomersController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -31,12 +30,12 @@ class BookingsController extends Controller
     }
 
     /**
-     * Lists all Bookings models.
+     * Lists all Customers models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new BookingsSearch();
+        $searchModel = new CustomersSeach();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -46,7 +45,7 @@ class BookingsController extends Controller
     }
 
     /**
-     * Displays a single Bookings model.
+     * Displays a single Customers model.
      * @param int $id ID
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -59,31 +58,29 @@ class BookingsController extends Controller
     }
 
     /**
-     * Creates a new Bookings model.
+     * Creates a new Customers model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Bookings();
-        $services = Services::find()->all();
+        $model = new Customers();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('success', [
                 'title' => 'Yay!',
-                'body' => 'Booking Complete.',
+                'body' => 'Customer Creation Success!.',
             ]);
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
             'model' => $model,
-            'services' => $services,
         ]);
     }
 
     /**
-     * Updates an existing Bookings model.
+     * Updates an existing Customers model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return mixed
@@ -103,7 +100,7 @@ class BookingsController extends Controller
     }
 
     /**
-     * Deletes an existing Bookings model.
+     * Deletes an existing Customers model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return mixed
@@ -117,15 +114,15 @@ class BookingsController extends Controller
     }
 
     /**
-     * Finds the Bookings model based on its primary key value.
+     * Finds the Customers model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Bookings the loaded model
+     * @return Customers the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Bookings::findOne($id)) !== null) {
+        if (($model = Customers::findOne($id)) !== null) {
             return $model;
         }
 

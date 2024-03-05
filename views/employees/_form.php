@@ -1,8 +1,8 @@
 <?php
 
+use kartik\date\DatePicker;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
-use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Employees */
@@ -48,15 +48,11 @@ $Status = $employeesModel->fetchAndMapData(\app\models\EmployeesStatus::class, '
 
                 </div>
                 <div class="col-md-3">
-                    <?= $form->field($model, 'bday')->label('Birthday <span class="text-body-tertiary">(MM/dd/yyyy)</span>')->textInput([
+                    <?= $form->field($model, 'bday')->label('Birthday <span class="text-body-tertiary">(MM-dd-yyyy)</span>')->textInput([
                         'class' => 'form-control form-control-sm',
-                        'autocomplete' => 'off',
                     ]) ?>
                 </div>
-
             </div>
-
-
         </div>
     </div>
 
@@ -67,10 +63,6 @@ $Status = $employeesModel->fetchAndMapData(\app\models\EmployeesStatus::class, '
             <label for="contact_info">Contact Information</label>
         </div>
         <div class="col-md-12" id="contact_info">
-            <div class="row">
-
-
-            </div>
             <div class="row">
                 <div class="col-md-3 text-sm">
                     <?= $form->field($model, 'fk_cluster')->dropDownList($clusters,
@@ -115,32 +107,30 @@ $Status = $employeesModel->fetchAndMapData(\app\models\EmployeesStatus::class, '
             <div class="row">
                 <div class="col-md-3 text-sm">
                     <?= $form->field($model, 'employee_id')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm']) ?>
-
                 </div>
                 <div class="col-md-3 text-sm">
                     <?= $form->field($model, 'fk_position')->dropDownList($position, ['prompt' => '-- Select Position', 'class' => 'form-control form-control-sm', 'id' => 'employees-fk_position'])->label('Position') ?>
-
                 </div>
-                <div class="row">
-                    <div class="col-md-3 text-sm">
-                        <?= $form->field($model, 'date_hired')->label('Date Hired <span class="text-body-tertiary">(MM/dd/yyyy)</span>')->textInput([
-                            'class' => 'form-control form-control-sm',
-                            'autocomplete' => 'off',
-                        ]) ?>
-                    </div>
-                    <div class="col-md-3 text-sm">
-                        <?= $form->field($model, 'end_of_contract')->label('End Of Contract <span class="text-body-tertiary">(MM/dd/yyyy)</span>')->textInput([
-                            'class' => 'form-control form-control-sm',
-                            'autocomplete' => 'off',
-                        ]) ?>
-                    </div>
-                    <div class="col-md-3 text-sm">
-                        <?= $form->field($model, 'fk_employment_status')->dropDownList($Status, ['prompt' => '-- Select Status', 'class' => 'form-control form-control-sm'])->label('Status') ?>
-
-                    </div>
-                    <div class="col-md-2 text-sm">
-                        <?= $form->field($model, 'availability')->textInput(['class' => 'form-control form-control-sm', 'id' => 'availability-field', 'disabled' => true])->label('Availability') ?>
-
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-3 text-sm">
+                            <?= $form->field($model, 'date_hired')->label('Date Hired <span class="text-body-tertiary">(MM-dd-yyyy)</span>')->textInput([
+                                'class' => 'form-control form-control-sm',
+                                'autocomplete' => 'off',
+                            ]) ?>
+                        </div>
+                        <div class="col-md-3 text-sm">
+                            <?= $form->field($model, 'end_of_contract')->label('End Of Contract <span class="text-body-tertiary">(MM-dd-yyyy)</span>')->textInput([
+                                'class' => 'form-control form-control-sm',
+                                'autocomplete' => 'off',
+                            ]) ?>
+                        </div>
+                        <div class="col-md-3 text-sm">
+                            <?= $form->field($model, 'fk_employment_status')->dropDownList($Status, ['prompt' => '-- Select Status', 'class' => 'form-control form-control-sm'])->label('Status') ?>
+                        </div>
+                        <div class="col-md-2 text-sm">
+                            <?= $form->field($model, 'availability')->textInput(['class' => 'form-control form-control-sm', 'id' => 'availability-field', 'disabled' => true])->label('Availability') ?>
+                        </div>
                     </div>
                 </div>
             </div>
