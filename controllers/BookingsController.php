@@ -66,7 +66,7 @@ class BookingsController extends Controller
     public function actionCreate()
     {
         $model = new Bookings();
-        $services = Services::find()->all();
+        $services = Services::find()->all(); // Fetch all services
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('success', [
@@ -78,9 +78,11 @@ class BookingsController extends Controller
 
         return $this->render('create', [
             'model' => $model,
-            'services' => $services,
+            'services' => $services, // Pass services to the view
         ]);
     }
+
+
 
     /**
      * Updates an existing Bookings model.
@@ -111,9 +113,11 @@ class BookingsController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        Yii::$app->session->setFlash('error', [
+            'title' => 'Oh no!',
+            'body' => 'You do not have enough permission.',
+        ]);
+        return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
     }
 
     /**

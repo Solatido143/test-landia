@@ -1,13 +1,14 @@
 <?php
 
+use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Customers */
 
-$this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Customers', 'url' => ['index']];
+$this->title = $model->customer_name;
+$this->params['breadcrumbs'][] = ['label' => 'Customer', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -18,27 +19,47 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row">
                 <div class="col-md-12">
                     <p>
-                        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-                        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-                            'class' => 'btn btn-danger',
-                            'data' => [
-                                'confirm' => 'Are you sure you want to delete this item?',
-                                'method' => 'post',
-                            ],
-                        ]) ?>
+                        <?= Html::a('<i class="fas fa-pencil"></i>&nbspUpdate', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
                     </p>
-                    <?= DetailView::widget([
-                        'model' => $model,
-                        'attributes' => [
-                            'id',
-                            'customer_name',
-                            'contact_number',
-                            'logged_by',
-                            'logged_time',
-                            'updated_by',
-                            'updated_time',
-                        ],
-                    ]) ?>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <?= GridView::widget([
+                                'dataProvider' => new \yii\data\ArrayDataProvider([
+                                    'allModels' => [$model],
+                                    'pagination' => false,
+                                ]),
+
+                                'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
+                                'tableOptions' => ["class" => "table table-striped table-bordered text-nowrap"],
+                                'layout' => "{items}\n{pager}",
+                                'columns' => [
+                                    'customer_name',
+                                    'contact_number',
+                                ],
+                            ]);
+                            ?>
+                        </div>
+                        <div class="col-md-6">
+                            <?= GridView::widget([
+                                'dataProvider' => new \yii\data\ArrayDataProvider([
+                                    'allModels' => [$model],
+                                    'pagination' => false,
+                                ]),
+
+                                'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
+                                'tableOptions' => ["class" => "table table-striped table-bordered text-nowrap"],
+                                'layout' => "{items}\n{pager}",
+                                'columns' => [
+                                    'logged_by',
+                                    'logged_time',
+                                    'updated_by',
+                                    'updated_time',
+                                ],
+                            ]);
+                            ?>
+                        </div>
+
+                    </div>
                 </div>
                 <!--.col-md-12-->
             </div>

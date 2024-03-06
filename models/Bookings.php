@@ -26,6 +26,8 @@ use Yii;
  */
 class Bookings extends \yii\db\ActiveRecord
 {
+    public $service_id;
+
     /**
      * {@inheritdoc}
      */

@@ -64,11 +64,14 @@ class ServicesController extends Controller
      */
     public function actionCreate()
     {
+        date_default_timezone_set('Asia/Manila');
         $model = new Services();
         $model->logged_time = date('h:i:s a');
         $model->logged_by = Yii::$app->user->identity->username;
         $model->updated_by = "";
         $model->updated_time = "";
+        $model->completion_time = 30;
+        $model->service_fee = 0;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);

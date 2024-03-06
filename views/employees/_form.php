@@ -48,9 +48,20 @@ $Status = $employeesModel->fetchAndMapData(\app\models\EmployeesStatus::class, '
 
                 </div>
                 <div class="col-md-3">
-                    <?= $form->field($model, 'bday')->label('Birthday <span class="text-body-tertiary">(MM-dd-yyyy)</span>')->textInput([
-                        'class' => 'form-control form-control-sm',
-                    ]) ?>
+                    <?= $form->field($model, 'bday')->widget(DatePicker::class, [
+                        'options' => [
+                            'placeholder' => 'Select date',
+                            'class' => 'form-control',
+                        ],
+                        'pluginOptions' => [
+                            'autoclose' => true,
+                            'format' => 'mm-dd-yyyy',
+                            'todayHighlight' => true,
+                        ],
+                        'layout' => '{input}{picker}',
+                        'size' => 'sm',
+                    ]);
+                    ?>
                 </div>
             </div>
         </div>
@@ -114,13 +125,13 @@ $Status = $employeesModel->fetchAndMapData(\app\models\EmployeesStatus::class, '
                 <div class="col-md-12">
                     <div class="row">
                         <div class="col-md-3 text-sm">
-                            <?= $form->field($model, 'date_hired')->label('Date Hired <span class="text-body-tertiary">(MM-dd-yyyy)</span>')->textInput([
+                            <?= $form->field($model, 'date_hired')->label('Date Hired <span class="text-body-tertiary">(mm-dd-yyyy)</span>')->textInput([
                                 'class' => 'form-control form-control-sm',
                                 'autocomplete' => 'off',
                             ]) ?>
                         </div>
                         <div class="col-md-3 text-sm">
-                            <?= $form->field($model, 'end_of_contract')->label('End Of Contract <span class="text-body-tertiary">(MM-dd-yyyy)</span>')->textInput([
+                            <?= $form->field($model, 'end_of_contract')->label('End Of Contract <span class="text-body-tertiary">(mm-dd-yyyy)</span>')->textInput([
                                 'class' => 'form-control form-control-sm',
                                 'autocomplete' => 'off',
                             ]) ?>

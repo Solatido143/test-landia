@@ -100,6 +100,7 @@ class SiteController extends Controller
         }
 
         $model = new RegisterForm();
+
         if ($model->load(Yii::$app->request->post()) && $model->register()) {
             Yii::$app->session->setFlash('success', [
                 'title' => 'Yay!',

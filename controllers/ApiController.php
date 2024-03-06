@@ -28,14 +28,11 @@ class ApiController extends Controller
     public function actionAttendance()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-
-        // Fetch query parameters if needed
         $queryParams = Yii::$app->request->queryParams;
 
         // Check for invalid query parameters
         foreach ($queryParams as $attribute => $value) {
-            // Assuming 'Attendances' model has attribute names defined in the schema, check if the attribute exists
-            if (!in_array($attribute, ['id', 'fk_employee', 'date', 'sign_in', 'sign_out', 'remarks', 'sign_in_log', 'sign_out_log', 'name'])) {
+            if (!in_array($attribute, ['id', 'fk_employee', 'date', 'sign_in', 'sign_out', 'remarks', 'sign_in_log', 'sign_out_log'])) {
                 return [
                     'success' => false,
                     'error' => "Invalid query parameter: $attribute",
@@ -51,7 +48,7 @@ class ApiController extends Controller
             $query->andWhere([$attribute => $value]);
         }
 
-        // Sort the query by 'id' in ascending order
+        // Sort the query by 'id' in descending order
         $query->orderBy(['id' => SORT_DESC]);
 
         // Execute the query to fetch attendance records
@@ -71,8 +68,9 @@ class ApiController extends Controller
 
             // If employee record is found, include the first name in the JSON response
             if ($employee !== null) {
-                $attendanceArray = $attendance->attributes; // Convert attendance record to array
-                $attendanceArray['full_name'] = $employee->fname; // Add 'full_name' field with employee's first name
+                // Convert attendance record and include 'full_name' field
+                $attendanceArray = $attendance->toArray();
+                $attendanceArray['full_name'] = $employee->fname;
                 unset($attendanceArray['fname']); // Remove 'fname' field if it exists
                 $attendance = $attendanceArray; // Assign the modified array back to $attendance
             }
@@ -80,6 +78,7 @@ class ApiController extends Controller
 
         return $attendances;
     }
+
     public function actionCreateAttendance()
     {
         date_default_timezone_set('Asia/Manila');
@@ -93,7 +92,6 @@ class ApiController extends Controller
                 ]
             ];
         }
-
         $employee = Employees::findOne(['employee_id' => $fkEmployeeId]);
         if ($employee === null) {
             return [
@@ -107,7 +105,7 @@ class ApiController extends Controller
         $existingAttendance = Attendances::find()
             ->where([
                 'fk_employee' => $employee->id,
-                'date' => date('Y-m-d'),
+                'date' => date('m-d-Y'),
                 'sign_out' => ''
             ])
             ->exists();
@@ -121,8 +119,8 @@ class ApiController extends Controller
 
         $attendances = new Attendances();
         $attendances->fk_employee = $employee->id;
-        $attendances->date = date('Y-m-d');
-        $attendances->sign_in = date('H:i:s');
+        $attendances->date = date('m-d-Y');
+        $attendances->sign_in = date('H:i');
         $attendances->sign_in_log = "Time In";
         $attendances->sign_out = "";
         $attendances->remarks = "";
@@ -248,6 +246,7 @@ class ApiController extends Controller
         } else {
             return [
                 'errors' => $employees->errors,
+                'success' => false,
             ];
         }
     }
@@ -539,20 +538,37 @@ class ApiController extends Controller
     public function actionServices()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
+//        $queryParams = Yii::$app->request->queryParams;
 
-        // Retrieve query parameters if needed
-        $queryParams = Yii::$app->request->queryParams;
-
-        // Find and return all services
         $services = Services::find()->all();
 
-        // Check if services are found
         if ($services) {
-            // Return the services in JSON format
             return $services;
         } else {
-            // Return an error message if no services are found
             return ['error' => 'No services found.'];
         }
     }
+    public function actionCreateService()
+    {
+        date_default_timezone_set('Asia/Manila');
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $services = new Services();
+
+        $services->logged_time = date('h:i:s a');
+        $services->updated_by = "";
+        $services->updated_time = "";
+
+        $services->load(Yii::$app->request->getBodyParams(), '');
+
+        if ($services->save()) {
+            Yii::$app->response->setStatusCode(201); // Created
+            return ['success' => true];
+        } else {
+            return [
+                'errors' => $services->errors,
+                'success' => false,
+            ];
+        }
+    }
+
 }
