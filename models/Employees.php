@@ -62,6 +62,12 @@ class Employees extends \yii\db\ActiveRecord
             [['employee_id', 'fk_position', 'fname', 'lname', 'bday', 'gender', 'contact_number', 'fk_cluster', 'fk_region', 'fk_region_area', 'fk_city', 'house_address', 'date_hired', 'fk_employment_status', 'logged_by', 'logged_time'], 'required'],
             [['fk_position', 'fk_cluster', 'fk_region', 'fk_region_area', 'fk_city', 'fk_employment_status', 'availability'], 'integer'],
             [['gender', 'house_address'], 'string'],
+            [
+                ['contact_number'],
+                'match',
+                'pattern' => '/^(?:\+639|09)\d{9}$|^\d{3}-\d{4}$|^\d{4}-\d{4}$|^\d{7}$|^\d{8}$|^(\d{4}\s\d{4})$/',
+                'message' => 'Please enter a valid contact number',
+            ],
             [['employee_id'], 'string', 'max' => 30],
             [['fname', 'mname', 'lname'], 'string', 'max' => 50],
             [['suffix'], 'string', 'max' => 10],

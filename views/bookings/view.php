@@ -17,16 +17,19 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="card-body">
             <div class="row">
                 <div class="col-md-12">
-                    <p>
-                        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-                        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-                            'class' => 'btn btn-danger',
-                            'data' => [
-                                'confirm' => 'Are you sure you want to delete this item?',
-                                'method' => 'post',
-                            ],
-                        ]) ?>
-                    </p>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <p>
+                                <?= Html::a('<i class="fa fa-cancel"></i>&nbspCancel', ['cancel'], ['class' => 'btn btn-danger']) ?>
+                                <?= Html::a('<i class="fa fa-pencil"></i>&nbspUpdate', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+                            </p>
+                        </div>
+                        <div>
+                            <p>
+                                <?= Html::a('<i class="fa fa-forward-step"></i>&nbspSet as Ongoing', ['ongoing', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+                            </p>
+                        </div>
+                    </div>
                     <?= DetailView::widget([
                         'model' => $model,
                         'attributes' => [

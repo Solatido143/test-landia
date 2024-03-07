@@ -66,7 +66,7 @@ class CustomersController extends Controller
     {
         date_default_timezone_set('Asia/Manila');
         $model = new Customers();
-        $model->logged_time = date('H:i:s');
+        $model->logged_time = date('Y-m-d H:i:s');
         $model->logged_by = Yii::$app->user->identity->username;
         $model->updated_by = '';
         $model->updated_time = '';
@@ -76,7 +76,7 @@ class CustomersController extends Controller
                 'title' => 'Yay!',
                 'body' => 'Customer Creation Success!.',
             ]);
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['/bookings/create']);
         }
 
         return $this->render('create', [

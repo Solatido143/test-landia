@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\BookingsServices;
 use app\models\Services;
 use Yii;
 use app\models\Bookings;
@@ -65,15 +66,43 @@ class BookingsController extends Controller
      */
     public function actionCreate()
     {
+        date_default_timezone_set('Asia/Manila');
         $model = new Bookings();
-        $services = Services::find()->all(); // Fetch all services
+        $services = Services::find()->all();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('success', [
-                'title' => 'Yay!',
-                'body' => 'Booking Complete.',
-            ]);
-            return $this->redirect(['view', 'id' => $model->id]);
+        $model->fk_booking_status = 1;
+        $model->logged_by = Yii::$app->user->identity->username;
+        $model->logged_time = date('Y-m-d h:i:s a');
+
+        if ($model->load(Yii::$app->request->post())) {
+            // Get the selected services from the form submission
+            $selectedServices = Yii::$app->request->post('Bookings')['selectedServices'];
+
+            // Now you can use $selectedServices to save to your database or perform other actions
+            // For example, if you want to save to a related model:
+            $bookingsServices = new BookingsServices();
+            $bookingsServices->fk_service = $selectedServices;
+
+            // Validate and save the model
+            if ($model->validate() && $model->save()) {
+                // Assign the booking ID to the related model
+                $bookingsServices->fk_booking = $model->id;
+
+                // Validate and save the related model
+                if ($bookingsServices->validate() && $bookingsServices->save()) {
+                    Yii::$app->session->setFlash('success', [
+                        'title' => 'Yay!',
+                        'body' => 'Booking Complete.',
+                    ]);
+                    return $this->redirect(['view', 'id' => $model->id]);
+                } else {
+                    // Handle errors in saving related model
+                    Yii::$app->session->setFlash('error', 'Failed to save related services.');
+                }
+            } else {
+                // Handle errors in saving main model
+                Yii::$app->session->setFlash('error', 'Failed to save booking.');
+            }
         }
 
         return $this->render('create', [
@@ -81,6 +110,7 @@ class BookingsController extends Controller
             'services' => $services, // Pass services to the view
         ]);
     }
+
 
 
 
@@ -94,6 +124,7 @@ class BookingsController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $services = Services::find()->all();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -101,6 +132,7 @@ class BookingsController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'services' => $services,
         ]);
     }
 

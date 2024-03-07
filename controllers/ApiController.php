@@ -3,8 +3,11 @@
 namespace app\controllers;
 
 use app\models\Attendances;
+use app\models\Bookings;
+use app\models\BookingsStatus;
 use app\models\Cities;
 use app\models\Clusters;
+use app\models\Customers;
 use app\models\Employees;
 use app\models\EmployeesStatus;
 use app\models\Positions;
@@ -24,61 +27,54 @@ class ApiController extends Controller
         parent::init();
         Yii::$app->response->format = Response::FORMAT_JSON;
     }
+
 //    -- Attendance --
-    public function actionAttendance()
+    public function actionGetAttendance()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         $queryParams = Yii::$app->request->queryParams;
-
-        // Check for invalid query parameters
-        foreach ($queryParams as $attribute => $value) {
-            if (!in_array($attribute, ['id', 'fk_employee', 'date', 'sign_in', 'sign_out', 'remarks', 'sign_in_log', 'sign_out_log'])) {
-                return [
-                    'success' => false,
-                    'error' => "Invalid query parameter: $attribute",
-                ];
-            }
-        }
-
-        // Initialize the query with the Attendances model
         $query = Attendances::find();
-
-        // Apply conditions based on query parameters
-        foreach ($queryParams as $attribute => $value) {
-            $query->andWhere([$attribute => $value]);
-        }
-
-        // Sort the query by 'id' in descending order
-        $query->orderBy(['id' => SORT_DESC]);
-
-        // Execute the query to fetch attendance records
-        $attendances = $query->all();
-
-        if (empty($attendances)) {
-            return [
-                'success' => false,
-                'error' => 'No attendance records found'
-            ];
-        }
-
-        // Fetch the corresponding employee data for each attendance record
-        foreach ($attendances as &$attendance) {
-            // Retrieve the employee record based on the fk_employee value
-            $employee = Employees::findOne($attendance->fk_employee);
-
-            // If employee record is found, include the first name in the JSON response
-            if ($employee !== null) {
-                // Convert attendance record and include 'full_name' field
-                $attendanceArray = $attendance->toArray();
-                $attendanceArray['full_name'] = $employee->fname;
-                unset($attendanceArray['fname']); // Remove 'fname' field if it exists
-                $attendance = $attendanceArray; // Assign the modified array back to $attendance
+        $fields = ['id', 'fk_employee', 'date', 'sign_in', 'sign_out', 'remarks'];
+        if (isset($queryParams['expand'])) {
+            if ($queryParams['expand'] == 'all') {
+                $fields = ['*'];
+            } else {
+                $expandFields = explode(',', $queryParams['expand']);
+                foreach ($expandFields as $expandField) {
+                    if (in_array($expandField, ['sign_in_log', 'sign_out_log'])) {
+                        $fields[] = $expandField;
+                    }
+                }
             }
         }
+        $query->select($fields);
+        foreach ($queryParams as $key => $value) {
+            if (in_array($key, ['id', 'fk_employee', 'date', 'sign_in', 'sign_out', 'remarks', 'sign_in_log', 'sign_out_log'])) {
+                $query->andWhere([$key => $value]);
+            }
+        }
+        $query->orderBy(['id' => SORT_DESC]);
+        $attendances = $query->all();
+        if (!empty($attendances)) {
+            // Fetch the corresponding employee data for each attendance record
+            foreach ($attendances as &$attendance) {
+                // Retrieve the employee record based on the fk_employee value
+                $employee = Employees::findOne($attendance->fk_employee);
 
-        return $attendances;
+                // If employee record is found, include the first name in the JSON response
+                if ($employee !== null) {
+                    // Convert attendance record and include 'full_name' field
+                    $attendanceArray = $attendance->toArray();
+                    $attendanceArray['full_name'] = $employee->fname . " " . $employee->lname;
+                    $attendance = $attendanceArray; // Assign the modified array back to $attendance
+                }
+            }
+            return $attendances;
+        } else {
+            Yii::$app->response->statusCode = 404; // Not Found
+            return ['error' => 'No attendance found matching the provided criteria.'];
+        }
     }
-
     public function actionCreateAttendance()
     {
         date_default_timezone_set('Asia/Manila');
@@ -168,7 +164,7 @@ class ApiController extends Controller
         }
 
         // Update sign_out and sign_out_log
-        $attendances->sign_out = date('H:i:s');
+        $attendances->sign_out = date('H:i');
         $attendances->sign_out_log = "Time Out";
 
         // Perform validation and save the updated record
@@ -422,39 +418,47 @@ class ApiController extends Controller
 
 
 //  ----- User Accounts -----
-    public function actionUserList()
+    public function actionGetUsers()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-
-        // Fetch query parameters
+        // Fetch the query parameters
         $queryParams = Yii::$app->request->queryParams;
+        // Start building the query
+        $query = User::find();
+        // Select only specific fields
+        $fields = ['id', 'username', 'fk_employee_id', 'email', 'status', 'user_access', 'availability'];
 
-        // Check if expand parameter is set
-        $expandFields = [];
+        // Check if the expand parameter is present and set to all
         if (isset($queryParams['expand'])) {
-            $expandFields = explode(',', $queryParams['expand']);
-            unset($queryParams['expand']);
+            if ($queryParams['expand'] == 'all') {
+                $fields = ['*'];
+            } else {
+                $expandFields = explode(',', $queryParams['expand']);
+                foreach ($expandFields as $expandField) {
+                    if (in_array($expandField, ['password_reset_token', 'created_at', 'updated_at', 'auth_key', 'verification_token', 'managers_code'])) {
+                        $fields[] = $expandField;
+                    }
+                }
+            }
         }
-
-        // Initialize the query with the User model
-        $query = User::find()->select(['username', 'fk_employee_id', 'email', 'user_access']);
-
-        // Include expanded fields in the query
-        foreach ($expandFields as $field) {
-            $query->addSelect($field);
+        $query->select($fields);
+        foreach ($queryParams as $key => $value) {
+            // Only consider parameters that match column names in the Services model
+            if (in_array($key, ['id', 'username', 'fk_employee_id', 'email', 'status', 'user_access', 'availability'])) {
+                $query->andWhere([$key => $value]);
+            }
         }
-
-        // Apply conditions based on query parameters
-        foreach ($queryParams as $attribute => $value) {
-            $query->andWhere([$attribute => $value]);
-        }
-
-        // Execute the query to fetch users
+        // Execute the query
         $users = $query->all();
-
-        return $users;
+        // Return the results or an error if no users found
+        if (!empty($users)) {
+            return $users;
+        } else {
+            Yii::$app->response->statusCode = 404; // Not Found
+            return ['error' => 'No users found.'];
+        }
     }
-    public function actionCreateUsers()
+    public function actionCreateUser()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -484,7 +488,7 @@ class ApiController extends Controller
             }
         }
     }
-    public function actionUpdateUsers($id)
+    public function actionUpdateUser($id)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -504,22 +508,7 @@ class ApiController extends Controller
             return ['errors' => $model->errors];
         }
     }
-    public function actionDeleteUsers($id)
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        $model = User::findOne($id);
-        if ($model === null) {
-            return [
-                'isUserExist' => false,
-                'name' => 'Not found',
-                'message' => 'User not found.'
-            ];
-        }
-        $model->delete();
-        Yii::$app->getResponse()->setStatusCode(204); // No content
-    }
-    public function actionValidateLogin($username, $password)
+    public function actionUserLoginValidation($username, $password)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -535,17 +524,52 @@ class ApiController extends Controller
         return ['success' => false];
     }
 
-    public function actionServices()
+
+
+
+
+//  ----- SERVICES -----
+    public function actionGetServices()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-//        $queryParams = Yii::$app->request->queryParams;
-
-        $services = Services::find()->all();
-
-        if ($services) {
+        // Fetch the query parameters
+        $queryParams = Yii::$app->request->queryParams;
+        // Start building the query
+        $query = Services::find();
+        // Select only specific fields
+        $fields = ['id', 'service_name', 'service_fee', 'completion_time', 'availability'];
+        // Check if the expand parameter is present and set to all
+        if (isset($queryParams['expand'])) {
+            if ($queryParams['expand'] == 'all') {
+                $fields = ['*'];
+            } else {
+                $expandFields = explode(',', $queryParams['expand']);
+                foreach ($expandFields as $expandField) {
+                    if (in_array($expandField, ['logged_by', 'logged_time', 'updated_by', 'updated_time'])) {
+                        $fields[] = $expandField;
+                    }
+                }
+            }
+        }
+        $query->select($fields);
+        // Check each query parameter and apply it to the query if provided
+        foreach ($queryParams as $key => $value) {
+            // Only consider parameters that match column names in the Services model
+            if (in_array($key, ['id', 'service_name', 'service_fee', 'completion_time', 'logged_by', 'logged_time', 'updated_by', 'updated_time', 'availability'])) {
+                $query->andWhere([$key => $value]);
+            }
+        }
+        // Execute the query
+        $services = $query->all();
+        // Return the results or an error if no services found
+        if (!empty($services)) {
             return $services;
         } else {
-            return ['error' => 'No services found.'];
+            Yii::$app->response->statusCode = 404; // Not Found
+            return [
+                'success' => false,
+                'error' => 'No services found matching the provided criteria.'
+            ];
         }
     }
     public function actionCreateService()
@@ -554,7 +578,7 @@ class ApiController extends Controller
         Yii::$app->response->format = Response::FORMAT_JSON;
         $services = new Services();
 
-        $services->logged_time = date('h:i:s a');
+        $services->logged_time = date('H:i:s a');
         $services->updated_by = "";
         $services->updated_time = "";
 
@@ -562,13 +586,240 @@ class ApiController extends Controller
 
         if ($services->save()) {
             Yii::$app->response->setStatusCode(201); // Created
-            return ['success' => true];
+            return [
+                'success' => true
+            ];
         } else {
             return [
                 'errors' => $services->errors,
                 'success' => false,
             ];
         }
+    }
+    public function actionUpdateService($id = null)
+    {
+        date_default_timezone_set('Asia/Manila');
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if ($id === null || $id === '') {
+            Yii::$app->response->statusCode = 400; // Bad Request
+            return [
+                'success' => false,
+                'message' => 'Missing required parameters: id',
+            ];
+        }
+
+        $service = Services::findOne($id);
+
+        if ($service === null) {
+            Yii::$app->response->statusCode = 404; // Not Found
+            return [
+                'success' => false,
+                'message' => 'Service not found',
+            ];
+        }
+        $service->load(Yii::$app->getRequest()->getBodyParams(), '');
+        $service->updated_time = date('H:i:s');
+        if ($service->save()) {
+            return $service;
+        } else {
+            return [
+                'success' => false,
+                'message' => 'Failed to update service',
+                'errors' => $service->errors,
+            ];
+        }
+    }
+
+
+
+
+
+//  ----- BOOKINGS -----
+    public function actionGetBookings()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $bookings = Bookings::find()->all();
+
+        if (!empty($bookings))
+        {
+            return $bookings;
+        } else {
+            Yii::$app->response->statusCode = 404; // Not Found
+            return [
+                'bookings' => $bookings,
+                'success' => false,
+                'error' => 'No bookings found'
+            ];
+        }
+    }
+    public function actionCreateBooking()
+    {
+        date_default_timezone_set('Asia/Manila');
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $booking = new Bookings();
+        $booking->logged_time = date('Y-m-d H:i:s');
+        $booking->fk_booking_status = 1;
+        $booking->load(Yii::$app->request->getBodyParams(), '');
+        if ($booking->save()) {
+            Yii::$app->response->setStatusCode(201); // Created
+            return ['success' => true];
+        } else {
+            return [
+                'errors' => $booking->errors,
+                'success' => false
+            ];
+        }
+    }
+    public function actionUpdateBooking($id = null){
+        date_default_timezone_set('Asia/Manila');
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if ($id === null) {
+            Yii::$app->response->statusCode = 400; // Bad Request
+            return [
+                'success' => false,
+                'message' => 'Missing required parameter: id',
+            ];
+        }
+
+        $booking = Bookings::findOne($id);
+
+        if ($booking === null) {
+            Yii::$app->response->statusCode = 404; // Not Found
+            return [
+                'success' => false,
+                'message' => 'Service not found',
+            ];
+        }
+
+        // Check if $booking->fk_booking_status is equal to 3 or 4
+        if ($booking->fk_booking_status == 3 || $booking->fk_booking_status == 4) {
+            Yii::$app->response->statusCode = 403; // Forbidden
+            return [
+                'success' => false,
+                'message' => 'Cannot update booking with status Complete or Cancelled',
+            ];
+        }
+
+        $booking->load(Yii::$app->getRequest()->getBodyParams(), '');
+
+        if ($booking->save()) {
+            $booking->updated_time = date('Y-m-d H:i:s');
+            return $booking;
+        } else {
+            return [
+                'message' => 'Failed to update service',
+                'success' => false,
+                'errors' => $booking->errors,
+            ];
+        }
+    }
+//  ----- CUSTOMER -----
+    public function actionGetCustomers()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $queryParams = Yii::$app->request->queryParams;
+        // Start building the query
+        $query = Customers::find();
+        // Select only specific fields
+        $fields = ['id', 'customer_name', 'contact_number'];
+        if (isset($queryParams['expand'])) {
+            if ($queryParams['expand'] == 'all') {
+                $fields = ['*'];
+            } else {
+                $expandFields = explode(',', $queryParams['expand']);
+                foreach ($expandFields as $expandField) {
+                    if (in_array($expandField, ['logged_by', 'logged_time', 'updated_by', 'updated_time'])) {
+                        $fields[] = $expandField;
+                    }
+                }
+            }
+        }
+        $query->select($fields);
+        // Check each query parameter and apply it to the query if provided
+        foreach ($queryParams as $key => $value) {
+            // Only consider parameters that match column names in the Services model
+            if (in_array($key, ['id', 'customer_name', 'contact_number', 'logged_by', 'logged_time', 'updated_by', 'updated_time'])) {
+                $query->andWhere([$key => $value]);
+            }
+        }
+        // Execute the query
+        $customers = $query->all();
+        // Return the results or an error if no services found
+        if (!empty($customers)) {
+            return $customers;
+        } else {
+            Yii::$app->response->statusCode = 404; // Not Found
+            return [
+                'success' => false,
+                'error' => 'No services found matching the provided criteria.'
+            ];
+        }
+    }
+    public function actionCreateCustomers()
+    {
+        date_default_timezone_set('Asia/Manila');
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $customer = new Customers();
+        $customer->load(Yii::$app->request->getBodyParams(), '');
+        $customer->logged_time = date('m-d-Y H:i:s');
+        $customer->updated_by = '';
+        $customer->updated_time = '';
+        if ($customer->save())
+        {
+            Yii::$app->response->setStatusCode(201);
+            return [
+                'success' => true,
+            ];
+        } else {
+            return [
+                'errors' => $customer->errors,
+                'success' => false,
+            ];
+        }
+    }
+    public function actionUpdateCustomers($id = null)
+    {
+        date_default_timezone_set('Asia/Manila');
+
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if ($id === null) {
+            Yii::$app->response->statusCode = 400; // Bad Request
+            return [
+                'success' => false,
+                'message' => 'Missing required parameter: id',
+            ];
+        }
+        $customer = Customers::findOne($id);
+
+        if ($customer === null) {
+            Yii::$app->response->statusCode = 404; // Not Found
+            return [
+                'success' => false,
+                'message' => 'Customer not found',
+            ];
+        }
+
+        $customer->load(Yii::$app->getRequest()->getBodyParams(), '');
+        $customer->updated_time = date('Y-m-d H:i:s');
+        if ($customer->save()) {
+            return $customer;
+        } else {
+            return [
+                'errors' => $customer->errors,
+                'success' => false,
+                'message' => 'Failed to update customer',
+            ];
+        }
+    }
+//  ----- BOOKING STATUS -----
+    public function actionGetBookingStatus()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return BookingsStatus::find()->all();
     }
 
 }

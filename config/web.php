@@ -79,14 +79,20 @@ $config = [
                 'user/delete' => 'user/delete-users',
                 'user/user-login' => 'user/validate-login',
 
-                'api/user-list' => 'api/user-list',
-                'api/create-user' => 'api/create-users',
-                'api/update-user' => 'api/update-users',
-                'api/delete-user' => 'api/delete-users',
-                'api/user-validation' => 'api/validate-login',
+                'api/attendance' => 'api/get-attendance',
+                'api/time-in' => 'api/create-attendance',
+                'api/time-out' => 'api/update-attendance',
 
-                'attendance/time-in' => 'attendances/create',
-                'attendance/time-out' => 'attendances/update',
+                'api/users' => 'api/get-users',
+
+                'api/services' => 'api/get-services',
+
+                'api/bookings' => 'api/get-bookings',
+
+                'api/customers' => 'api/get-customers',
+
+                'api/user-validation' => 'api/user-login-validation',
+
 
                 'nailandia' => 'site/index',
                 'attendance' => 'attendances/index',

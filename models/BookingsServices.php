@@ -21,7 +21,7 @@ class BookingsServices extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'bookings_services';
+        return 'fk_service';
     }
 
     /**
