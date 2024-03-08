@@ -31,6 +31,12 @@ $Roles = $UserModel->fetchAndMapData(\app\models\Roles::class, 'user_access_id',
                 <div class="col-md-12">
                     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
                 </div>
+                <div class="col-md-12">
+                    <?= $form->field($model, 'password')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md-12">
+                    <?= $form->field($model, 'confirmPassword')->textInput(['maxlength' => true]) ?>
+                </div>
                 <div class="col-md-6">
                     <?= $form->field($model, 'status')->dropDownList([
                         10 => 'Active',
@@ -64,25 +70,4 @@ $Roles = $UserModel->fetchAndMapData(\app\models\Roles::class, 'user_access_id',
     </div>
 
     <?php ActiveForm::end(); ?>
-
-    <hr>
-
-    <?php $form = ActiveForm::begin(); ?>
-
-    <div class="row">
-        <div class="col-md-6">
-            <div>
-                <?= $form->field($model, 'old_password')->textInput(['maxlength' => true]) ?>
-                <?= $form->field($model, 'new_password')->textInput(['maxlength' => true]) ?>
-                <?= $form->field($model, 'confirm_new_password')->textInput(['maxlength' => true]) ?>
-            </div>
-            <div class="form-group">
-                <?= Html::submitButton('Change Password', ['class' => 'btn btn-success']) ?>
-            </div>
-        </div>
-
-    </div>
-
-    <?php ActiveForm::end(); ?>
-
 </div>

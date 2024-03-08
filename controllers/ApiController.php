@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Attendances;
 use app\models\Bookings;
+use app\models\BookingsServices;
 use app\models\BookingsStatus;
 use app\models\Cities;
 use app\models\Clusters;
@@ -14,6 +15,7 @@ use app\models\Positions;
 use app\models\Provinces;
 use app\models\Regions;
 use app\models\RegisterForm;
+use app\models\Roles;
 use app\models\Services;
 use app\models\User;
 use Yii;
@@ -31,36 +33,48 @@ class ApiController extends Controller
 //    -- Attendance --
     public function actionGetAttendance()
     {
+        // Set response format to JSON
         Yii::$app->response->format = Response::FORMAT_JSON;
+        // Get query parameters from request
         $queryParams = Yii::$app->request->queryParams;
+        // Initialize query for Attendances model
         $query = Attendances::find();
+        // Define default fields to select
         $fields = ['id', 'fk_employee', 'date', 'sign_in', 'sign_out', 'remarks'];
+        // Check if 'expand' parameter is set
         if (isset($queryParams['expand'])) {
+            // If 'expand' is set to 'all', select all fields
             if ($queryParams['expand'] == 'all') {
                 $fields = ['*'];
             } else {
+                // If 'expand' is set to specific fields, select those fields
                 $expandFields = explode(',', $queryParams['expand']);
                 foreach ($expandFields as $expandField) {
+                    // Include 'sign_in_log' and 'sign_out_log' fields if requested
                     if (in_array($expandField, ['sign_in_log', 'sign_out_log'])) {
                         $fields[] = $expandField;
                     }
                 }
             }
         }
+        // Select specified fields for the query
         $query->select($fields);
+        // Apply filters based on query parameters
         foreach ($queryParams as $key => $value) {
             if (in_array($key, ['id', 'fk_employee', 'date', 'sign_in', 'sign_out', 'remarks', 'sign_in_log', 'sign_out_log'])) {
                 $query->andWhere([$key => $value]);
             }
         }
+        // Order query results by 'id' in descending order
         $query->orderBy(['id' => SORT_DESC]);
+        // Execute the query and fetch all results
         $attendances = $query->all();
+        // Check if any attendance records are found
         if (!empty($attendances)) {
             // Fetch the corresponding employee data for each attendance record
             foreach ($attendances as &$attendance) {
                 // Retrieve the employee record based on the fk_employee value
                 $employee = Employees::findOne($attendance->fk_employee);
-
                 // If employee record is found, include the first name in the JSON response
                 if ($employee !== null) {
                     // Convert attendance record and include 'full_name' field
@@ -69,8 +83,10 @@ class ApiController extends Controller
                     $attendance = $attendanceArray; // Assign the modified array back to $attendance
                 }
             }
+            // Return the fetched attendance records with employee names
             return $attendances;
         } else {
+            // If no attendance records are found, set response status code to 404 (Not Found) and return error message
             Yii::$app->response->statusCode = 404; // Not Found
             return ['error' => 'No attendance found matching the provided criteria.'];
         }
@@ -174,27 +190,6 @@ class ApiController extends Controller
             return ['errors' => $attendances->errors];
         }
     }
-    public function actionViewAttendance($id = null)
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        // Check if $id is provided
-        if ($id === null) {
-            return [
-                'success' => false,
-                'name' => 'Bad Request',
-                'message' => 'Missing required parameter: id'];
-        }
-
-        $attendance = Attendances::findOne($id);
-        if ($attendance === null) {
-            return [
-                'isAttendanceExist' => false,
-                'message' => 'Attendance not found.' ];
-        }
-
-        return $attendance;
-    }
 
 
 
@@ -225,17 +220,67 @@ class ApiController extends Controller
         }
         return $formattedEmployees;
     }
+    public function actionNewEmployees()
+    {
+        // Set response format to JSON
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Get query parameters from request
+        $queryParams = Yii::$app->request->queryParams;
+
+        // Initialize query for Employees model
+        $query = Employees::find()->with('fkPosition'); // Eager loading fk_position relation
+
+        // Define default fields to select
+        $fields = [
+            'id', 'employee_id', 'fk_position', 'fname', 'mname', 'lname', 'suffix', 'bday', 'gender', 'contact_number',
+            'fk_cluster', 'fk_region', 'fk_region_area', 'fk_city', 'house_address', 'date_hired', 'end_of_contract',
+            'fk_employment_status', 'emergency_contact_persons', 'emergency_contact_numbers', 'emergency_contact_relations',
+            'availability'
+        ];
+
+        // Ensure that fk_position field is included in the selected fields
+        if (!in_array('fk_position', $fields)) {
+            $fields[] = 'fk_position';
+        }
+
+        $query->select($fields);
+
+        // Filter by query parameters
+        foreach ($queryParams as $key => $value) {
+            if (in_array($key, $fields)) {
+                $query->andWhere([$key => $value]);
+            }
+        }
+
+        $employees = $query->all();
+        if (!empty($employees)) {
+            // Transform the fk_position field to include position details
+            foreach ($employees as &$employee) {
+                if (isset($employee['fk_position'])) {
+                    // Ensure that fk_position is an object before accessing its properties
+                    if (is_object($employee['fk_position'])) {
+                        $employee['fk_position'] = [
+                            'id' => $employee['fk_position']->id,
+                            'position' => $employee['fk_position']->position,
+                        ];
+                    }
+                }
+            }
+            return $employees;
+        } else {
+            Yii::$app->response->statusCode = 404; // Not Found
+            return ['error' => 'No employee records found matching the provided criteria.'];
+        }
+    }
+
     public function actionCreateEmployees()
     {
         date_default_timezone_set('Asia/Manila');
         Yii::$app->response->format = Response::FORMAT_JSON;
-
         $employees = new Employees();
-
         $employees->logged_time = date('Y-m-d H:i:s');
-
         $employees->load(Yii::$app->getRequest()->getBodyParams(), '');
-
         if ($employees->save()) {
             Yii::$app->response->setStatusCode(201); // Created
             return ['success' => true];
@@ -290,7 +335,11 @@ class ApiController extends Controller
         }
         $employees->load(Yii::$app->getRequest()->getBodyParams(), '');
         if ($employees->save()) {
-            return ['success' => true];
+            $employees->updated_time = date('Y-m-d h:i:s');
+            return [
+                'employees' => $employees,
+                'success' => true
+            ];
         } else {
             return [
                 'success' => false,
@@ -335,7 +384,6 @@ class ApiController extends Controller
 
 
 
-//      -- CRPC ADDRESS --
 //-- CLUSTER --
     public function actionCluster()
     {
@@ -402,13 +450,13 @@ class ApiController extends Controller
         return $formattedCities;
     }
 //-- POSTION --
-    public function actionPositions()
+    public function actionGetPositions()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         return Positions::find()->all();
     }
 //-- STATUS --
-    public function actionStatus()
+    public function actionGetEmployeesStatus()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         return EmployeesStatus::find()->all();
@@ -715,6 +763,11 @@ class ApiController extends Controller
             ];
         }
     }
+
+
+
+
+
 //  ----- CUSTOMER -----
     public function actionGetCustomers()
     {
@@ -815,11 +868,44 @@ class ApiController extends Controller
             ];
         }
     }
+
+
+
+
+
 //  ----- BOOKING STATUS -----
     public function actionGetBookingStatus()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         return BookingsStatus::find()->all();
+    }
+//  ----- BOOKING SERVICES -----
+    public function actionCreateBookingServices()
+    {
+        date_default_timezone_set('Asia/Manila');
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $booking_services = new BookingsServices();
+        $booking_services->load(Yii::$app->request->getBodyParams(), '');
+
+        if ($booking_services->save())
+        {
+            Yii::$app->response->setStatusCode(201);
+            return [
+                'success' => true,
+            ];
+        } else {
+            return [
+                'errors' => $booking_services->errors,
+                'success' => false,
+            ];
+        }
+    }
+//  ----- BOOKING ROLES -----
+    public function actionGetRoles()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return Roles::find()->all();
     }
 
 }

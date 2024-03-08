@@ -29,6 +29,9 @@ class User extends ActiveRecord implements IdentityInterface
     public $old_password;
     public $new_password;
     public $confirm_new_password;
+
+    public $password;
+    public $confirmPassword;
     /**
      * {@inheritdoc}
      */

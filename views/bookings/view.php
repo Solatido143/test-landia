@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\Bookings */
 
-$this->title = $model->id;
+$this->title = $model->fkBookingStatus->booking_status . ' ' . $model->fkCustomer->customer_name . ' ' . $model->booking_type;
 $this->params['breadcrumbs'][] = ['label' => 'Bookings', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -20,13 +20,23 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="d-flex justify-content-between">
                         <div>
                             <p>
-                                <?= Html::a('<i class="fa fa-cancel"></i>&nbspCancel', ['cancel'], ['class' => 'btn btn-danger']) ?>
-                                <?= Html::a('<i class="fa fa-pencil"></i>&nbspUpdate', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+
+                                <?php if ($model->fk_booking_status != 4) : ?>
+                                    <?= Html::a('<i class="fa fa-cancel"></i>&nbspCancel', ['cancel', 'id' => $model->id], ['class' => 'btn btn-danger']) ?>
+                                    <?= Html::a('<i class="fa fa-pencil"></i>&nbsp;Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+                                <?php else : ?>
+                                    <?= Html::a('<i class="fa fa-arrow-left"></i>&nbspBack', ['index'], ['class' => 'btn btn-secondary']) ?>
+                                <?php endif; ?>
+
                             </p>
                         </div>
                         <div>
                             <p>
-                                <?= Html::a('<i class="fa fa-forward-step"></i>&nbspSet as Ongoing', ['ongoing', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+                                <?php if ($model->fk_booking_status == 1) : ?>
+                                    <?= Html::a('<i class="fa fa-forward-step"></i>&nbsp; Set as Ongoing', ['ongoing', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+                                <?php elseif ($model->fk_booking_status == 2) : ?>
+                                    <?= Html::a('<i class="fa fa-check"></i>&nbsp; Set as Complete', ['complete', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+                                <?php endif; ?>
                             </p>
                         </div>
                     </div>
@@ -35,8 +45,18 @@ $this->params['breadcrumbs'][] = $this->title;
                         'attributes' => [
                             'id',
                             'booking_type',
-                            'fk_customer',
-                            'fk_booking_status',
+                            [
+                                'attribute' => 'fk_customer',
+                                'value' => function ($model) {
+                                    return $model->fkCustomer->customer_name;
+                                },
+                            ],
+                            [
+                                'attribute' => 'fk_booking_status',
+                                'value' => function ($model) {
+                                    return $model->fkBookingStatus->booking_status;
+                                },
+                            ],
                             'schedule_time',
                             'remarks:ntext',
                             'logged_by',

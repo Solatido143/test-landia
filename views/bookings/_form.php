@@ -36,7 +36,7 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
                                 'autoclose' => true,
                                 'todayHighlight' => true,
                                 'todayBtn' => true,
-                                'format' => 'mm-dd-yyyy H:ii:ss a'
+                                'format' => 'mm-dd-yyyy H:ii:ss'
                             ],
                             'layout' => '{input}{picker}',
                             'size' => 'sm',
@@ -81,7 +81,7 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
                 <div class="row">
                     <div class="col-md-6">
                         <h3>Services</h3>
-                        <h5 class="border rounded ps-3">Total due: Php <span id="total-due"></span></h5>
+                        <h5 class="border rounded ps-3">Total due: Php <span id="total-due">0.00</span></h5>
 
                     </div>
                     <div class="col-md-6 d-flex justify-content-end">
@@ -105,8 +105,9 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
                         [
                             'class' => 'yii\grid\CheckboxColumn',
                             'header' => '',
+                            'name' => 'selectedServices[]', // Correct the name attribute
                             'checkboxOptions' => function ($service, $key, $index, $column) {
-                                return ['value' => $service->id];
+                                return ['value' => $service->id, 'data-fee' => $service->service_fee];
                             }
                         ],
                         'service_name',
@@ -120,44 +121,31 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
     <?php ActiveForm::end(); ?>
 
 </div>
-
 <?php
+// Register JavaScript to calculate the total due based on the checkbox values
 $this->registerJs(<<<JS
-$(document).ready(function() {
-    // Get the total due span element
-    var totalDueSpan = $('#total-due');
-
-    // Calculate total due initially
-    updateTotalDue();
-
-    // Function to update total due
-    function updateTotalDue() {
-        // Get all checked checkboxes
-        var checkedCheckboxes = $('input[type="checkbox"][name="selection[]"]:checked');
-
-        // Calculate total fee
-        var totalFee = 0;
-        checkedCheckboxes.each(function() {
-            totalFee += parseFloat($(this).closest('tr').find('td:nth-child(3)').text());
-        });
-
-        // Update total due text
-        totalDueSpan.text(totalFee.toFixed(2));
-    }
-
-    // Listen for checkbox change event
-    $('input[type="checkbox"][name="selection[]"]').change(function() {
-        // Update total due when checkbox changes
+    $(document).ready(function() {
+        // Calculate total due initially
         updateTotalDue();
-
-        // Get an array of values of checked checkboxes
-        var checkedValues = $('input[type="checkbox"][name="selection[]"]:checked').map(function() {
-            return $(this).val();
-        }).get();
-        $('#Bookings-selectedServices').val(checkedValues.join(','));
+    
+        // Function to update total due
+        function updateTotalDue() {
+            var totalFee = 0;
+            // Iterate over each checked checkbox
+            $('input[type="checkbox"][name="selectedServices[]"]:checked').each(function() {
+                // Extract the fee from the data attribute
+                var serviceFee = parseFloat($(this).data('fee'));
+                totalFee += serviceFee; // Add the fee to the total
+            });
+            // Update the total due span with the calculated total fee
+            $('#total-due').text(totalFee.toFixed(2));
+        }
+    
+        // Listen for checkbox change event and update total due
+        $('input[type="checkbox"][name="selectedServices[]"]').change(function() {
+            updateTotalDue();
+        });
     });
-});
 JS
 );
 ?>
-

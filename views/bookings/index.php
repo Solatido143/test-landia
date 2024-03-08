@@ -56,13 +56,24 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ]
                                 ],
                             ],
-
-                            'id',
                             'booking_type',
                             'schedule_time',
-                            'fk_customer',
-                            'fk_booking_status',
-                            //'remarks:ntext',
+                            [
+                                'attribute' => 'fk_customer',
+                                'label' => 'Customer',
+                                'value' => function ($model) {
+                                    return $model->fkCustomer->customer_name;
+                                },
+                            ],
+                            [
+                                'attribute' => 'fk_booking_status',
+                                'label' => 'Booking Status',
+
+                                'value' => function ($model) {
+                                    return $model->fkBookingStatus->booking_status;
+                                },
+                            ],
+                            'remarks:ntext',
                             //'logged_by',
                             //'logged_time',
                             //'updated_by',

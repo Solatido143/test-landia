@@ -18,7 +18,7 @@ use Yii;
  * @property string|null $updated_by
  * @property string|null $updated_time
  *
- * @property BookingsServices[] $bookingsServices
+ * @property BookingsServices[] $bookings   Services
  * @property BookingsTiming[] $bookingsTimings
  * @property BookingsStatus $fkBookingStatus
  * @property Customers $fkCustomer
@@ -27,7 +27,7 @@ use Yii;
 class Bookings extends \yii\db\ActiveRecord
 {
     public $searchQuery;
-    public $selectedServices;
+    public $select_Employee;
 
     /**
      * {@inheritdoc}
@@ -45,7 +45,7 @@ class Bookings extends \yii\db\ActiveRecord
         return [
             [['booking_type', 'fk_customer', 'fk_booking_status', 'schedule_time', 'logged_by', 'logged_time'], 'required'],
             [['booking_type', 'remarks'], 'string'],
-            [['fk_customer', 'fk_booking_status'], 'integer'],
+            [['fk_customer', 'fk_booking_status', 'select_Employee'], 'integer'],
             [['schedule_time', 'logged_by', 'logged_time', 'updated_by', 'updated_time'], 'string', 'max' => 255],
             [['fk_customer'], 'exist', 'skipOnError' => true, 'targetClass' => Customers::class, 'targetAttribute' => ['fk_customer' => 'id']],
             [['fk_booking_status'], 'exist', 'skipOnError' => true, 'targetClass' => BookingsStatus::class, 'targetAttribute' => ['fk_booking_status' => 'id']],

@@ -51,7 +51,7 @@ $config = [
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
+                    'levels' => ['error', 'warning', 'info'],
                 ],
             ],
         ],
@@ -84,15 +84,13 @@ $config = [
                 'api/time-out' => 'api/update-attendance',
 
                 'api/users' => 'api/get-users',
-
                 'api/services' => 'api/get-services',
-
                 'api/bookings' => 'api/get-bookings',
-
                 'api/customers' => 'api/get-customers',
-
                 'api/user-validation' => 'api/user-login-validation',
-
+                'api/roles' => 'api/get-roles',
+                'api/positions' => 'api/get-positions',
+                'api/status' => 'api/get-employees-status',
 
                 'nailandia' => 'site/index',
                 'attendance' => 'attendances/index',
