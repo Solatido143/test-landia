@@ -68,7 +68,7 @@ class BookingsController extends Controller
 
         $model->fk_booking_status = 1;
         $model->logged_by = Yii::$app->user->identity->username;
-        $model->logged_time = date('Y-m-d h:i:s a');
+        $model->logged_time = date('Y-m-d H:i:s');
 
         if ($model->load(Yii::$app->request->post())) {
             // Get the selected services from the form submission
@@ -113,7 +113,7 @@ class BookingsController extends Controller
 
         $model->fk_booking_status = 2;
         $model->updated_by = Yii::$app->user->identity->username;
-        $model->updated_time = date('Y-m-d h:i:s a');
+        $model->updated_time = date('Y-m-d H:i:s');
 
         // Process form submission and save the model
         if ($model->load(Yii::$app->request->post()) && $model->save()) {

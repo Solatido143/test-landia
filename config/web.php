@@ -83,6 +83,8 @@ $config = [
                 'api/time-in' => 'api/create-attendance',
                 'api/time-out' => 'api/update-attendance',
 
+                'api/employees' => 'api/get-employees',
+
                 'api/users' => 'api/get-users',
                 'api/services' => 'api/get-services',
                 'api/bookings' => 'api/get-bookings',
