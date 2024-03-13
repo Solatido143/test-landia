@@ -64,49 +64,35 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        // Fetch bookings in queue
-        $inQueueQuery = Bookings::find()
-            ->with('fkBookingStatus') // assuming fkBookingStatus is the name of the relation
-            ->where(['fk_booking_status' => 1]); // assuming 'status' is the attribute in the related model
+        // Define queries for each status
+        $queries = [
+            1 => Bookings::find()->with('fkBookingStatus')->where(['=', 'schedule_time', date('Y-m-d H:i:s')]),
+            2 => Bookings::find()->with('fkBookingStatus')->where(['=', 'schedule_time', date('Y-m-d H:i:s')]),
+            4 => Bookings::find()->with('fkBookingStatus')->where(['=', 'schedule_time', date('Y-m-d H:i:s')]),
+        ];
 
-        // Fetch ongoing bookings
-        $onGoingQuery = Bookings::find()
-            ->with('fkBookingStatus')
-            ->where(['fk_booking_status' => 2]);
-
-        $completeQuery = Bookings::find()
-            ->with('fkBookingStatus')
-            ->where(['fk_booking_status' => 4]);
+        // Set conditions for each query
+        foreach ($queries as $status => $query) {
+            $query->where(['fk_booking_status' => $status]);
+        }
 
         // Create data providers for each query
-        $inQueueDataProvider = new ActiveDataProvider([
-            'query' => $inQueueQuery,
-            'pagination' => [
-                'pageSize' => 5,
-            ]
-        ]);
-
-        $onGoingDataProvider = new ActiveDataProvider([
-            'query' => $onGoingQuery,
-            'pagination' => [
-                'pageSize' => 5,
-            ]
-        ]);
-
-        $completeDataProvider = new ActiveDataProvider([
-            'query' => $completeQuery,
-            'pagination' => [
-                'pageSize' => 5,
-            ]
-        ]);
+        $dataProviders = [];
+        foreach ($queries as $status => $query) {
+            $dataProviders[$status] = new ActiveDataProvider([
+                'query' => $query,
+                'pagination' => [
+                    'pageSize' => 10,
+                ],
+            ]);
+        }
 
         // Pass the data providers to the view
         return $this->render('index', [
-            'inQueueDataProvider' => $inQueueDataProvider,
-            'onGoingDataProvider' => $onGoingDataProvider,
-            'completeDataProvider' => $completeDataProvider,
+            'dataProviders' => $dataProviders,
         ]);
     }
+
 
     /**
      * Login action.

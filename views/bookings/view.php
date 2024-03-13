@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <div>
                             <p>
 
-                                <?php if ($model->fk_booking_status != 4) : ?>
+                                <?php if ($model->fk_booking_status != 4 && $model->fk_booking_status != 3) : ?>
                                     <?= Html::a('<i class="fa fa-cancel"></i>&nbspCancel', ['cancel', 'id' => $model->id], ['class' => 'btn btn-danger']) ?>
                                     <?= Html::a('<i class="fa fa-pencil"></i>&nbsp;Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
                                 <?php else : ?>
@@ -40,31 +40,36 @@ $this->params['breadcrumbs'][] = $this->title;
                             </p>
                         </div>
                     </div>
-                    <?= DetailView::widget([
-                        'model' => $model,
-                        'attributes' => [
-                            'id',
-                            'booking_type',
-                            [
-                                'attribute' => 'fk_customer',
-                                'value' => function ($model) {
-                                    return $model->fkCustomer->customer_name;
-                                },
-                            ],
-                            [
-                                'attribute' => 'fk_booking_status',
-                                'value' => function ($model) {
-                                    return $model->fkBookingStatus->booking_status;
-                                },
-                            ],
-                            'schedule_time',
-                            'remarks:ntext',
-                            'logged_by',
-                            'logged_time',
-                            'updated_by',
-                            'updated_time',
-                        ],
-                    ]) ?>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <?= DetailView::widget([
+                                'model' => $model,
+                                'attributes' => [
+                                    'booking_type',
+                                    [
+                                        'attribute' => 'fk_customer',
+                                        'label' => 'Customer Name',
+                                        'value' => function ($model) {
+                                            return $model->fkCustomer->customer_name;
+                                        },
+                                    ],
+                                    [
+                                        'attribute' => 'fk_booking_status',
+                                        'label' => 'Booking Status',
+                                        'value' => function ($model) {
+                                            return $model->fkBookingStatus->booking_status;
+                                        },
+                                    ],
+                                    'schedule_time',
+                                    'remarks:ntext',
+                                    'logged_by',
+                                    'logged_time',
+                                    'updated_by',
+                                    'updated_time',
+                                ],
+                            ]) ?>
+                        </div>
+                    </div>
                 </div>
                 <!--.col-md-12-->
             </div>

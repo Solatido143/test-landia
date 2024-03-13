@@ -1,39 +1,49 @@
 <?php
+
+
+/* @var $dataProviders yii\data\ActiveDataProvider */
+
+
+use yii\grid\GridView;
+
 $this->title = 'Overview';
 $this->params['breadcrumbs'] = [['label' => $this->title]];
 ?>
 <div class="container-fluid">
     <div class="row">
         <div class="col-lg-3">
-            <div class="row g-3">
-                <div class="col-12 d-lg-none">
-                    <button type="button" class="btn btn-success btn-block">
-                        <i class="fas fa-plus"></i>
-                        Add Reservation
-                    </button>
-                </div>
-                <div class="col col-md-6 col-lg-12">
+            <div class="row mb-3">
+                <div class="col-lg-12">
                         <?= \hail812\adminlte\widgets\SmallBox::widget([
-                            'title' => '10',
+                            'title' => '0',
                             'text' => 'Total Bookings',
-                            'icon' => 'fas fa-bell-concierge',
+                            'icon' => 'fas fa-calendar',
                             'theme' => 'success',
+                            'options' => [
+                                'class' => 'small-box bg-success',
+                            ],
                         ]) ?>
                 </div>
-                <div class="col col-md-6 col-lg-12">
+                <div class="col-lg-12">
                     <?= \hail812\adminlte\widgets\SmallBox::widget([
-                        'title' => '10',
+                        'title' => '0',
                         'text' => 'Completed Bookings',
-                        'icon' => 'fas fa-bell-concierge',
+                        'icon' => 'fas fa-check',
                         'theme' => 'primary',
+                        'options' => [
+                            'class' => 'small-box bg-primary',
+                        ],
                     ]) ?>
                 </div>
-                <div class="col col-md-6 col-lg-12">
+                <div class="col-lg-12">
                     <?= \hail812\adminlte\widgets\SmallBox::widget([
-                        'title' => '10',
+                        'title' => '0',
                         'text' => 'Cancelled Bookings',
-                        'icon' => 'fas fa-bell-concierge',
+                        'icon' => 'fas fa-cancel',
                         'theme' => 'danger',
+                        'options' => [
+                            'class' => 'small-box bg-danger',
+                        ],
                     ]) ?>
                 </div>
             </div>
@@ -43,35 +53,11 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
             <div class="row">
 
                 <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header d-flex align-items-center">
-                            <h5 class="flex-grow-1">My Daily Activity</h5>
-                            <a href="#" class="text-decoration-none text-nowrap">View all</a>
-                        </div>
+                    <div class="card mb-0">
                         <div class="card-body" style="overflow-x: auto;">
-                            <?php
-
-                            use microinginer\dropDownActionColumn\DropDownActionColumn;
-                            use scotthuangzl\googlechart\GoogleChart;
-                            use yii\grid\GridView;
-
-                            echo GoogleChart::widget([
-                                'visualization' => 'LineChart',
-                                'data' => [
-                                    ['Task', 'Hours per Day'],
-                                    ['Work', 11],
-                                    ['Eat', 2],
-                                    ['Commute', 2],
-                                    ['Watch TV', 2],
-                                    ['Sleep', 7]
-                                ],
-                                'options' => [
-                                    'title' => '',
-                                    'legend' => ['position' => 'top'],
-                                ]
-                            ]);
-                            ?>
-
+                            <figure class="highcharts-figure">
+                                <div id="chat-container"></div>
+                            </figure>
                         </div>
                     </div>
                 </div>
@@ -81,175 +67,126 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
 
 
         <div class="col-lg-12">
-
             <div class="row g-3 mb-3">
-
-                <div class="col-md-4">
-
-                    <div class="card">
-                        <div class="card-header d-flex align-items-center">
-                            <h5 class="flex-grow-1">In queue</h5>
-                            <a href="#" class="text-decoration-none">View all</a>
-                        </div>
-                        <div class="card-body">
-                            <?= GridView::widget([
-                                'dataProvider' => $inQueueDataProvider,
-                                'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
-                                'tableOptions' => ["class" => "table table-striped table-bordered text-nowrap"],
-                                'columns' => [
-                                    [
-                                        'attribute' => 'fk_customer',
-                                        'label' => 'Customer',
-                                        'value' => function($model){
-                                            $customer = \app\models\Customers::findOne($model->fk_customer);
-                                            return $customer->customer_name;
-                                        }
+                <?php foreach ($dataProviders as $status => $dataProvider): ?>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header d-flex align-items-center">
+                                <h5 class="flex-grow-1">
+                                    <?php
+                                    if ($status == 1) {
+                                        echo 'In queue';
+                                    } elseif ($status == 2) {
+                                        echo 'On going';
+                                    } elseif ($status == 4) {
+                                        echo 'Complete';
+                                    }
+                                    ?>
+                                </h5>
+                                <a href="#" class="text-decoration-none">View all</a>
+                            </div>
+                            <div class="card-body">
+                                <?= GridView::widget([
+                                    'dataProvider' => $dataProvider,
+                                    'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
+                                    'tableOptions' => ["class" => "table table-striped table-bordered text-nowrap"],
+                                    'columns' => [
+                                        [
+                                            'attribute' => 'fk_customer',
+                                            'label' => 'Customer',
+                                            'value' => function ($model) {
+                                                $customer = \app\models\Customers::findOne($model->fk_customer);
+                                                return $customer->customer_name;
+                                            }
+                                        ],
+                                        'schedule_time',
                                     ],
-                                    'schedule_time',
-                                ],
-                                'layout' => '{items}{pager}',
-                                'pager' => [
-                                    'class' => 'yii\bootstrap4\LinkPager',
-                                ]
-                            ]); ?>
-                            <figure class="highcharts-figure">
-                                <div id="container"></div>
-                                <p class="highcharts-description">
-                                    Basic line chart showing trends in a dataset. This chart includes the
-                                    <code>series-label</code> module, which adds a label to each line for
-                                    enhanced readability.
-                                </p>
-                            </figure>
+                                    'layout' => '{items}{pager}',
+                                    'pager' => [
+                                        'class' => 'yii\bootstrap4\LinkPager',
+                                    ]
+                                ]); ?>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="col-md-4">
-
-                    <div class="card">
-                        <div class="card-header d-flex align-items-center">
-                            <h5 class="flex-grow-1">On going</h5>
-                            <a href="#" class="text-decoration-none">View all</a>
-                        </div>
-                        <div class="card-body">
-                            <?= GridView::widget([
-                                'dataProvider' => $onGoingDataProvider,
-                                'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
-                                'tableOptions' => ["class" => "table table-striped table-bordered text-nowrap"],
-                                'columns' => [
-                                    [
-                                        'attribute' => 'fk_customer',
-                                        'label' => 'Customer',
-                                        'value' => function($model){
-                                            $customer = \app\models\Customers::findOne($model->fk_customer);
-                                            return $customer->customer_name;
-                                        }
-                                    ],
-                                    'schedule_time',
-                                ],
-                                'layout' => '{items}{pager}',
-                                'pager' => [
-                                    'class' => 'yii\bootstrap4\LinkPager',
-                                ]
-                            ]); ?>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-
-                    <div class="card">
-                        <div class="card-header d-flex align-items-center">
-                            <h5 class="flex-grow-1">Complete</h5>
-                            <a href="#" class="text-decoration-none">View all</a>
-                        </div>
-                        <div class="card-body">
-                            <?= GridView::widget([
-                                'dataProvider' => $completeDataProvider,
-                                'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
-                                'tableOptions' => ["class" => "table table-striped table-bordered text-nowrap"],
-                                'columns' => [
-                                    [
-                                        'attribute' => 'fk_customer',
-                                        'label' => 'Customer',
-                                        'value' => function($model){
-                                            $customer = \app\models\Customers::findOne($model->fk_customer);
-                                            return $customer->customer_name;
-                                        }
-                                    ],
-                                    'schedule_time',
-                                ],
-                                'layout' => '{items}{pager}',
-                                'pager' => [
-                                    'class' => 'yii\bootstrap4\LinkPager',
-                                ]
-                            ]); ?>
-                        </div>
-                    </div>
-                </div>
-
-
+                <?php endforeach; ?>
             </div>
         </div>
+
 
     </div>
 </div>
 
 <?php
-// Highcharts chart initialization script
+// Calculate the current month and year
+$currentMonth = date('n');
+$currentYear = date('Y');
+
+// Calculate the start month and year for the xAxis
+$startMonth = $currentMonth - 5; // 6 months ago
+$startYear = $currentYear;
+if ($startMonth <= 0) {
+    $startMonth += 12;
+    $startYear--;
+}
+
+// Define the range description for accessibility
+$rangeDescription = date('F Y', mktime(0, 0, 0, $startMonth, 1, $startYear)) . ' to ' . date('F Y');
+
+// Initialize arrays to store xAxis categories and sales data
+$xAxisCategories = [];
+$salesData = [];
+
+// Loop through the last 6 months and populate xAxis categories and sales data
+for ($i = 0; $i < 6; $i++) {
+    // Calculate month and year for the current iteration
+    $month = ($startMonth + $i) % 12;
+    if ($month == 0) $month = 12; // January is represented by 12 in date()
+    $year = $startYear + floor(($startMonth + $i - 1) / 12);
+
+    // Add the month and year to the xAxis categories
+    $xAxisCategories[] = date('F Y', mktime(0, 0, 0, $month, 1, $year));
+
+    // Generate a random sales value (replace this with your actual sales data retrieval logic)
+    $salesValue = 0;
+
+    // Add the sales value to the sales data array
+    $salesData[] = $salesValue;
+}
+
+// Highcharts chart initialization script with dynamic data
 $this->registerJs("
-    Highcharts.chart('container', {
+    Highcharts.chart('chat-container', {
         title: {
-            text: 'U.S Solar Employment Growth',
-            align: 'left'
-        },
-        subtitle: {
-            text: 'By Job Category. Source: <a href=\"https://irecusa.org/programs/solar-jobs-census/\" target=\"_blank\">IREC</a>.',
-            align: 'left'
+            text: 'Sales Report ($rangeDescription)',
+            align: 'center'
         },
         yAxis: {
             title: {
-                text: 'Number of Employees'
+                text: 'Total Sales'
             }
         },
         xAxis: {
             accessibility: {
-                rangeDescription: 'Range: 2010 to 2020'
-            }
+                rangeDescription: '" . $rangeDescription . "'
+            },
+            categories: " . json_encode($xAxisCategories) . "
         },
         legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'middle'
+            layout: 'horizontal',
+            align: 'center',
+            horizontalAlign: 'middle'
         },
         plotOptions: {
             series: {
                 label: {
                     connectorAllowed: false
-                },
-                pointStart: 2010
+                }
             }
         },
         series: [{
-            name: 'Installation & Developers',
-            data: [43934, 48656, 65165, 81827, 112143, 142383,
-                171533, 165174, 155157, 161454, 154610]
-        }, {
-            name: 'Manufacturing',
-            data: [24916, 37941, 29742, 29851, 32490, 30282,
-                38121, 36885, 33726, 34243, 31050]
-        }, {
-            name: 'Sales & Distribution',
-            data: [11744, 30000, 16005, 19771, 20185, 24377,
-                32147, 30912, 29243, 29213, 25663]
-        }, {
-            name: 'Operations & Maintenance',
-            data: [null, null, null, null, null, null, null,
-                null, 11164, 11218, 10077]
-        }, {
-            name: 'Other',
-            data: [21908, 5548, 8105, 11248, 8989, 11816, 18274,
-                17300, 13053, 11906, 10073]
+            name: 'Sales',
+            data: " . json_encode($salesData) . "
         }],
         responsive: {
             rules: [{

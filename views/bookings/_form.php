@@ -19,7 +19,7 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
 
             <div class="col-md-6">
@@ -36,7 +36,7 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
                                 'autoclose' => true,
                                 'todayHighlight' => true,
                                 'todayBtn' => true,
-                                'format' => 'mm-dd-yyyy H:ii:ss'
+                                'format' => 'mm-dd-yyyy HH:ii:ss'
                             ],
                             'layout' => '{input}{picker}',
                             'size' => 'sm',
@@ -50,13 +50,7 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
                             ['' => '- Select Customer -'] + $customers,
                             ['class' => 'form-control form-control-sm']
                         )->label('Customer') ?>
-
-                    </div>
-                    <div class="col-md-6 text-sm d-flex align-items-center">
-                        <div>
-                            <?= Html::a('<i class="fas fa-person-circle-plus "></i>&nbsp Add Customer', ['/customers/create'], ['class' => 'btn btn-success']) ?>
-
-                        </div>
+                        <?= Html::a('<i class="fas fa-person-circle-plus"></i> Add Customer', ['/customers/create'], ['class' => 'btn btn-success mb-3']) ?>
                     </div>
                 </div>
                 <div class="row">
@@ -80,7 +74,7 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
             <div class="col-md-6">
                 <div class="row">
                     <div class="col-md-6">
-                        <h3>Services</h3>
+                        <h3>List of Services</h3>
                         <h5 class="border rounded ps-3">Total due: Php <span id="total-due">0.00</span></h5>
 
                     </div>

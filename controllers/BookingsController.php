@@ -69,6 +69,8 @@ class BookingsController extends Controller
         $model->fk_booking_status = 1;
         $model->logged_by = Yii::$app->user->identity->username;
         $model->logged_time = date('Y-m-d H:i:s');
+        $model->updated_by = '';
+        $model->updated_time = '';
 
         if ($model->load(Yii::$app->request->post())) {
             // Get the selected services from the form submission
@@ -111,16 +113,10 @@ class BookingsController extends Controller
         date_default_timezone_set('Asia/Manila');
         $model = $this->findModel($id);
 
-        $model->fk_booking_status = 2;
-        $model->updated_by = Yii::$app->user->identity->username;
-        $model->updated_time = date('Y-m-d H:i:s');
-
-        // Process form submission and save the model
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
-
-        // Render the view
+        
         return $this->render('ongoing', [
             'model' => $model,
         ]);

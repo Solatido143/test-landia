@@ -98,10 +98,15 @@
                         'label' => 'User Management',
                         'url' => ['/user-manage/index'],
                         'visible' => $isGuest,
-                        'icon' => 'user-gear',
+                        'icon' => 'user-gear'
+                    ],
+                    [
+                        'label' => 'Promos',
+                        'url' => ['/promos/index'],
+                        'visible' => $isGuest,
+                        'icon' => 'percentage',
                         'options' => ['style' => 'border-bottom: 1px solid #4b545c;'],
                     ],
-
 //                    user
                     ['label' => 'User', 'header' => true , 'options' => ['style' => 'color: #6c757d']],
                     ['label' => 'Login', 'url' => ['site/login'], 'icon' => 'sign-in-alt', 'visible' => !$isGuest,],

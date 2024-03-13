@@ -27,7 +27,6 @@ use Yii;
 class Bookings extends \yii\db\ActiveRecord
 {
     public $searchQuery;
-    public $select_Employee;
 
     /**
      * {@inheritdoc}

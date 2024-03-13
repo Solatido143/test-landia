@@ -2,18 +2,28 @@
 
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
+use app\models\SelectEmployeeForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Bookings */
 /* @var $form yii\bootstrap4\ActiveForm */
 
-$employeesData = \app\models\Employees::find()
-    ->select(['id', 'CONCAT(fname, " ", lname) AS full_name'])
-    ->where(['availability' => 1])
-    ->asArray()
+$todayDate = date('m-d-Y');
+$employeeAttendanceTimeIn = \app\models\Attendances::find()
+    ->where(['date' => $todayDate])
+    ->andWhere(['sign_out_log' => null])
     ->all();
 
-$employees = \yii\helpers\ArrayHelper::map($employeesData, 'id', 'full_name');
+$employees = []; // Initialize an empty array to hold employees
+
+foreach ($employeeAttendanceTimeIn as $attendance) {
+    // Access the related employee model for each attendance record
+    $employee = $attendance->fkEmployee;
+    // Add the employee to the array
+    $employees[$employee->id] = $employee->fname . ' ' . $employee->lname;
+}
+
+$selectEmployeeForm = new SelectEmployeeForm();
 
 ?>
 
@@ -21,14 +31,17 @@ $employees = \yii\helpers\ArrayHelper::map($employeesData, 'id', 'full_name');
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-md-6">
                 <div class="row">
                     <div class="col-md-6">
-                        <?= $form->field($model, 'select_Employee')->dropdownList(
+                        <?= $form->field($selectEmployeeForm, 'select_Employee')->dropdownList(
                             $employees,
-                            ['class' => 'form-control form-control-sm']
+                            [
+                                'class' => 'form-control form-control-sm',
+                                'prompt' => '- Select an employee -', // Prompt text here
+                            ]
                         ) ?>
                     </div>
                     <div class="col-md-12 form-group">
@@ -36,7 +49,7 @@ $employees = \yii\helpers\ArrayHelper::map($employeesData, 'id', 'full_name');
                         <?= Html::submitButton('<i class="fas fa-forward-step"></i>&nbsp Proceed', ['class' => 'btn btn-success']) ?>
                     </div>
                 </div>
-            </div
+            </div>
         </div>
     </div>
 
