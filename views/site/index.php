@@ -13,19 +13,27 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                     </button>
                 </div>
                 <div class="col col-md-6 col-lg-12">
+                        <?= \hail812\adminlte\widgets\SmallBox::widget([
+                            'title' => '10',
+                            'text' => 'Total Bookings',
+                            'icon' => 'fas fa-bell-concierge',
+                            'theme' => 'success',
+                        ]) ?>
+                </div>
+                <div class="col col-md-6 col-lg-12">
                     <?= \hail812\adminlte\widgets\SmallBox::widget([
                         'title' => '10',
-                        'text' => 'Service',
-                        'icon' => 'fas fa-solid fa-bell-concierge',
-                        'theme' => 'light',
+                        'text' => 'Completed Bookings',
+                        'icon' => 'fas fa-bell-concierge',
+                        'theme' => 'primary',
                     ]) ?>
                 </div>
                 <div class="col col-md-6 col-lg-12">
                     <?= \hail812\adminlte\widgets\SmallBox::widget([
                         'title' => '10',
-                        'text' => 'Service',
-                        'icon' => 'fas fa-solid fa-bell-concierge',
-                        'theme' => 'light',
+                        'text' => 'Cancelled Bookings',
+                        'icon' => 'fas fa-bell-concierge',
+                        'theme' => 'danger',
                     ]) ?>
                 </div>
             </div>
@@ -34,7 +42,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
         <div class="col-lg-9">
             <div class="row">
 
-                <div class="col-lg-6 col-md-6">
+                <div class="col-md-12">
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
                             <h5 class="flex-grow-1">My Daily Activity</h5>
@@ -42,7 +50,10 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         </div>
                         <div class="card-body" style="overflow-x: auto;">
                             <?php
+
+                            use microinginer\dropDownActionColumn\DropDownActionColumn;
                             use scotthuangzl\googlechart\GoogleChart;
+                            use yii\grid\GridView;
 
                             echo GoogleChart::widget([
                                 'visualization' => 'LineChart',
@@ -60,174 +71,200 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                                 ]
                             ]);
                             ?>
+
                         </div>
                     </div>
                 </div>
-
-                <div class="col-lg-6 col-md-6">
-                    <div class="card">
-                        <div class="card-header d-flex align-items-center">
-                            <h5 class="flex-grow-1">Performance</h5>
-                            <a href="#" class="text-decoration-none ms-auto text-nowrap">View all</a>
-                        </div>
-                        <div class="card-body" style="overflow-x: auto;">
-                            <?php
-                            echo GoogleChart::widget([
-                                'visualization' => 'LineChart',
-                                'data' => [
-                                    ['Year', 'Sales', 'Expenses'],
-                                    ['2004', 1000, 400],
-                                    ['2005', 1170, 460],
-                                    ['2006', 660, 1120],
-                                    ['2007', 1030, 540],
-                                    ['2008', 1030, 540],
-                                ],
-                                'options' => [
-                                    'curveType' => 'function',
-                                    'legend' => ['position' => 'top'],
-                                ]
-                            ]);
-                            ?>
-                        </div>
-
-                    </div>
-                </div>
-
             </div>
         </div>
 
-        <div class="col-lg-8">
+
+
+        <div class="col-lg-12">
+
             <div class="row g-3 mb-3">
-                <div class="col-md-6">
+
+                <div class="col-md-4">
+
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
-                            <h5 class="flex-grow-1">In queue</h5> <!-- Use flex-grow-1 to allow the title to grow and take up the remaining space -->
+                            <h5 class="flex-grow-1">In queue</h5>
                             <a href="#" class="text-decoration-none">View all</a>
                         </div>
                         <div class="card-body">
-                            <form>
-                                <div class="input-group mb-3">
-                                    <input type="text" class="form-control" placeholder="Search...">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-primary" type="button">Search</button>
-                                    </div>
-                                </div>
-                            </form>
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>John Doe</td>
-                                        <td>john@example.com</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Jane Smith</td>
-                                        <td>jane@example.com</td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td>Michael Johnson</td>
-                                        <td>michael@example.com</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                            <?= GridView::widget([
+                                'dataProvider' => $inQueueDataProvider,
+                                'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
+                                'tableOptions' => ["class" => "table table-striped table-bordered text-nowrap"],
+                                'columns' => [
+                                    [
+                                        'attribute' => 'fk_customer',
+                                        'label' => 'Customer',
+                                        'value' => function($model){
+                                            $customer = \app\models\Customers::findOne($model->fk_customer);
+                                            return $customer->customer_name;
+                                        }
+                                    ],
+                                    'schedule_time',
+                                ],
+                                'layout' => '{items}{pager}',
+                                'pager' => [
+                                    'class' => 'yii\bootstrap4\LinkPager',
+                                ]
+                            ]); ?>
+                            <figure class="highcharts-figure">
+                                <div id="container"></div>
+                                <p class="highcharts-description">
+                                    Basic line chart showing trends in a dataset. This chart includes the
+                                    <code>series-label</code> module, which adds a label to each line for
+                                    enhanced readability.
+                                </p>
+                            </figure>
                         </div>
                     </div>
-
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
+
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
-                            <h5 class="flex-grow-1">Payments</h5>
-                            <a href="#" class="text-decoration-none ms-auto">View all</a>
+                            <h5 class="flex-grow-1">On going</h5>
+                            <a href="#" class="text-decoration-none">View all</a>
                         </div>
-
                         <div class="card-body">
-                            <form>
-                                <div class="input-group mb-3">
-                                    <input type="text" class="form-control" placeholder="Search...">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-primary" type="button">Search</button>
-                                    </div>
-                                </div>
-                            </form>
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>John Doe</td>
-                                        <td>john@example.com</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Jane Smith</td>
-                                        <td>jane@example.com</td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td>Michael Johnson</td>
-                                        <td>michael@example.com</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                            <?= GridView::widget([
+                                'dataProvider' => $onGoingDataProvider,
+                                'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
+                                'tableOptions' => ["class" => "table table-striped table-bordered text-nowrap"],
+                                'columns' => [
+                                    [
+                                        'attribute' => 'fk_customer',
+                                        'label' => 'Customer',
+                                        'value' => function($model){
+                                            $customer = \app\models\Customers::findOne($model->fk_customer);
+                                            return $customer->customer_name;
+                                        }
+                                    ],
+                                    'schedule_time',
+                                ],
+                                'layout' => '{items}{pager}',
+                                'pager' => [
+                                    'class' => 'yii\bootstrap4\LinkPager',
+                                ]
+                            ]); ?>
                         </div>
                     </div>
                 </div>
+
+                <div class="col-md-4">
+
+                    <div class="card">
+                        <div class="card-header d-flex align-items-center">
+                            <h5 class="flex-grow-1">Complete</h5>
+                            <a href="#" class="text-decoration-none">View all</a>
+                        </div>
+                        <div class="card-body">
+                            <?= GridView::widget([
+                                'dataProvider' => $completeDataProvider,
+                                'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
+                                'tableOptions' => ["class" => "table table-striped table-bordered text-nowrap"],
+                                'columns' => [
+                                    [
+                                        'attribute' => 'fk_customer',
+                                        'label' => 'Customer',
+                                        'value' => function($model){
+                                            $customer = \app\models\Customers::findOne($model->fk_customer);
+                                            return $customer->customer_name;
+                                        }
+                                    ],
+                                    'schedule_time',
+                                ],
+                                'layout' => '{items}{pager}',
+                                'pager' => [
+                                    'class' => 'yii\bootstrap4\LinkPager',
+                                ]
+                            ]); ?>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
-
-        </div>
-
-        <div class="col">
-            <button type="button" class="btn btn-success btn-block mb-3 d-none d-lg-block">
-                <i class="fas fa-plus"></i>
-                Add Reservation
-            </button>
-
-            <div class="card">
-                <div class="card-header d-flex align-items-center">
-                    <h5 class="flex-grow-1">Services</h5>
-                    <a href="#" class="text-decoration-none ms-auto">View all</a>
-                </div>
-
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header d-flex align-items-center">
-                    <h5 class="flex-grow-1">Out of Stocks</h5>
-                    <a href="#" class="text-decoration-none ms-auto">View all</a>
-                </div>
-
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                </div>
-            </div>
-
         </div>
 
     </div>
 </div>
+
+<?php
+// Highcharts chart initialization script
+$this->registerJs("
+    Highcharts.chart('container', {
+        title: {
+            text: 'U.S Solar Employment Growth',
+            align: 'left'
+        },
+        subtitle: {
+            text: 'By Job Category. Source: <a href=\"https://irecusa.org/programs/solar-jobs-census/\" target=\"_blank\">IREC</a>.',
+            align: 'left'
+        },
+        yAxis: {
+            title: {
+                text: 'Number of Employees'
+            }
+        },
+        xAxis: {
+            accessibility: {
+                rangeDescription: 'Range: 2010 to 2020'
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle'
+        },
+        plotOptions: {
+            series: {
+                label: {
+                    connectorAllowed: false
+                },
+                pointStart: 2010
+            }
+        },
+        series: [{
+            name: 'Installation & Developers',
+            data: [43934, 48656, 65165, 81827, 112143, 142383,
+                171533, 165174, 155157, 161454, 154610]
+        }, {
+            name: 'Manufacturing',
+            data: [24916, 37941, 29742, 29851, 32490, 30282,
+                38121, 36885, 33726, 34243, 31050]
+        }, {
+            name: 'Sales & Distribution',
+            data: [11744, 30000, 16005, 19771, 20185, 24377,
+                32147, 30912, 29243, 29213, 25663]
+        }, {
+            name: 'Operations & Maintenance',
+            data: [null, null, null, null, null, null, null,
+                null, 11164, 11218, 10077]
+        }, {
+            name: 'Other',
+            data: [21908, 5548, 8105, 11248, 8989, 11816, 18274,
+                17300, 13053, 11906, 10073]
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    legend: {
+                        layout: 'horizontal',
+                        align: 'center',
+                        verticalAlign: 'bottom'
+                    }
+                }
+            }]
+        }
+    });
+");
+?>

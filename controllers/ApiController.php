@@ -1119,7 +1119,6 @@ class ApiController extends Controller
 
 
 
-
     public function getQueryParams($queryParams, array $fields, \yii\db\ActiveQuery $query)
     {
         if (isset($queryParams['expand'])) {
@@ -1137,5 +1136,6 @@ class ApiController extends Controller
         $query->select($fields);
         return $queryParams;
     }
+
 
 }
