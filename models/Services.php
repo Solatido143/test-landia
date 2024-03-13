@@ -24,6 +24,7 @@ use yii\base\Model;
  */
 class Services extends \yii\db\ActiveRecord
 {
+    public $searchQuery;
     /**
      * {@inheritdoc}
      */

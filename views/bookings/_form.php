@@ -8,8 +8,12 @@ use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Bookings */
-/* @var $services app\models\Services */
 /* @var $form yii\bootstrap4\ActiveForm */
+/* @var $services app\models\Services */
+/* @var $servicesModel app\models\Services */
+
+$bookingServicesModel = new \app\models\BookingsServices();
+$booking_services = $bookingServicesModel->find()->where(['fk_booking' => $model->id])->all();
 
 $bookingsModel = new \app\models\Bookings();
 $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id', 'customer_name');
@@ -65,7 +69,7 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
                 <hr>
                 <div class="row">
                     <div class="col-md-12 form-group">
-                        <?= Html::a('<i class="fas fa-cancel"></i>&nbsp Cancel', ['/bookings'], ['class' => 'btn btn-secondary']) ?>
+                        <?= Html::a('<i class="fas fa-cancel"></i>&nbsp Cancel', Yii::$app->request->referrer ?: ['/bookings'], ['class' => 'btn btn-secondary']) ?>
                         <?= Html::submitButton('<i class="fas fa-forward-step"></i>&nbsp Proceed', ['class' => 'btn btn-success']) ?>
                     </div>
                 </div>
@@ -84,7 +88,7 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
                         </div>
                     </div>
                     <div class="col-md-12">
-                        <?= $form->field($model, 'searchQuery')->textInput(['placeholder' => 'Search services here...'])->label(false) ?>
+                        <?= $form->field($servicesModel, 'searchQuery')->textInput(['placeholder' => 'Search services here...'])->label(false) ?>
                     </div>
                 </div>
 
@@ -100,14 +104,27 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
                             'class' => 'yii\grid\CheckboxColumn',
                             'header' => '',
                             'name' => 'selectedServices[]', // Correct the name attribute
-                            'checkboxOptions' => function ($service, $key, $index, $column) {
-                                return ['value' => $service->id, 'data-fee' => $service->service_fee];
+                            'checkboxOptions' => function ($service, $key, $index, $column) use ($booking_services) {
+                                $isChecked = false;
+                                // Check if the service exists in the booking services
+                                foreach ($booking_services as $booking_service) {
+                                    if ($booking_service->fk_service == $service->id) {
+                                        $isChecked = true;
+                                        break;
+                                    }
+                                }
+                                return [
+                                    'value' => $service->id,
+                                    'data-fee' => $service->service_fee,
+                                    'checked' => $isChecked,
+                                ];
                             }
                         ],
                         'service_name',
                         'service_fee',
                     ],
                 ]) ?>
+
             </div>
         </div>
     </div>
@@ -116,7 +133,7 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
 
 </div>
 <?php
-// Register JavaScript to calculate the total due based on the checkbox values
+// Register JavaScript to calculate the total due based on the checkbox values and handle service deletion
 $this->registerJs(<<<JS
     $(document).ready(function() {
         // Calculate total due initially
@@ -138,6 +155,27 @@ $this->registerJs(<<<JS
         // Listen for checkbox change event and update total due
         $('input[type="checkbox"][name="selectedServices[]"]').change(function() {
             updateTotalDue();
+        });
+
+        // Listen for checkbox uncheck event and remove associated service
+        $('input[type="checkbox"][name="selectedServices[]"]').on('change', function() {
+            var serviceId = $(this).val();
+            if (!$(this).prop('checked')) { // If the checkbox is unchecked
+                // Remove the associated service
+                $.ajax({
+                    url: '/bookings/remove-service',
+                    method: 'POST',
+                    data: { serviceId: serviceId, bookingId: $model->id },
+                    success: function(response) {
+                        // Optionally, handle success response here
+                        console.log('Service removed successfully');
+                    },
+                    error: function(xhr, status, error) {
+                        // Optionally, handle error here
+                        console.error('Error removing service:', error);
+                    }
+                });
+            }
         });
     });
 JS

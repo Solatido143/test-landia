@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Bookings */
+/* @var $model app\models\EmployeeSelectionForm */
 /* @var $form yii\bootstrap4\ActiveForm */
 
 $todayDate = date('m-d-Y');

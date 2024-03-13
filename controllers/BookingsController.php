@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\BookingsServices;
 use app\models\Employees;
+use app\models\EmployeeSelectionForm;
 use app\models\Services;
 use Yii;
 use app\models\Bookings;
@@ -111,26 +112,21 @@ class BookingsController extends Controller
     public function actionOngoing($id)
     {
         date_default_timezone_set('Asia/Manila');
-        $booking  = $this->findModel($id);
+        $bookingModel  = $this->findModel($id);
 
-        if ($booking->load(Yii::$app->request->post())) {
-            $booking->fk_booking_status = 2;
+        $employeeSelectionModel = new EmployeeSelectionForm();
 
-            if (empty($booking->selectEmployee)) {
-                Yii::$app->session->setFlash('error', [
-                    'title' => 'Oh no!',
-                    'body' => 'Select an employee.',
-                ]);
-                return $this->redirect(['ongoing', 'id' => $booking->id]);
-            }
+        if ($employeeSelectionModel->load(Yii::$app->request->post()) && $employeeSelectionModel->validate()) {
+            // Proceed with your logic here
+            $bookingModel->fk_booking_status = 2;
 
-            if ($booking->save()) {
-                return $this->redirect(['view', 'id' => $booking->id]);
+            if ($bookingModel->save()) {
+                return $this->redirect(['view', 'id' => $bookingModel->id]);
             }
         }
-
         return $this->render('ongoing', [
-            'model' => $booking,
+            'employeeSelectionModel' => $employeeSelectionModel,
+            'bookingModel' => $bookingModel,
         ]);
     }
 
@@ -187,17 +183,51 @@ class BookingsController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $servicesModel = new Services();
         $services = Services::find()->all();
 
+        // Get previously selected services directly from the BookingsServices table
+        $previousSelectedServices = BookingsServices::find()
+            ->select('fk_service')
+            ->where(['fk_booking' => $model->id])
+            ->column();
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            // Get currently selected services
+            $selectedServices = Yii::$app->request->post('selectedServices', []);
+
+            // Check for newly checked services
+            $newlyCheckedServices = array_diff($selectedServices, $previousSelectedServices);
+
+            // Check for newly unchecked services
+            $newlyUncheckedServices = array_diff($previousSelectedServices, $selectedServices);
+
+            // Process newly checked services
+            foreach ($newlyCheckedServices as $serviceId) {
+                $bookingsServices = new BookingsServices();
+                $bookingsServices->fk_booking = $model->id;
+                $bookingsServices->fk_service = $serviceId;
+                $bookingsServices->save();
+            }
+
+            // Process newly unchecked services
+            foreach ($newlyUncheckedServices as $serviceId) {
+                $bookingService = BookingsServices::findOne(['fk_booking' => $model->id, 'fk_service' => $serviceId]);
+                if ($bookingService !== null) {
+                    $bookingService->delete();
+                }
+            }
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'servicesModel' => $servicesModel,
             'services' => $services,
         ]);
     }
+
 
     /**
      * Deletes an existing Bookings model.

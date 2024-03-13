@@ -3,11 +3,12 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Bookings */
+/* @var $bookingModel app\models\Bookings */
+/* @var $employeeSelectionModel app\models\EmployeeSelectionForm */
 
 $this->title = 'Select Employee';
 $this->params['breadcrumbs'][] = ['label' => 'Bookings', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->fkBookingStatus->booking_status. ' ' .$model->fkCustomer->customer_name. ' ' .$model->booking_type, 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = ['label' => $bookingModel->fkBookingStatus->booking_status. ' ' .$bookingModel->fkCustomer->customer_name. ' ' .$bookingModel->booking_type, 'url' => ['view', 'id' => $bookingModel->id]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -17,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row">
                 <div class="col-md-12">
                     <?=$this->render('_formSelectEmployee', [
-                        'model' => $model,
+                        'model' => $employeeSelectionModel,
                     ]) ?>
                 </div>
             </div>

@@ -22,10 +22,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             <p>
 
                                 <?php if ($model->fk_booking_status != 4 && $model->fk_booking_status != 3) : ?>
-                                    <?= Html::a('<i class="fa fa-cancel"></i>&nbspCancel', ['cancel', 'id' => $model->id], ['class' => 'btn btn-danger']) ?>
+                                    <?= Html::a('<i class="fa fa-cancel"></i>&nbsp;Cancel', ['cancel', 'id' => $model->id], ['class' => 'btn btn-danger']) ?>
                                     <?= Html::a('<i class="fa fa-pencil"></i>&nbsp;Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
                                 <?php else : ?>
-                                    <?= Html::a('<i class="fa fa-arrow-left"></i>&nbspBack', ['index'], ['class' => 'btn btn-secondary']) ?>
+                                    <?= Html::a('<i class="fa fa-arrow-left"></i>&nbsp;Back', ['index'], ['class' => 'btn btn-secondary']) ?>
                                 <?php endif; ?>
 
                             </p>
@@ -35,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <?php if ($model->fk_booking_status == 1) : ?>
                                     <?= Html::a('<i class="fa fa-forward-step"></i>&nbsp; Set as Ongoing', ['ongoing', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
                                 <?php elseif ($model->fk_booking_status == 2) : ?>
-                                    <?= Html::a('<i class="fa fa-check"></i>&nbsp; Set as Complete', ['complete', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+                                    <?= Html::a('<i class="fa fa-cash-register"></i>&nbsp; Set as Complete', ['payments', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
                                 <?php endif; ?>
                             </p>
                         </div>
