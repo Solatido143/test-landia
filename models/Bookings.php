@@ -27,6 +27,7 @@ use Yii;
 class Bookings extends \yii\db\ActiveRecord
 {
     public $searchQuery;
+    public $selectEmployee;
 
     /**
      * {@inheritdoc}
@@ -44,7 +45,7 @@ class Bookings extends \yii\db\ActiveRecord
         return [
             [['booking_type', 'fk_customer', 'fk_booking_status', 'schedule_time', 'logged_by', 'logged_time'], 'required'],
             [['booking_type', 'remarks'], 'string'],
-            [['fk_customer', 'fk_booking_status', 'select_Employee'], 'integer'],
+            [['fk_customer', 'fk_booking_status', 'selectEmployee'], 'integer'],
             [['schedule_time', 'logged_by', 'logged_time', 'updated_by', 'updated_time'], 'string', 'max' => 255],
             [['fk_customer'], 'exist', 'skipOnError' => true, 'targetClass' => Customers::class, 'targetAttribute' => ['fk_customer' => 'id']],
             [['fk_booking_status'], 'exist', 'skipOnError' => true, 'targetClass' => BookingsStatus::class, 'targetAttribute' => ['fk_booking_status' => 'id']],

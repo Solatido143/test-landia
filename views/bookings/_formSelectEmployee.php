@@ -2,7 +2,6 @@
 
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
-use app\models\SelectEmployeeForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Bookings */
@@ -23,8 +22,6 @@ foreach ($employeeAttendanceTimeIn as $attendance) {
     $employees[$employee->id] = $employee->fname . ' ' . $employee->lname;
 }
 
-$selectEmployeeForm = new SelectEmployeeForm();
-
 ?>
 
 <div class="bookings-formSelectEmployee">
@@ -36,7 +33,7 @@ $selectEmployeeForm = new SelectEmployeeForm();
             <div class="col-md-6">
                 <div class="row">
                     <div class="col-md-6">
-                        <?= $form->field($selectEmployeeForm, 'select_Employee')->dropdownList(
+                        <?= $form->field($model, 'selectEmployee')->dropdownList(
                             $employees,
                             [
                                 'class' => 'form-control form-control-sm',

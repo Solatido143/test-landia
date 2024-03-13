@@ -111,14 +111,26 @@ class BookingsController extends Controller
     public function actionOngoing($id)
     {
         date_default_timezone_set('Asia/Manila');
-        $model = $this->findModel($id);
+        $booking  = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($booking->load(Yii::$app->request->post())) {
+            $booking->fk_booking_status = 2;
+
+            if (empty($booking->selectEmployee)) {
+                Yii::$app->session->setFlash('error', [
+                    'title' => 'Oh no!',
+                    'body' => 'Select an employee.',
+                ]);
+                return $this->redirect(['ongoing', 'id' => $booking->id]);
+            }
+
+            if ($booking->save()) {
+                return $this->redirect(['view', 'id' => $booking->id]);
+            }
         }
-        
+
         return $this->render('ongoing', [
-            'model' => $model,
+            'model' => $booking,
         ]);
     }
 
