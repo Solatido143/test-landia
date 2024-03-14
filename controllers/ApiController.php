@@ -6,6 +6,7 @@ use app\models\Attendances;
 use app\models\Bookings;
 use app\models\BookingsServices;
 use app\models\BookingsStatus;
+use app\models\BookingsTiming;
 use app\models\Cities;
 use app\models\Clusters;
 use app\models\Customers;
@@ -946,12 +947,7 @@ class ApiController extends Controller
         }
     }
 
-//  ----- BOOKING STATUS -----
-    public function actionGetBookingStatus()
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        return BookingsStatus::find()->all();
-    }
+
 //  ----- BOOKING SERVICES -----
     public function actionGetBookingServices()
     {
@@ -1006,7 +1002,38 @@ class ApiController extends Controller
             ];
         }
     }
+//  ----- BOOKING STATUS -----
+    public function actionGetBookingStatus()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return BookingsStatus::find()->all();
+    }
+//  ----- BOOKING TIMING -----
+    public function actionGetBookingTiming()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return BookingsTiming::find()->all();
+    }
+    public function actionCreateBookingTiming()
+    {
+        date_default_timezone_set('Asia/Manila');
+        Yii::$app->response->format = Response::FORMAT_JSON;
 
+        $booking_timing = new BookingsTiming();
+        $booking_timing->load(Yii::$app->request->getBodyParams(), '');
+
+        if ($booking_timing->save()){
+            Yii::$app->response->setStatusCode(201);
+            return [
+                'success' => true,
+            ];
+        } else {
+            return [
+                'errors' => $booking_timing->errors,
+                'success' => false,
+            ];
+        }
+    }
 
 
 
