@@ -9,6 +9,7 @@ use yii\bootstrap4\ActiveForm;
 /* @var $form yii\bootstrap4\ActiveForm */
 
 $promos = $paymentModel->fetchAndMapData(\app\models\Promos::class, 'id', 'promo');
+//Yii::info($promos, 'Promos Data');
 ?>
 
 <div class="payment-form">
@@ -16,10 +17,13 @@ $promos = $paymentModel->fetchAndMapData(\app\models\Promos::class, 'id', 'promo
     <div class="container-fluid">
 
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-5">
                 <!--Bookings Services GridView-->
                 <?= \yii\grid\GridView::widget([
                     'dataProvider' => $dataProvider,
+                    'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
+                    'tableOptions' => ["class" => "table table-striped table-bordered"],
+                    'layout' => "{items}\n{pager}",
                     'columns' => [
                         [
                             'attribute' => 'fk_service',
@@ -51,27 +55,26 @@ $promos = $paymentModel->fetchAndMapData(\app\models\Promos::class, 'id', 'promo
                                 }
                             },
                         ],
-                        // Other columns if needed
                     ],
+                    'pager' => [
+                        'class' => 'yii\bootstrap4\LinkPager',
+                    ]
                 ]);
                 ?>
 
             </div>
-            <div class="col-md-6">
+            <div class="col-md-7">
 
                 <?php $form = ActiveForm::begin(); ?>
 
-                <?= $form->field($paymentModel, 'fk_booking')->textInput()->input('hidden')->label(false) ?>
-
                 <div class="row">
-                    <div class="p-0">
+                    <div class="col-md-12">
                         <div class="col-md-6">
-                            <?= $form->field($paymentModel, 'total_due')->textInput(['readonly' => true]) ?>
+                            <?= $form->field($paymentModel, 'payment_amount')->textInput(['readonly' => true])->label('Total Due') ?>
                         </div>
                     </div>
 
-
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <?= $form->field($paymentModel, 'mode_of_payment')->dropdownList(
                             [
                                 'Cash' => 'Cash',
@@ -83,16 +86,31 @@ $promos = $paymentModel->fetchAndMapData(\app\models\Promos::class, 'id', 'promo
                             ['prompt' => '- Select Mode of Payment -']
                         ) ?>
                     </div>
+                    <div class="col-md-4">
+                        <?= $form->field($paymentModel, 'fk_promo')->dropdownList(
+                            $promos,
+                            ['prompt' => ''])
+                        ?>
+                    </div>
+                    <div class="col-md-4">
+                        <?= $form->field($paymentModel, 'discount')->textInput(['readonly' => true]) ?>
+                    </div>
+
                     <div class="col-md-6">
-                        <?= $form->field($paymentModel, 'fk_promo')->dropdownList($promos) ?>
+                        <?= $form->field($paymentModel, 'amount_tendered')->textInput(['type' => 'number', 'value' => 0]) ?>
                     </div>
                     <div class="col-md-6">
-                        <?= $form->field($paymentModel, 'payment_amount')->textInput() ?>
+                        <?= $form->field($paymentModel, 'change')->textInput(['readonly' => true]) ?>
                     </div>
-                    <div class="col-md-6">
-                        <?= $form->field($paymentModel, 'change')->textInput() ?>
-                    </div>
+
                 </div>
+
+                <hr>
+
+                <div class="form-group text-end">
+                    <?= Html::submitButton('<i class="fas fa-check"></i>&nbsp Complete', ['class' => 'btn btn-success']) ?>
+                </div>
+
 
                 <?php ActiveForm::end(); ?>
 

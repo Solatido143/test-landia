@@ -3,9 +3,11 @@
 /* @var $this yii\web\View */
 /* @var $paymentModel app\models\Payments */
 /* @var $dataProvider app\models\BookingsServices */
+/* @var $bookingModel app\models\Bookings */
 
 $this->title = 'Payments';
 $this->params['breadcrumbs'][] = ['label' => 'Bookings', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => $bookingModel->fkCustomer->customer_name . ' ' . $bookingModel->booking_type, 'url' => ['view', 'id' => $bookingModel->id]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -17,6 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?=$this->render('_paymentForm', [
                         'paymentModel' => $paymentModel,
                         'dataProvider' => $dataProvider,
+                        'bookingModel' => $bookingModel,
                     ]) ?>
                 </div>
             </div>

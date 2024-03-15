@@ -181,7 +181,29 @@ class BookingsController extends Controller
         $modelPayment = new Payments();
         $dataProvider = new ActiveDataProvider([
             'query' => BookingsServices::find()->where(['fk_booking' => $id]),
+            'pagination' => [
+                'pageSize' => 5,
+            ],
         ]);
+        $bookingModel = Bookings::findOne($id);
+
+        if ($bookingModel === null) {
+            throw new NotFoundHttpException('The requested booking does not exist.');
+        }
+
+        // Calculate the sum of fk_service
+        $booking_services = BookingsServices::find()->where(['fk_booking' => $id])->all();
+        $totaldue = 0;
+        foreach ($booking_services as $booking_service)
+        {
+            $totaldue += $booking_service->fkService->service_fee;
+        }
+
+        $modelPayment->payment_amount = $totaldue;
+        $modelPayment->logged_by = Yii::$app->user->identity->username;
+        $modelPayment->logged_time = date('H:i:s');
+        $modelPayment->payment_date = date('Y-m-d');
+        $modelPayment->fk_booking = $id;
 
         if ($modelPayment->load(Yii::$app->request->post()) && $modelPayment->save()) {
             Yii::$app->session->setFlash('success', 'Payment created successfully.');
@@ -191,6 +213,7 @@ class BookingsController extends Controller
         return $this->render('payments', [
             'paymentModel' => $modelPayment,
             'dataProvider' => $dataProvider,
+            'bookingModel' => $bookingModel,
         ]);
     }
 

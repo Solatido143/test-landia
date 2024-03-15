@@ -23,7 +23,7 @@ use Yii;
 class Payments extends \yii\db\ActiveRecord
 {
     public $change;
-    public $total_due;
+    public $amount_tendered;
     /**
      * {@inheritdoc}
      */
@@ -38,14 +38,17 @@ class Payments extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['fk_booking', 'mode_of_payment', 'payment_amount', 'fk_promo', 'discount', 'payment_date', 'logged_by', 'logged_time'], 'required'],
+            [['fk_booking', 'mode_of_payment', 'payment_amount', 'discount', 'payment_date', 'logged_by', 'logged_time'], 'required'],
             [['fk_booking', 'fk_promo'], 'integer'],
             [['mode_of_payment'], 'string'],
-            [['payment_amount', 'discount'], 'number'],
+            [['payment_amount', 'discount', 'amount_tendered'], 'number', 'min' => 0],
             [['payment_date', 'logged_by', 'logged_time'], 'string', 'max' => 255],
             [['fk_booking'], 'exist', 'skipOnError' => true, 'targetClass' => Bookings::class, 'targetAttribute' => ['fk_booking' => 'id']],
+            [['fk_promo'], 'exist', 'skipOnError' => true, 'targetClass' => Promos::class, 'targetAttribute' => ['fk_promo' => 'id']],
         ];
     }
+
+
 
     /**
      * {@inheritdoc}
