@@ -18,6 +18,14 @@ $employees = []; // Initialize an empty array to hold employees
 foreach ($employeeAttendanceTimeIn as $attendance) {
     // Access the related employee model for each attendance record
     $employee = $attendance->fkEmployee;
+    $bookingTiming = \app\models\BookingsTiming::findOne(['fk_employee' => $employee->id]);
+
+    if ($bookingTiming !== null) {
+        continue; // Skip this employee if booking timing data exists
+    }
+    if ($employee->fk_position != 3){
+        continue; // Skip this employee if position is not 3
+    }
     // Add the employee to the array
     $employees[$employee->id] = $employee->fname . ' ' . $employee->lname;
 }

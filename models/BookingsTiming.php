@@ -32,8 +32,8 @@ class BookingsTiming extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['fk_booking', 'fk_employee', 'booking_time',], 'required'],
-            [['fk_booking'], 'integer'],
+            [['fk_booking', 'fk_employee', 'booking_time'], 'required'],
+            [['fk_booking', 'fk_employee'], 'integer'],
             [['booking_time', 'ongoing_time', 'completion_time'], 'string', 'max' => 255],
             [['fk_booking'], 'exist', 'skipOnError' => true, 'targetClass' => Bookings::class, 'targetAttribute' => ['fk_booking' => 'id']],
         ];
@@ -62,11 +62,6 @@ class BookingsTiming extends \yii\db\ActiveRecord
     public function getFkBooking()
     {
         return $this->hasOne(Bookings::class, ['id' => 'fk_booking']);
-    }
-
-    public function getFkEmployee()
-    {
-        return $this->hasOne(Employees::class, ['id' => 'fk_employee']);
     }
 
     /**

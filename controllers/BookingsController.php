@@ -3,12 +3,15 @@
 namespace app\controllers;
 
 use app\models\BookingsServices;
+use app\models\BookingsTiming;
 use app\models\Employees;
 use app\models\EmployeeSelectionForm;
+use app\models\Payments;
 use app\models\Services;
 use Yii;
 use app\models\Bookings;
 use app\models\searches\BookingsSearch;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -115,12 +118,16 @@ class BookingsController extends Controller
         $bookingModel  = $this->findModel($id);
 
         $employeeSelectionModel = new EmployeeSelectionForm();
+        $timing = new BookingsTiming();
 
         if ($employeeSelectionModel->load(Yii::$app->request->post()) && $employeeSelectionModel->validate()) {
             // Proceed with your logic here
             $bookingModel->fk_booking_status = 2;
 
-            if ($bookingModel->save()) {
+            $timing->fk_employee = $employeeSelectionModel->selectEmployee;
+            $timing->fk_booking = $bookingModel->id;
+            $timing->booking_time = $bookingModel->schedule_time;
+            if ($bookingModel->save() && $timing->save()) {
                 return $this->redirect(['view', 'id' => $bookingModel->id]);
             }
         }
@@ -167,6 +174,24 @@ class BookingsController extends Controller
         }
 
         return $this->redirect(['index']);
+    }
+
+    public function actionPayments($id)
+    {
+        $modelPayment = new Payments();
+        $dataProvider = new ActiveDataProvider([
+            'query' => BookingsServices::find()->where(['fk_booking' => $id]),
+        ]);
+
+        if ($modelPayment->load(Yii::$app->request->post()) && $modelPayment->save()) {
+            Yii::$app->session->setFlash('success', 'Payment created successfully.');
+            return $this->redirect(['view', 'id' => $modelPayment->id]);
+        }
+
+        return $this->render('payments', [
+            'paymentModel' => $modelPayment,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
 
@@ -227,24 +252,6 @@ class BookingsController extends Controller
             'services' => $services,
         ]);
     }
-
-
-    /**
-     * Deletes an existing Bookings model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($id)
-    {
-        Yii::$app->session->setFlash('error', [
-            'title' => 'Oh no!',
-            'body' => 'You do not have enough permission.',
-        ]);
-        return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
-    }
-
     /**
      * Finds the Bookings model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -259,5 +266,20 @@ class BookingsController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    /**
+     * Deletes an existing Bookings model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param int $id ID
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionDelete($id)
+    {
+        Yii::$app->session->setFlash('error', [
+            'title' => 'Oh no!',
+            'body' => 'You do not have enough permission.',
+        ]);
+        return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
     }
 }

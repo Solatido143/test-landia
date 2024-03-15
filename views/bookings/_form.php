@@ -88,7 +88,7 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
                         </div>
                     </div>
                     <div class="col-md-12">
-                        <?= $form->field($servicesModel, 'searchQuery')->textInput(['placeholder' => 'Search services here...'])->label(false) ?>
+                        <?= $form->field($model, 'searchQuery')->textInput(['placeholder' => 'Search services here...'])->label(false) ?>
                     </div>
                 </div>
 
@@ -132,52 +132,3 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
     <?php ActiveForm::end(); ?>
 
 </div>
-<?php
-// Register JavaScript to calculate the total due based on the checkbox values and handle service deletion
-$this->registerJs(<<<JS
-    $(document).ready(function() {
-        // Calculate total due initially
-        updateTotalDue();
-    
-        // Function to update total due
-        function updateTotalDue() {
-            var totalFee = 0;
-            // Iterate over each checked checkbox
-            $('input[type="checkbox"][name="selectedServices[]"]:checked').each(function() {
-                // Extract the fee from the data attribute
-                var serviceFee = parseFloat($(this).data('fee'));
-                totalFee += serviceFee; // Add the fee to the total
-            });
-            // Update the total due span with the calculated total fee
-            $('#total-due').text(totalFee.toFixed(2));
-        }
-    
-        // Listen for checkbox change event and update total due
-        $('input[type="checkbox"][name="selectedServices[]"]').change(function() {
-            updateTotalDue();
-        });
-
-        // Listen for checkbox uncheck event and remove associated service
-        $('input[type="checkbox"][name="selectedServices[]"]').on('change', function() {
-            var serviceId = $(this).val();
-            if (!$(this).prop('checked')) { // If the checkbox is unchecked
-                // Remove the associated service
-                $.ajax({
-                    url: '/bookings/remove-service',
-                    method: 'POST',
-                    data: { serviceId: serviceId, bookingId: $model->id },
-                    success: function(response) {
-                        // Optionally, handle success response here
-                        console.log('Service removed successfully');
-                    },
-                    error: function(xhr, status, error) {
-                        // Optionally, handle error here
-                        console.error('Error removing service:', error);
-                    }
-                });
-            }
-        });
-    });
-JS
-);
-?>
