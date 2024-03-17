@@ -229,6 +229,21 @@ $('#employees-fk_position').change(function(){
     });
 });
 
+$('#fk_cluster').change(function(){
+    var id = $(this).val();
+    $.ajax({
+        url: '/employees/get-regions', // Update the URL with your actual controller/action
+        method: 'GET',
+        data: {id: id}, // Update the parameter name to match the action parameter
+        success: function(response){
+            $('#fk_region').html(response);
+        },
+        error: function(xhr, status, error){
+            console.error(xhr.responseText);
+        }
+    });
+});
+
 $('#fk_region').change(function(){
     var id = $(this).val();
     $.ajax({
