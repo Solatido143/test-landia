@@ -8,7 +8,12 @@ use yii\helpers\Html;
     <!-- Left navbar links -->
     <ul class="navbar-nav">
         <li class="nav-item">
+<<<<<<< Updated upstream
             <a class="nav-link px-3" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+=======
+            <a class="nav-link px-3" href="/nailandia" role="button"><i class="fas fa-house-chimney"></i>&nbspDashboard</a>
+        </li>
+>>>>>>> Stashed changes
     </ul>
 
     <!-- Right navbar links -->
