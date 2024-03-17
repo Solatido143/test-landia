@@ -11,7 +11,7 @@ use yii\helpers\Html;
 <!--            <a class="nav-link px-3" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>-->
 <!--        </li>-->
         <li class="nav-item">
-            <a class="nav-link px-3" href="nailandia" role="button"><i class="fas fa-house-chimney"></i>&nbspDashboard</a>
+            <a class="nav-link px-3" href="/nailandia" role="button"><i class="fas fa-house-chimney"></i>&nbspDashboard</a>
         </li>
     </ul>
 
