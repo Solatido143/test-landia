@@ -59,7 +59,7 @@ class RegisterForm extends Model
             $user->verification_token = Yii::$app->security->generateRandomString();
             $user->fk_employee_id = $employee->employee_id;
             $user->password_reset_token = null;
-            $user->user_access = 6;
+            $user->user_access = 3;
             $user->status = 10;
             $user->created_at = date('Y-m-d H:i:s');
 
