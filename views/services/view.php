@@ -6,8 +6,8 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\Services */
 
-$this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'services', 'url' => ['index']];
+$this->title = $model->service_name;
+$this->params['breadcrumbs'][] = ['label' => 'Services', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -18,28 +18,47 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="row">
                 <div class="col-md-12">
                     <p>
-                        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-                        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-                            'class' => 'btn btn-danger',
-                            'data' => [
-                                'confirm' => 'Are you sure you want to delete this item?',
-                                'method' => 'post',
-                            ],
-                        ]) ?>
+                        <?= Html::a('<i class="fas fa-pencil"></i>&nbspUpdate', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
                     </p>
-                    <?= DetailView::widget([
-                        'model' => $model,
-                        'attributes' => [
-                            'id',
-                            'service_name',
-                            'service_fee',
-                            'completion_time:datetime',
-                            'logged_by',
-                            'logged_time',
-                            'updated_by',
-                            'updated_time',
-                        ],
-                    ]) ?>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <?= DetailView::widget([
+                                'model' => $model,
+                                'attributes' => [
+                                    //'id',
+                                    'service_name',
+                                    'service_fee',
+                                ],
+                            ]) ?>
+                        </div>
+                        <div class="col-md-6">
+                            <?= DetailView::widget([
+                                'model' => $model,
+                                'attributes' => [
+                                    'completion_time',
+                                ],
+                            ]) ?>
+                        </div>
+                        <div class="col-md-6">
+                            <?= DetailView::widget([
+                                'model' => $model,
+                                'attributes' => [
+                                    'logged_by',
+                                    'logged_time',
+                                ],
+                            ]) ?>
+                        </div>
+                        <div class="col-md-6">
+                            <?= DetailView::widget([
+                                'model' => $model,
+                                'attributes' => [
+                                    'updated_by',
+                                    'updated_time',
+                                ],
+                            ]) ?>
+                        </div>
+                    </div>
+
                 </div>
                 <!--.col-md-12-->
             </div>

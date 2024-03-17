@@ -3,9 +3,9 @@
 /* @var $this yii\web\View */
 /* @var $model app\models\Services */
 
-$this->title = 'Update services: ' . $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'services', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
+$this->title = 'Update services: ' . $model->service_name;
+$this->params['breadcrumbs'][] = ['label' => 'Services', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => $model->service_name, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 
@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = 'Update';
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <?=$this->render('_form', [
                         'model' => $model
                     ]) ?>

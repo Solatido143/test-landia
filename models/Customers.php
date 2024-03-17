@@ -33,8 +33,14 @@ class Customers extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['customer_name', 'logged_by', 'logged_time'], 'required'],
+            [['customer_name', 'logged_by', 'logged_time', 'contact_number'], 'required'],
             [['customer_name', 'contact_number', 'logged_by', 'logged_time', 'updated_by', 'updated_time'], 'string', 'max' => 255],
+            [
+                ['contact_number'],
+                'match',
+                'pattern' => '/^(?:\+639|09)\d{9}$|^\d{3}-\d{4}$|^\d{4}-\d{4}$|^\d{7}$|^\d{8}$|^(\d{4}\s\d{4})$/',
+                'message' => 'Please enter a valid contact number',
+            ],
         ];
     }
 

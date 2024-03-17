@@ -64,6 +64,7 @@ class UserManageController extends Controller
      */
     public function actionCreate()
     {
+        date_default_timezone_set('Asia/Manila');
         $model = new User();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -84,10 +85,15 @@ class UserManageController extends Controller
      */
     public function actionUpdate($id)
     {
+        date_default_timezone_set('Asia/Manila');
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->updated_at = date('Y-m-d H:i:s');
+
+            if ($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
 
         return $this->render('update', [
@@ -104,9 +110,11 @@ class UserManageController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        Yii::$app->session->setFlash('error', [
+            'title' => 'Oh no!',
+            'body' => 'You do not have permission to delete this item.',
+        ]);
+        return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
     }
 
     /**

@@ -18,15 +18,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="card-body">
                     <div class="row mb-2">
                         <div class="col-md-12">
-                            <?= Html::a('Create Bookings', ['create'], ['class' => 'btn btn-success']) ?>
+                            <?= Html::a('<i class="fas fa-plus"></i>&nbspAdd New Bookings', ['create'], ['class' => 'btn btn-success']) ?>
                         </div>
                     </div>
-
 
                     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
                     <?= GridView::widget([
                         'dataProvider' => $dataProvider,
+                        'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
+                        'tableOptions' => ["class" => "table table-striped table-bordered"],
                         'columns' => [
                             ['class' => 'yii\grid\SerialColumn'],
 
@@ -55,13 +56,24 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ]
                                 ],
                             ],
-
-                            'id',
                             'booking_type',
                             'schedule_time',
-                            'fk_customer',
-                            'fk_booking_status',
-                            //'remarks:ntext',
+                            [
+                                'attribute' => 'fk_customer',
+                                'label' => 'Customer',
+                                'value' => function ($model) {
+                                    return $model->fkCustomer->customer_name;
+                                },
+                            ],
+                            [
+                                'attribute' => 'fk_booking_status',
+                                'label' => 'Booking Status',
+
+                                'value' => function ($model) {
+                                    return $model->fkBookingStatus->booking_status;
+                                },
+                            ],
+                            'remarks:ntext',
                             //'logged_by',
                             //'logged_time',
                             //'updated_by',

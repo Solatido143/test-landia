@@ -10,25 +10,27 @@ use yii\bootstrap4\ActiveForm;
 
 <div class="products-form">
 
-    <?php $form = ActiveForm::begin([
-        'options' => [
-            'class' => 'row g-3',
-        ]
-    ]); ?>
-    <div class="col-md-6">
-        <?= $form->field($model, 'product_name')->textInput(['maxlength' => true]) ?>
+    <?php $form = ActiveForm::begin(); ?>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-6">
+                    <?= $form->field($model, 'product_name')->textInput(['maxlength' => true]) ?>
+                </div>
+                <div class="col-md-6">
+                    <?= $form->field($model, 'stock_quantity')->textInput(['type' => 'number', 'value' => 0]) ?>
+                </div>
+                <div class="col-md-12">
+                    <?= $form->field($model, 'description')->label('Remarks')->textarea(['rows' => 6]) ?>
+
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="col-md-6">
-        <?= $form->field($model, 'stock_quantity')->textInput(['type' => 'number', 'value' => 0]) ?>
-    </div>
-
-    <div class="col-md-12">
-        <?= $form->field($model, 'description')->label('Remarks')->textarea(['rows' => 6]) ?>
-    </div>
-
-    <div class="col-md-12 mt-0">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+    <div class="form-group">
+        <?= Html::submitButton('<i class=""></i>&nbspSave', ['class' => 'btn btn-success']) ?>
         <?= Html::button('Cancel', ['class' => 'btn btn-danger', 'id' => 'cancelButton']) ?>
     </div>
 

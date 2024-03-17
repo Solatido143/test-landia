@@ -37,7 +37,7 @@ $error = Yii::$app->session->getFlash('error');
                 <div class="col-sm-6">
                     <?php
                     echo Breadcrumbs::widget([
-                        'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+                        'links' => $this->params['breadcrumbs'] ?? [],
                         'options' => [
                             'class' => 'breadcrumb float-sm-right'
                         ]

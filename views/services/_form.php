@@ -12,19 +12,21 @@ use yii\bootstrap4\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'service_name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'service_fee')->textInput() ?>
 
-    <?= $form->field($model, 'completion_time')->textInput() ?>
+    <div class="row">
+        <div class="col-md-6">
+            <?= $form->field($model, 'service_name')->textInput(['maxlength' => true]) ?>
+        </div>
+        <div class="col-md-6">
+            <?= $form->field($model, 'service_fee')->textInput(['type' => 'number', 'step' => '0.01']) ?>
+        </div>
+        <div class="col-md-6">
+            <?= $form->field($model, 'completion_time')->textInput(['type' => 'number', 'step' => '1']) ?>
 
-    <?= $form->field($model, 'logged_by')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'logged_time')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'updated_by')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'updated_time')->textInput(['maxlength' => true]) ?>
+        </div>
+    </div>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

@@ -18,7 +18,7 @@ use Yii;
  * @property string|null $updated_by
  * @property string|null $updated_time
  *
- * @property BookingsServices[] $bookingsServices
+ * @property BookingsServices[] $bookings   Services
  * @property BookingsTiming[] $bookingsTimings
  * @property BookingsStatus $fkBookingStatus
  * @property Customers $fkCustomer
@@ -26,6 +26,7 @@ use Yii;
  */
 class Bookings extends \yii\db\ActiveRecord
 {
+    public $searchQuery;
     /**
      * {@inheritdoc}
      */
@@ -40,7 +41,7 @@ class Bookings extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['booking_type', 'fk_customer', 'fk_booking_status', 'schedule_time', 'remarks', 'logged_by', 'logged_time'], 'required'],
+            [['booking_type', 'fk_customer', 'fk_booking_status', 'schedule_time', 'logged_by', 'logged_time'], 'required'],
             [['booking_type', 'remarks'], 'string'],
             [['fk_customer', 'fk_booking_status'], 'integer'],
             [['schedule_time', 'logged_by', 'logged_time', 'updated_by', 'updated_time'], 'string', 'max' => 255],
@@ -125,5 +126,11 @@ class Bookings extends \yii\db\ActiveRecord
     public static function find()
     {
         return new \app\models\query\BookingsQuery(get_called_class());
+    }
+
+    public function fetchAndMapData($modelClass, $valueField, $textField)
+    {
+        $data = $modelClass::find()->select([$valueField, $textField])->asArray()->all();
+        return \yii\helpers\ArrayHelper::map($data, $valueField, $textField);
     }
 }

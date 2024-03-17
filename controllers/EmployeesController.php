@@ -73,8 +73,8 @@ class EmployeesController extends Controller
         $model = new Employees();
         $model->logged_by = Yii::$app->user->identity->username;
         $model->logged_time = date('Y-m-d H:i:s');
-        $model->updated_by = NULL;
-        $model->updated_time = NULL;
+        $model->updated_by = '';
+        $model->updated_time = '';
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -141,7 +141,7 @@ class EmployeesController extends Controller
     {
         $position = Positions::findOne($id);
         if ($position) {
-            $availabilityText = $position->availability ? 'Active' : 'Inactive';
+            $availabilityText = $position->availability ? '1' : '0';
             return $availabilityText;
         } else {
             return '';

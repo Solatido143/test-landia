@@ -24,7 +24,6 @@ class ProductsApiController extends ActiveController
     }
 
 //    -- Products --
-
     // Custom action to retrieve all products
     public function actionGetProducts($id = NULL)
     {

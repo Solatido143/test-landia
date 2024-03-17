@@ -1,8 +1,8 @@
 <?php
 
+use kartik\date\DatePicker;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
-use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Employees */
@@ -48,15 +48,22 @@ $Status = $employeesModel->fetchAndMapData(\app\models\EmployeesStatus::class, '
 
                 </div>
                 <div class="col-md-3">
-                    <?= $form->field($model, 'bday')->label('Birthday <span class="text-body-tertiary">(MM/dd/yyyy)</span>')->textInput([
-                        'class' => 'form-control form-control-sm',
-                        'autocomplete' => 'off',
-                    ]) ?>
+                    <?= $form->field($model, 'bday')->widget(DatePicker::class, [
+                        'options' => [
+                            'placeholder' => 'Select date',
+                            'class' => 'form-control',
+                        ],
+                        'pluginOptions' => [
+                            'autoclose' => true,
+                            'format' => 'mm-dd-yyyy',
+                            'todayHighlight' => true,
+                        ],
+                        'layout' => '{input}{picker}',
+                        'size' => 'sm',
+                    ]);
+                    ?>
                 </div>
-
             </div>
-
-
         </div>
     </div>
 
@@ -67,10 +74,6 @@ $Status = $employeesModel->fetchAndMapData(\app\models\EmployeesStatus::class, '
             <label for="contact_info">Contact Information</label>
         </div>
         <div class="col-md-12" id="contact_info">
-            <div class="row">
-
-
-            </div>
             <div class="row">
                 <div class="col-md-3 text-sm">
                     <?= $form->field($model, 'fk_cluster')->dropDownList($clusters,
@@ -115,31 +118,56 @@ $Status = $employeesModel->fetchAndMapData(\app\models\EmployeesStatus::class, '
             <div class="row">
                 <div class="col-md-3 text-sm">
                     <?= $form->field($model, 'employee_id')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm']) ?>
-
                 </div>
                 <div class="col-md-3 text-sm">
                     <?= $form->field($model, 'fk_position')->dropDownList($position, ['prompt' => '-- Select Position', 'class' => 'form-control form-control-sm', 'id' => 'employees-fk_position'])->label('Position') ?>
-
                 </div>
-                <div class="row">
-                    <div class="col-md-3 text-sm">
-                        <?= $form->field($model, 'date_hired')->label('Date Hired <span class="text-body-tertiary">(MM/dd/yyyy)</span>')->textInput([
-                            'class' => 'form-control form-control-sm',
-                            'autocomplete' => 'off',
-                        ]) ?>
-                    </div>
-                    <div class="col-md-3 text-sm">
-                        <?= $form->field($model, 'end_of_contract')->label('End Of Contract <span class="text-body-tertiary">(MM/dd/yyyy)</span>')->textInput([
-                            'class' => 'form-control form-control-sm',
-                            'autocomplete' => 'off',
-                        ]) ?>
-                    </div>
-                    <div class="col-md-3 text-sm">
-                        <?= $form->field($model, 'fk_employment_status')->dropDownList($Status, ['prompt' => '-- Select Status', 'class' => 'form-control form-control-sm'])->label('Status') ?>
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-3 text-sm">
+                            <?= $form->field($model, 'date_hired')->widget(DatePicker::class, [
+                                'options' => [
+                                    'placeholder' => 'Select date',
+                                    'class' => 'form-control',
+                                ],
+                                'pluginOptions' => [
+                                    'autoclose' => true,
+                                    'format' => 'mm-dd-yyyy',
+                                    'todayHighlight' => true,
+                                    'todayBtn' => true,
+                                ],
+                                'layout' => '{input}{picker}',
+                                'size' => 'sm',
+                            ]);
+                            ?>
+                        </div>
+                        <div class="col-md-3 text-sm">
+                            <?= $form->field($model, 'end_of_contract')->widget(DatePicker::class, [
+                                'options' => [
+                                    'placeholder' => 'Select date',
+                                    'class' => 'form-control',
+                                ],
+                                'pluginOptions' => [
+                                    'autoclose' => true,
+                                    'format' => 'mm-dd-yyyy',
+                                    'todayHighlight' => true,
+                                    'todayBtn' => true,
+                                ],
+                                'layout' => '{input}{picker}',
+                                'size' => 'sm',
+                            ]);
+                            ?>
+                        </div>
+                        <div class="col-md-3 text-sm">
+                            <?= $form->field($model, 'fk_employment_status')->dropDownList($Status, ['prompt' => '-- Select Status', 'class' => 'form-control form-control-sm'])->label('Status') ?>
+                        </div>
+                        <div class="col-md-2 text-sm">
+                            <?= $form->field($model, 'availability')->dropDownList(
+                                ['' => '','1' => 'Active', '0' => 'Inactive'],
+                                ['class' => 'form-control form-control-sm', 'id' => 'availability-field']
+                            )->label('Availability') ?>
+                        </div>
 
-                    </div>
-                    <div class="col-md-2">
-                        <?= $form->field($model, 'availability')->textInput(['class' => 'form-control form-control-sm', 'id' => 'availability-field', 'disabled' => true])->label('Availability') ?>
 
                     </div>
                 </div>
@@ -168,15 +196,12 @@ $Status = $employeesModel->fetchAndMapData(\app\models\EmployeesStatus::class, '
                     <?= $form->field($model, 'emergency_contact_relations')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('Relationship') ?>
 
                 </div>
-                <div class="col-md-3">
-
-                </div>
             </div>
         </div>
     </div>
 
     <div class="form-group">
-        <?= Html::Button('<i class="fas fa-cancel"></i> Cancel', ['class' => 'btn btn-secondary']) ?>
+        <?= Html::a('<i class="fas fa-times"></i> Cancel', ['index'], ['class' => 'btn btn-secondary']) ?>
         <?= Html::submitButton('<i class="fas fa-save"></i> Save', ['class' => 'btn btn-success']) ?>
 
     </div>
@@ -188,6 +213,7 @@ $Status = $employeesModel->fetchAndMapData(\app\models\EmployeesStatus::class, '
 
 <?php
 $script = <<< JS
+
 $('#employees-fk_position').change(function(){
     var id = $(this).val();
     $.ajax({
@@ -196,21 +222,6 @@ $('#employees-fk_position').change(function(){
         data: {id: id},
         success: function(response){
             $('#availability-field').val(response);
-        },
-        error: function(xhr, status, error){
-            console.error(xhr.responseText);
-        }
-    });
-});
-
-$('#fk_cluster').change(function(){
-    var id = $(this).val();
-    $.ajax({
-        url: '/employees/get-regions', // Update the URL with your actual controller/action
-        method: 'GET',
-        data: {id: id}, // Update the parameter name to match the action parameter
-        success: function(response){
-            $('#fk_region').html(response);
         },
         error: function(xhr, status, error){
             console.error(xhr.responseText);

@@ -34,19 +34,18 @@ $this->params['breadcrumbs'][] = $this->title;
                         'columns' => [
                             [
                                 'class' => DropDownActionColumn::className(),
-                                'header' => 'Actions',
                                 'contentOptions' => ['style' => 'white-space: nowrap;'],
                                 'items' => [
                                     [
-                                        'label' => 'Views',
+                                        'label' => '<i class="fas fa-eye"></i>&nbsp; View',
                                         'url' => ['view']
                                     ],
                                     [
-                                        'label' => 'Edit',
+                                        'label' => '<i class="fas fa-pencil"></i>&nbsp; Edit',
                                         'url' => ['update']
                                     ],
                                     [
-                                        'label' => 'Delete',
+                                        'label' => '<i class="fas fa-trash"></i>&nbsp; Delete',
                                         'url' => ['delete'],
                                         'linkOptions' => [
                                             'class' => 'dropdown-item contextDelete',

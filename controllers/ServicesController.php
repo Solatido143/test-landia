@@ -64,7 +64,14 @@ class ServicesController extends Controller
      */
     public function actionCreate()
     {
+        date_default_timezone_set('Asia/Manila');
         $model = new Services();
+        $model->logged_time = date('h:i:s a');
+        $model->logged_by = Yii::$app->user->identity->username;
+        $model->updated_by = "";
+        $model->updated_time = "";
+        $model->completion_time = 30;
+        $model->service_fee = 0;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -74,7 +81,6 @@ class ServicesController extends Controller
             'model' => $model,
         ]);
     }
-
     /**
      * Updates an existing services model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -84,10 +90,16 @@ class ServicesController extends Controller
      */
     public function actionUpdate($id)
     {
+        date_default_timezone_set('Asia/Manila');
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->updated_by = Yii::$app->user->identity->username;
+            $model->updated_time = date('h:i:s a');
+
+            if ($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
 
         return $this->render('update', [
@@ -104,9 +116,11 @@ class ServicesController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        Yii::$app->session->setFlash('error', [
+            'title' => 'Oh no!',
+            'body' => 'You do not have permission to delete this item.',
+        ]);
+        return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
     }
 
     /**

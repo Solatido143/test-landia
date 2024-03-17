@@ -9,6 +9,7 @@ use Yii;
  *
  * @property int $id
  * @property int $fk_booking
+ * @property int $fk_employee
  * @property string $booking_time
  * @property string|null $ongoing_time
  * @property string|null $completion_time
@@ -31,8 +32,8 @@ class BookingsTiming extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['fk_booking', 'booking_time'], 'required'],
-            [['fk_booking'], 'integer'],
+            [['fk_booking', 'fk_employee', 'booking_time'], 'required'],
+            [['fk_booking', 'fk_employee'], 'integer'],
             [['booking_time', 'ongoing_time', 'completion_time'], 'string', 'max' => 255],
             [['fk_booking'], 'exist', 'skipOnError' => true, 'targetClass' => Bookings::class, 'targetAttribute' => ['fk_booking' => 'id']],
         ];
@@ -46,6 +47,7 @@ class BookingsTiming extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'fk_booking' => 'Fk Booking',
+            'fk_employee' => 'Fk Employee',
             'booking_time' => 'Booking Time',
             'ongoing_time' => 'Ongoing Time',
             'completion_time' => 'Completion Time',

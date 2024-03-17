@@ -4,12 +4,12 @@ namespace app\models\searches;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Attendances as AttendancesModel;
+use app\models\Customers;
 
 /**
- * Attendances represents the model behind the search form of `app\models\Attendances`.
+ * CustomersSeach represents the model behind the search form of `app\models\Customers`.
  */
-class Attendances extends AttendancesModel
+class CustomersSeach extends Customers
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class Attendances extends AttendancesModel
     public function rules()
     {
         return [
-            [['id', 'fk_employee'], 'integer'],
-            [['sign_in', 'sign_out', 'remarks', 'sign_in_log', 'sign_out_log'], 'safe'],
+            [['id'], 'integer'],
+            [['customer_name', 'contact_number', 'logged_by', 'logged_time', 'updated_by', 'updated_time'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class Attendances extends AttendancesModel
      */
     public function search($params)
     {
-        $query = AttendancesModel::find();
+        $query = Customers::find();
 
         // add conditions that should always apply here
 
@@ -59,14 +59,14 @@ class Attendances extends AttendancesModel
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'fk_employee' => $this->fk_employee,
         ]);
 
-        $query->andFilterWhere(['like', 'sign_in', $this->sign_in])
-            ->andFilterWhere(['like', 'sign_out', $this->sign_out])
-            ->andFilterWhere(['like', 'remarks', $this->remarks])
-            ->andFilterWhere(['like', 'sign_in_log', $this->sign_in_log])
-            ->andFilterWhere(['like', 'sign_out_log', $this->sign_out_log]);
+        $query->andFilterWhere(['like', 'customer_name', $this->customer_name])
+            ->andFilterWhere(['like', 'contact_number', $this->contact_number])
+            ->andFilterWhere(['like', 'logged_by', $this->logged_by])
+            ->andFilterWhere(['like', 'logged_time', $this->logged_time])
+            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
+            ->andFilterWhere(['like', 'updated_time', $this->updated_time]);
 
         return $dataProvider;
     }

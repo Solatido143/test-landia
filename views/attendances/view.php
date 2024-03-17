@@ -1,12 +1,15 @@
 <?php
 
+use app\models\Employees;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Attendances */
 
-$this->title = $model->id;
+$employee = \app\models\Employees::findOne(['id' => $model->fk_employee]);
+
+$this->title = $employee->fname . " " . $employee->lname;
 $this->params['breadcrumbs'][] = ['label' => 'Attendances', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -16,27 +19,23 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-md-12">
-                    <p>
-                        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-                        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-                            'class' => 'btn btn-danger',
-                            'data' => [
-                                'confirm' => 'Are you sure you want to delete this item?',
-                                'method' => 'post',
-                            ],
-                        ]) ?>
-                    </p>
+                <div class="col-md-6">
                     <?= DetailView::widget([
                         'model' => $model,
                         'attributes' => [
-                            'id',
-                            'fk_employee',
+                            [
+                                'attribute' => 'fk_employee',
+                                'label' => 'Employee',
+                                'value' => function($model) {
+                                    $employee = Employees::findOne($model->fk_employee);
+                                    return $employee ? $employee->fname . " " . $employee->lname : null;
+                                }
+                            ],
                             'sign_in',
                             'sign_out',
                             'remarks:ntext',
-                            'sign_in_log',
-                            'sign_out_log',
+                            //'sign_in_log',
+                            //'sign_out_log',
                         ],
                     ]) ?>
                 </div>

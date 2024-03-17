@@ -7,6 +7,7 @@ namespace app\models;
  *
  * @property int $id
  * @property int $fk_employee
+ * @property string $date
  * @property string $sign_in
  * @property string|null $sign_out
  * @property string|null $remarks
@@ -19,6 +20,7 @@ namespace app\models;
  */
 class Attendances extends \yii\db\ActiveRecord
 {
+    public $fk_employee_id;
     /**
      * {@inheritdoc}
      */
@@ -35,8 +37,8 @@ class Attendances extends \yii\db\ActiveRecord
         return [
             [['fk_employee', 'sign_in', 'sign_in_log'], 'required'],
             [['fk_employee'], 'integer'],
-            [['remarks'], 'string'],
-            [['sign_in', 'sign_out'], 'string', 'max' => 100],
+            [['remarks', 'fk_employee_id'], 'string'],
+            [['sign_in', 'sign_out', 'date'], 'string', 'max' => 100],
             [['sign_in_log', 'sign_out_log'], 'string', 'max' => 50],
             [['fk_employee'], 'exist', 'skipOnError' => true, 'targetClass' => Employees::class, 'targetAttribute' => ['fk_employee' => 'id']],
         ];

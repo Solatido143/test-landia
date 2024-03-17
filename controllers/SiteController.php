@@ -2,7 +2,9 @@
 
 namespace app\controllers;
 
+use app\models\Bookings;
 use Yii;
+use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
@@ -10,8 +12,6 @@ use yii\filters\VerbFilter;
 
 use app\models\LoginForm;
 use app\models\RegisterForm;
-use app\models\PasswordResetRequestForm;
-use app\models\Search;
 
 class SiteController extends Controller
 {
@@ -35,7 +35,7 @@ class SiteController extends Controller
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
-                    'logout' => ['post'],
+                    'logout' => ['POST'],
                 ],
             ],
         ];
@@ -64,8 +64,35 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        // Define queries for each status
+        $queries = [
+            1 => Bookings::find()->with('fkBookingStatus')->where(['=', 'schedule_time', date('Y-m-d H:i:s')]),
+            2 => Bookings::find()->with('fkBookingStatus')->where(['=', 'schedule_time', date('Y-m-d H:i:s')]),
+            4 => Bookings::find()->with('fkBookingStatus')->where(['=', 'schedule_time', date('Y-m-d H:i:s')]),
+        ];
+
+        // Set conditions for each query
+        foreach ($queries as $status => $query) {
+            $query->where(['fk_booking_status' => $status]);
+        }
+
+        // Create data providers for each query
+        $dataProviders = [];
+        foreach ($queries as $status => $query) {
+            $dataProviders[$status] = new ActiveDataProvider([
+                'query' => $query,
+                'pagination' => [
+                    'pageSize' => 10,
+                ],
+            ]);
+        }
+
+        // Pass the data providers to the view
+        return $this->render('index', [
+            'dataProviders' => $dataProviders,
+        ]);
     }
+
 
     /**
      * Login action.
@@ -102,6 +129,7 @@ class SiteController extends Controller
         }
 
         $model = new RegisterForm();
+
         if ($model->load(Yii::$app->request->post()) && $model->register()) {
             Yii::$app->session->setFlash('success', [
                 'title' => 'Yay!',

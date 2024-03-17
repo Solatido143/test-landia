@@ -1,5 +1,7 @@
 <?php
 
+use app\models\Attendances;
+use app\models\Employees;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 use yii\web\View;
@@ -7,6 +9,13 @@ use yii\web\View;
 /* @var $this yii\web\View */
 /* @var $model app\models\Attendances */
 /* @var $form yii\bootstrap4\ActiveForm */
+
+$fkEmployeeId = Yii::$app->user->identity->fk_employee_id;
+$employee = Employees::findOne(['employee_id' => $fkEmployeeId]);
+$attendance = $employee ? Attendances::find()
+    ->where(['fk_employee' => $employee->id])
+    ->orderBy(['id' => SORT_DESC])
+    ->one() : null;
 
 // Register the JavaScript code for the real-time clock and date
 $this->registerJs("
@@ -48,8 +57,6 @@ $this->registerJs("
 ", View::POS_READY);
 ?>
 
-
-
 <div class="attendances-form">
 
     <div id="clock" class="clock mb-3"></div>
@@ -63,9 +70,15 @@ $this->registerJs("
     <?= $form->field($model, 'sign_in_log')->hiddenInput()->label(false) ?>
 
 
-    <div class="form-group">
-        <?= Html::submitButton('Time In', ['class' => 'btn btn-success']) ?>
-    </div>
+    <?php if ($attendance === null || (!empty($attendance->sign_in) && !empty($attendance->sign_out))) : ?>
+        <div class="form-group">
+            <?= Html::submitButton('Time In', ['class' => 'btn btn-success']) ?>
+        </div>
+    <?php elseif (empty($attendance->sign_out)): ?>
+        <div class="form-group">
+            <?= Html::submitButton('Time Out', ['class' => 'btn btn-danger']) ?>
+        </div>
+    <?php endif; ?>
 
     <?php ActiveForm::end(); ?>
 

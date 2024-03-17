@@ -22,6 +22,7 @@ $config = [
 //                ],
 //            ],
 //        ],
+
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'ZRvCDLtO-03SgGUlKRqDPABfE6ouO6sK',
@@ -50,7 +51,7 @@ $config = [
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
+                    'levels' => ['error', 'warning', 'info'],
                 ],
             ],
         ],
@@ -61,16 +62,12 @@ $config = [
             'rules' => [
 //                api
 
-//               viewall
                 'product-list/products' => 'products-api/get-products',
-
                 'product-list/create' => 'products-api/create-products',
                 'product-list/view' => 'products-api/view-products',
                 'product-list/update' => 'products-api/update-products',
 
-//                view all
                 'product-list/subprod' => 'products-api/get-sub-products',
-
                 'product-list/createsubprod' => 'products-api/create-sub-products',
                 'product-list/viewsubprod' => 'products-api/view-sub-products',
                 'product-list/updatesubprod' => 'products-api/update-sub-products',
@@ -82,7 +79,25 @@ $config = [
                 'user/delete' => 'user/delete-users',
                 'user/user-login' => 'user/validate-login',
 
-//                'attendance' => 'attendances/index'
+                'api/attendance' => 'api/get-attendance',
+                'api/time-in' => 'api/create-attendance',
+                'api/time-out' => 'api/update-attendance',
+
+                'api/employees' => 'api/get-employees',
+
+                'api/users' => 'api/get-users',
+                'api/services' => 'api/get-services',
+                'api/bookings' => 'api/get-bookings',
+                'api/customers' => 'api/get-customers',
+                'api/user-validation' => 'api/user-login-validation',
+                'api/roles' => 'api/get-roles',
+                'api/positions' => 'api/get-positions',
+                'api/status' => 'api/get-employees-status',
+
+                'nailandia' => 'site/index',
+                'attendance' => 'attendances/index',
+                'products' => 'products/index',
+
             ],
         ],
     ],
@@ -113,7 +128,7 @@ $config = [
             ],
 //            controllers
             [
-                'controllers' => ['products', 'api', 'products-api', 'user'],
+                'controllers' => ['products', 'api', 'products-api', 'user', 'attendance'],
                 'allow' => true,
             ],
             [

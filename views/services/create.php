@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $model app\models\Services */
 
 $this->title = 'Create services';
-$this->params['breadcrumbs'][] = ['label' => 'services', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Services', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <?=$this->render('_form', [
                         'model' => $model
                     ]) ?>

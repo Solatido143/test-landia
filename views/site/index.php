@@ -1,31 +1,49 @@
 <?php
+
+
+/* @var $dataProviders yii\data\ActiveDataProvider */
+
+
+use yii\grid\GridView;
+
 $this->title = 'Overview';
 $this->params['breadcrumbs'] = [['label' => $this->title]];
 ?>
 <div class="container-fluid">
     <div class="row">
         <div class="col-lg-3">
-            <div class="row g-3">
-                <div class="col-12 d-lg-none">
-                    <button type="button" class="btn btn-success btn-block">
-                        <i class="fas fa-plus"></i>
-                        Add Reservation
-                    </button>
+            <div class="row mb-3">
+                <div class="col-lg-12">
+                        <?= \hail812\adminlte\widgets\SmallBox::widget([
+                            'title' => '0',
+                            'text' => 'Total Bookings',
+                            'icon' => 'fas fa-calendar',
+                            'theme' => 'success',
+                            'options' => [
+                                'class' => 'small-box bg-success',
+                            ],
+                        ]) ?>
                 </div>
-                <div class="col col-md-6 col-lg-12">
+                <div class="col-lg-12">
                     <?= \hail812\adminlte\widgets\SmallBox::widget([
-                        'title' => '10',
-                        'text' => 'Service',
-                        'icon' => 'fas fa-solid fa-bell-concierge',
-                        'theme' => 'light',
+                        'title' => '0',
+                        'text' => 'Completed Bookings',
+                        'icon' => 'fas fa-check',
+                        'theme' => 'primary',
+                        'options' => [
+                            'class' => 'small-box bg-primary',
+                        ],
                     ]) ?>
                 </div>
-                <div class="col col-md-6 col-lg-12">
+                <div class="col-lg-12">
                     <?= \hail812\adminlte\widgets\SmallBox::widget([
-                        'title' => '10',
-                        'text' => 'Service',
-                        'icon' => 'fas fa-solid fa-bell-concierge',
-                        'theme' => 'light',
+                        'title' => '0',
+                        'text' => 'Cancelled Bookings',
+                        'icon' => 'fas fa-cancel',
+                        'theme' => 'danger',
+                        'options' => [
+                            'class' => 'small-box bg-danger',
+                        ],
                     ]) ?>
                 </div>
             </div>
@@ -34,200 +52,156 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
         <div class="col-lg-9">
             <div class="row">
 
-                <div class="col-lg-6 col-md-6">
-                    <div class="card">
-                        <div class="card-header d-flex align-items-center">
-                            <h5 class="flex-grow-1">My Daily Activity</h5>
-                            <a href="#" class="text-decoration-none text-nowrap">View all</a>
-                        </div>
+                <div class="col-md-12">
+                    <div class="card mb-0">
                         <div class="card-body" style="overflow-x: auto;">
-                            <?php
-                            use scotthuangzl\googlechart\GoogleChart;
-
-                            echo GoogleChart::widget([
-                                'visualization' => 'LineChart',
-                                'data' => [
-                                    ['Task', 'Hours per Day'],
-                                    ['Work', 11],
-                                    ['Eat', 2],
-                                    ['Commute', 2],
-                                    ['Watch TV', 2],
-                                    ['Sleep', 7]
-                                ],
-                                'options' => [
-                                    'title' => '',
-                                    'legend' => ['position' => 'top'],
-                                ]
-                            ]);
-                            ?>
+                            <figure class="highcharts-figure">
+                                <div id="chat-container"></div>
+                            </figure>
                         </div>
                     </div>
                 </div>
-
-                <div class="col-lg-6 col-md-6">
-                    <div class="card">
-                        <div class="card-header d-flex align-items-center">
-                            <h5 class="flex-grow-1">Performance</h5>
-                            <a href="#" class="text-decoration-none ms-auto text-nowrap">View all</a>
-                        </div>
-                        <div class="card-body" style="overflow-x: auto;">
-                            <?php
-                            echo GoogleChart::widget([
-                                'visualization' => 'LineChart',
-                                'data' => [
-                                    ['Year', 'Sales', 'Expenses'],
-                                    ['2004', 1000, 400],
-                                    ['2005', 1170, 460],
-                                    ['2006', 660, 1120],
-                                    ['2007', 1030, 540],
-                                    ['2008', 1030, 540],
-                                ],
-                                'options' => [
-                                    'curveType' => 'function',
-                                    'legend' => ['position' => 'top'],
-                                ]
-                            ]);
-                            ?>
-                        </div>
-
-                    </div>
-                </div>
-
             </div>
         </div>
 
-        <div class="col-lg-8">
+
+
+        <div class="col-lg-12">
             <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header d-flex align-items-center">
-                            <h5 class="flex-grow-1">In queue</h5> <!-- Use flex-grow-1 to allow the title to grow and take up the remaining space -->
-                            <a href="#" class="text-decoration-none">View all</a>
-                        </div>
-                        <div class="card-body">
-                            <form>
-                                <div class="input-group mb-3">
-                                    <input type="text" class="form-control" placeholder="Search...">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-primary" type="button">Search</button>
-                                    </div>
-                                </div>
-                            </form>
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>John Doe</td>
-                                        <td>john@example.com</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Jane Smith</td>
-                                        <td>jane@example.com</td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td>Michael Johnson</td>
-                                        <td>michael@example.com</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                <?php foreach ($dataProviders as $status => $dataProvider): ?>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header d-flex align-items-center">
+                                <h5 class="flex-grow-1">
+                                    <?php
+                                    if ($status == 1) {
+                                        echo 'In queue';
+                                    } elseif ($status == 2) {
+                                        echo 'On going';
+                                    } elseif ($status == 4) {
+                                        echo 'Complete';
+                                    }
+                                    ?>
+                                </h5>
+                                <a href="#" class="text-decoration-none">View all</a>
+                            </div>
+                            <div class="card-body">
+                                <?= GridView::widget([
+                                    'dataProvider' => $dataProvider,
+                                    'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
+                                    'tableOptions' => ["class" => "table table-striped table-bordered text-nowrap"],
+                                    'columns' => [
+                                        [
+                                            'attribute' => 'fk_customer',
+                                            'label' => 'Customer',
+                                            'value' => function ($model) {
+                                                $customer = \app\models\Customers::findOne($model->fk_customer);
+                                                return $customer->customer_name;
+                                            }
+                                        ],
+                                        'schedule_time',
+                                    ],
+                                    'layout' => '{items}{pager}',
+                                    'pager' => [
+                                        'class' => 'yii\bootstrap4\LinkPager',
+                                    ]
+                                ]); ?>
                             </div>
                         </div>
                     </div>
-
-                </div>
-
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header d-flex align-items-center">
-                            <h5 class="flex-grow-1">Payments</h5>
-                            <a href="#" class="text-decoration-none ms-auto">View all</a>
-                        </div>
-
-                        <div class="card-body">
-                            <form>
-                                <div class="input-group mb-3">
-                                    <input type="text" class="form-control" placeholder="Search...">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-primary" type="button">Search</button>
-                                    </div>
-                                </div>
-                            </form>
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>John Doe</td>
-                                        <td>john@example.com</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Jane Smith</td>
-                                        <td>jane@example.com</td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td>Michael Johnson</td>
-                                        <td>michael@example.com</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <?php endforeach; ?>
             </div>
-
         </div>
 
-        <div class="col">
-            <button type="button" class="btn btn-success btn-block mb-3 d-none d-lg-block">
-                <i class="fas fa-plus"></i>
-                Add Reservation
-            </button>
-
-            <div class="card">
-                <div class="card-header d-flex align-items-center">
-                    <h5 class="flex-grow-1">Services</h5>
-                    <a href="#" class="text-decoration-none ms-auto">View all</a>
-                </div>
-
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header d-flex align-items-center">
-                    <h5 class="flex-grow-1">Out of Stocks</h5>
-                    <a href="#" class="text-decoration-none ms-auto">View all</a>
-                </div>
-
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                </div>
-            </div>
-
-        </div>
 
     </div>
 </div>
+
+<?php
+// Calculate the current month and year
+$currentMonth = date('n');
+$currentYear = date('Y');
+
+// Calculate the start month and year for the xAxis
+$startMonth = $currentMonth - 5; // 6 months ago
+$startYear = $currentYear;
+if ($startMonth <= 0) {
+    $startMonth += 12;
+    $startYear--;
+}
+
+// Define the range description for accessibility
+$rangeDescription = date('F Y', mktime(0, 0, 0, $startMonth, 1, $startYear)) . ' to ' . date('F Y');
+
+// Initialize arrays to store xAxis categories and sales data
+$xAxisCategories = [];
+$salesData = [];
+
+// Loop through the last 6 months and populate xAxis categories and sales data
+for ($i = 0; $i < 6; $i++) {
+    // Calculate month and year for the current iteration
+    $month = ($startMonth + $i) % 12;
+    if ($month == 0) $month = 12; // January is represented by 12 in date()
+    $year = $startYear + floor(($startMonth + $i - 1) / 12);
+
+    // Add the month and year to the xAxis categories
+    $xAxisCategories[] = date('F Y', mktime(0, 0, 0, $month, 1, $year));
+
+    // Generate a random sales value (replace this with your actual sales data retrieval logic)
+    $salesValue = 0;
+
+    // Add the sales value to the sales data array
+    $salesData[] = $salesValue;
+}
+
+// Highcharts chart initialization script with dynamic data
+$this->registerJs("
+    Highcharts.chart('chat-container', {
+        title: {
+            text: 'Sales Report ($rangeDescription)',
+            align: 'center'
+        },
+        yAxis: {
+            title: {
+                text: 'Total Sales'
+            }
+        },
+        xAxis: {
+            accessibility: {
+                rangeDescription: '" . $rangeDescription . "'
+            },
+            categories: " . json_encode($xAxisCategories) . "
+        },
+        legend: {
+            layout: 'horizontal',
+            align: 'center',
+            horizontalAlign: 'middle'
+        },
+        plotOptions: {
+            series: {
+                label: {
+                    connectorAllowed: false
+                }
+            }
+        },
+        series: [{
+            name: 'Sales',
+            data: " . json_encode($salesData) . "
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    legend: {
+                        layout: 'horizontal',
+                        align: 'center',
+                        verticalAlign: 'bottom'
+                    }
+                }
+            }]
+        }
+    });
+");
+?>

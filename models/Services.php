@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\base\Model;
 
 /**
  * This is the model class for table "services".
@@ -15,6 +16,7 @@ use Yii;
  * @property string $logged_time
  * @property string|null $updated_by
  * @property string|null $updated_time
+ * @property int $availability
  *
  * @property BookingsServices[] $bookingsServices
  * @property EmployeesServices[] $employeesServices
@@ -22,6 +24,7 @@ use Yii;
  */
 class Services extends \yii\db\ActiveRecord
 {
+    public $searchQuery;
     /**
      * {@inheritdoc}
      */
@@ -37,8 +40,9 @@ class Services extends \yii\db\ActiveRecord
     {
         return [
             [['service_name', 'service_fee', 'completion_time', 'logged_by', 'logged_time'], 'required'],
-            [['service_fee'], 'number'],
-            [['completion_time'], 'integer'],
+            [['service_fee'], 'number', 'min' => 0],
+            [['availability'], 'integer',],
+            [['completion_time'], 'integer', 'min' => 30],
             [['service_name', 'logged_by', 'logged_time', 'updated_by', 'updated_time'], 'string', 'max' => 255],
         ];
     }
@@ -57,6 +61,7 @@ class Services extends \yii\db\ActiveRecord
             'logged_time' => 'Logged Time',
             'updated_by' => 'Updated By',
             'updated_time' => 'Updated Time',
+            'availability' => 'Available',
         ];
     }
 

@@ -26,6 +26,12 @@ use yii\web\IdentityInterface;
  */
 class User extends ActiveRecord implements IdentityInterface
 {
+    public $old_password;
+    public $new_password;
+    public $confirm_new_password;
+
+    public $password;
+    public $confirmPassword;
     /**
      * {@inheritdoc}
      */
@@ -40,9 +46,9 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'email', 'password_hash',], 'required'],
-            [['status', 'availability'], 'integer'],
-            [['username', 'email', 'password_hash', 'user_access'], 'string', 'max' => 100],
+            [['username', 'email', 'password_hash'], 'required'],
+            [['status', 'availability', 'user_access'], 'integer'],
+            [['username', 'email', 'password_hash'], 'string', 'max' => 100],
             ['email', 'email'],
             ['username', 'unique', 'message' => 'This username has already been taken.'],
             [['fk_employee_id'], 'string', 'max' => 30],
@@ -135,5 +141,17 @@ class User extends ActiveRecord implements IdentityInterface
         return Yii::$app->security->validatePassword($password_hash, $this->password_hash);
 //        return $this->password === $password;
     }
+
+    public function getRoles()
+    {
+        return $this->hasOne(Roles::class, ['user_access_id' => 'user_access']);
+    }
+
+    public function fetchAndMapData($modelClass, $valueField, $textField)
+    {
+        $data = $modelClass::find()->select([$valueField, $textField])->asArray()->all();
+        return \yii\helpers\ArrayHelper::map($data, $valueField, $textField);
+    }
+
 
 }

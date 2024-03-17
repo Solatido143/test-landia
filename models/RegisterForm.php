@@ -4,7 +4,6 @@ namespace app\models;
 
 use Yii;
 use yii\base\Model;
-use yii\helpers\VarDumper;
 use yii\validators\UniqueValidator;
 
 class RegisterForm extends Model
@@ -32,10 +31,7 @@ class RegisterForm extends Model
     {
         $employee = Employees::findOne(['employee_id' => $this->$attribute]);
         if ($employee === null) {
-            Yii::$app->session->setFlash('error', [
-                'title' => 'Oh no!',
-                'body' => 'Something went wrong, please try again.',
-            ]);
+            $this->addError($attribute, 'An error exist, please try again.');
         }
     }
 
@@ -45,19 +41,13 @@ class RegisterForm extends Model
 
             $existingUser = User::findOne(['fk_employee_id' => $this->emp_id]);
             if ($existingUser !== null) {
-                Yii::$app->session->setFlash('error', [
-                    'title' => 'Oh no!',
-                    'body' => 'Something went wrong, please try again.',
-                ]);
+                $this->addError('emp_id', 'An error exist, please try again.');
                 return false;
             }
 
             $employee = Employees::findOne(['employee_id' => $this->emp_id]);
             if ($employee === null) {
-                Yii::$app->session->setFlash('error', [
-                    'title' => 'Oh no!',
-                    'body' => 'Something went wrong, please try again.',
-                ]);
+                $this->addError('emp_id', 'An error exist, please try again.');
                 return false;
             }
 
@@ -68,11 +58,19 @@ class RegisterForm extends Model
             $user->auth_key = Yii::$app->security->generateRandomString();
             $user->verification_token = Yii::$app->security->generateRandomString();
             $user->fk_employee_id = $employee->employee_id;
+            $user->password_reset_token = null;
+            $user->user_access = 6;
+            $user->status = 10;
+            $user->created_at = date('Y-m-d H:i:s');
 
             if ($user->save()) {
                 return true;
             } else {
-                Yii::error("Unsuccessful account creation: " . VarDumper::dumpAsString($user->errors));
+                Yii::$app->session->setFlash('error', [
+                    'title' => 'Oh no!',
+                    'body' => 'Failed to create user: ' . implode(', ', $user->getFirstErrors()),
+                ]);
+                return false;
             }
         }
 
