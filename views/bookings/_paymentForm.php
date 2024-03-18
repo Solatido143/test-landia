@@ -108,7 +108,7 @@ if ($promos) {
                     <div class="col-md-4">
                         <?= $form->field($paymentModel, 'fk_promo')->dropdownList(
                             $promosOption,
-                            ['id' => 'fk_promo']
+                            ['id' => 'fk_promo', 'prompt' => '- Select promo']
                         ) ?>
                     </div>
 

@@ -61,69 +61,17 @@ class BookingsController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    public function actionCreate()
-    {
-        date_default_timezone_set('Asia/Manila');
-        $model = new Bookings();
-        $services = Services::find()->all();
-
-        $model->fk_booking_status = 1;
-        $model->logged_by = Yii::$app->user->identity->username;
-        $model->logged_time = date('Y-m-d H:i:s');
-        $model->updated_by = '';
-        $model->updated_time = '';
-
-        if ($model->load(Yii::$app->request->post())) {
-            // Get the selected services from the form submission
-            $selectedServices = Yii::$app->request->post('selectedServices');
-
-            if (empty($selectedServices)) {
-                Yii::$app->session->setFlash('error', [
-                    'title' => 'Oh no!',
-                    'body' => 'Please select at least one service.',
-                ]);
-            } else {
-                $existingBooking = Bookings::find()
-                    ->where(['fk_customer' => $model->fk_customer])
-                    ->one();
-
-                if ($existingBooking !== null) {
-                    Yii::$app->session->setFlash('error', [
-                        'title' => 'Error!',
-                        'body' => 'The customer already has a booking.',
-                    ]);
-                    return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
-                }
-                // Validate and save the model
-                if ($model->validate() && $model->save()) {
-                    // Iterate through selected services and save them to the bookings_services table
-                    foreach ($selectedServices as $serviceId) {
-                        $bookingsServices = new BookingsServices();
-                        $bookingsServices->fk_booking = $model->id;
-                        $bookingsServices->fk_service = $serviceId;
-                        $bookingsServices->save();
-                    }
-                    Yii::$app->session->setFlash('success', [
-                        'title' => 'Yay!',
-                        'body' => 'Booking Complete.',
-                    ]);
-                    return $this->redirect(['view', 'id' => $model->id]);
-                } else {
-                    Yii::$app->session->setFlash('error', 'Failed to save booking.');
-                }
-            }
+        $model = Bookings::findOne($id);
+        $bookingsTimingModel = BookingsTiming::findOne(['fk_booking' => $id]);
+        if ($model === null) {
+            throw new NotFoundHttpException('The requested page does not exist.');
         }
-
-        return $this->render('create', [
+        return $this->render('view', [
             'model' => $model,
-            'services' => $services,
+            'bookingsTimingModel' => $bookingsTimingModel,
         ]);
     }
+
 
     public function actionOngoing($id)
     {
@@ -169,6 +117,7 @@ class BookingsController extends Controller
 
         // Calculate the sum of fk_service
         $booking_services = BookingsServices::find()->where(['fk_booking' => $id])->all();
+        $booking_timing = BookingsTiming::findOne(['fk_booking' => $id]);
 
         $paymentTotal = 0.00;
         foreach ($booking_services as $booking_service)
@@ -179,9 +128,6 @@ class BookingsController extends Controller
         $modelPayment->fk_booking = $id;
         $modelPayment->payment_date = date('Y-m-d');
         $modelPayment->payment_amount = $paymentTotal;
-
-        $modelPayment->change = 0;
-
         $modelPayment->logged_by = Yii::$app->user->identity->username;
         $modelPayment->logged_time = date('H:i:s');
 
@@ -253,7 +199,64 @@ class BookingsController extends Controller
 
 
 
+    public function actionCreate()
+    {
+        date_default_timezone_set('Asia/Manila');
+        $model = new Bookings();
+        $services = Services::find()->all();
 
+        $model->fk_booking_status = 1;
+        $model->logged_by = Yii::$app->user->identity->username;
+        $model->logged_time = date('Y-m-d H:i:s');
+        $model->updated_by = '';
+        $model->updated_time = '';
+
+        if ($model->load(Yii::$app->request->post())) {
+            // Get the selected services from the form submission
+            $selectedServices = Yii::$app->request->post('selectedServices');
+
+            if (empty($selectedServices)) {
+                Yii::$app->session->setFlash('error', [
+                    'title' => 'Oh no!',
+                    'body' => 'Please select at least one service.',
+                ]);
+            } else {
+                $existingBooking = Bookings::find()
+                    ->where(['fk_customer' => $model->fk_customer])
+                    ->one();
+
+//                if ($existingBooking !== null) {
+//                    Yii::$app->session->setFlash('error', [
+//                        'title' => 'Error!',
+//                        'body' => 'The customer already has a booking.',
+//                    ]);
+//                    return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
+//                }
+                // Validate and save the model
+                if ($model->validate() && $model->save()) {
+                    // Iterate through selected services and save them to the bookings_services table
+                    foreach ($selectedServices as $serviceId) {
+                        $bookingsServices = new BookingsServices();
+                        $bookingsServices->fk_booking = $model->id;
+                        $bookingsServices->fk_service = $serviceId;
+                        $bookingsServices->save();
+                    }
+                    Yii::$app->session->setFlash('success', [
+                        'title' => 'Yay!',
+                        'body' => 'Booking Complete.',
+                    ]);
+                    return $this->redirect(['view', 'id' => $model->id]);
+                } else {
+                    Yii::$app->session->setFlash('error', 'Failed to save booking.');
+                }
+            }
+        }
+
+        return $this->render('create', [
+            'model' => $model,
+            'services' => $services,
+        ]);
+    }
 
     /**
      * Updates an existing Bookings model.
@@ -310,21 +313,13 @@ class BookingsController extends Controller
         ]);
     }
 
-    /**
-     * Finds the Bookings model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return Bookings the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
+    public function actionBookingServices($id)
     {
-        if (($model = Bookings::findOne($id)) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $booking_services = BookingsServices::find()->where(['fk_booking' => $id])->all();
+        return $booking_services;
     }
+
 
     /**
      * Deletes an existing Bookings model.
@@ -340,5 +335,21 @@ class BookingsController extends Controller
             'body' => 'You do not have enough permission.',
         ]);
         return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
+    }
+
+    /**
+     * Finds the Bookings model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param int $id ID
+     * @return Bookings the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Bookings::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

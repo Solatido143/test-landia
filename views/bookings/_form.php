@@ -136,13 +136,39 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
 <?php
 $this->registerJs(<<<JS
     $(document).ready(function() {
+        // Fetch booking services via AJAX when the page loads
+        $.ajax({
+            url: '/bookings/booking-services?id=<?= $model->id ?>',
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                // Iterate over the fetched services and check the corresponding checkboxes
+                $.each(response, function(index, service) {
+                    $('input[name="selectedServices[]"][value="' + service.fk_service + '"]').prop('checked', true);
+                });
+                
+                // Calculate and display the total due amount
+                calculateTotalDue();
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+
+        // Listen for changes in the checkboxes
         $('input[name="selectedServices[]"]').on('change', function() {
+            // Calculate and display the total due amount
+            calculateTotalDue();
+        });
+
+        // Function to calculate and display the total due amount
+        function calculateTotalDue() {
             var totalDue = 0;
             $('input[name="selectedServices[]"]:checked').each(function() {
                 totalDue += parseFloat($(this).data('fee'));
             });
             $('#total-due').text(totalDue.toFixed(2));
-        });
+        }
     });
 JS
 );

@@ -65,6 +65,16 @@ class BookingsTiming extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[FkEmployee]].
+     *
+     * @return \yii\db\ActiveQuery|\app\models\query\BookingsQuery
+     */
+    public function getFkEmployee()
+    {
+        return $this->hasOne(Employees::class, ['id' => 'fk_employee']);
+    }
+
+    /**
      * {@inheritdoc}
      * @return \app\models\query\BookingsTimingQuery the active query used by this AR class.
      */

@@ -5,6 +5,7 @@ use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Bookings */
+/* @var $bookingsTimingModel app\models\BookingsTiming */
 
 $this->title = $model->fkBookingStatus->booking_status . ' ' . $model->fkCustomer->customer_name . ' ' . $model->booking_type;
 $this->params['breadcrumbs'][] = ['label' => 'Bookings', 'url' => ['index']];
@@ -41,6 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                     </div>
                     <div class="row">
+
                         <div class="col-md-6">
                             <?= DetailView::widget([
                                 'model' => $model,
@@ -62,6 +64,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ],
                                     'schedule_time',
                                     'remarks:ntext',
+                                ],
+                            ]) ?>
+
+                            <?= DetailView::widget([
+                                'model' => $model,
+                                'attributes' => [
                                     'logged_by',
                                     'logged_time',
                                     'updated_by',
@@ -69,6 +77,26 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ],
                             ]) ?>
                         </div>
+
+                        <?php if ($bookingsTimingModel !== null): ?>
+                            <div class="col-md-6">
+                                <?= DetailView::widget([
+                                    'model' => $bookingsTimingModel,
+                                    'attributes' => [
+                                        [
+                                            'attribute' => 'fk_employee',
+                                            'label' => 'Assigned Employee',
+                                            'value' => function ($bookingsTimingModel) {
+                                                return $bookingsTimingModel->fkEmployee->fname . ' ' . $bookingsTimingModel->fkEmployee->lname;
+                                            },
+                                        ]
+                                        // Add more attributes as needed
+                                    ],
+                                ]) ?>
+                            </div>
+                        <?php endif; ?>
+
+
                     </div>
                 </div>
                 <!--.col-md-12-->

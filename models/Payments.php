@@ -40,7 +40,7 @@ class Payments extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['fk_booking', 'fk_promo', 'mode_of_payment', 'payment_amount', 'discount', 'payment_date', 'logged_by', 'logged_time', 'amount_tendered'], 'required'],
+            [['fk_booking', 'mode_of_payment', 'payment_amount', 'discount', 'payment_date', 'logged_by', 'logged_time', 'amount_tendered'], 'required'],
             [['fk_booking', 'fk_promo'], 'integer'],
             [['mode_of_payment'], 'string'],
             [['payment_amount', 'amount_tendered', 'change'], 'number', 'min' => 0],
