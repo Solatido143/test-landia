@@ -1,9 +1,9 @@
 <aside class="main-sidebar sidebar-dark-info elevation-4" style="background: #0a0e14; overflow-y: auto;">
     <!-- Brand Logo -->
     <a href="<?=\yii\helpers\Url::home()?>" class="brand-link">
-        <img src="/imgs/nailandia-logo.png" style="cursor:pointer; margin: 0 5px 0 5px" class="d-none card-mg-top" height="45" alt="E-CMV">
+        <img src="https://i.ibb.co/S6gcfQ8/nailandia-logo.png" style="cursor:pointer; margin: 0 5px 0 5px" class="d-none card-mg-top" height="45" alt="E-CMV">
         <span class="brand-text font-weight-light">
-            <img src="/imgs/nailandia-logo.png" style="cursor:pointer; margin: 0 5px 0 5px" class="card-mg-top" height="45" alt="E-CMV">
+            <img src="https://i.ibb.co/S6gcfQ8/nailandia-logo.png" style="cursor:pointer; margin: 0 5px 0 5px" class="card-mg-top" height="45" alt="E-CMV">
             <strong>AEP - MPOS</strong>
         </span>
     </a>

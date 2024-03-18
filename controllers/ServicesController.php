@@ -66,7 +66,7 @@ class ServicesController extends Controller
     {
         date_default_timezone_set('Asia/Manila');
         $model = new Services();
-        $model->logged_time = date('h:i:s a');
+        $model->logged_time = date('H:i:s');
         $model->logged_by = Yii::$app->user->identity->username;
         $model->updated_by = "";
         $model->updated_time = "";

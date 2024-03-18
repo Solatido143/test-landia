@@ -31,6 +31,7 @@ $this->registerJsFile($publishedRes[1].'/control_sidebar.js', ['depends' => '\ha
           rel="stylesheet"
           integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
           crossorigin="anonymous">
+    <link rel="icon" type="image/x-icon" href="https://i.ibb.co/S6gcfQ8/nailandia-logo.png">
     <style>
         a {
             text-decoration: none;

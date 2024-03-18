@@ -89,7 +89,7 @@ if ($promos) {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="col-md-6 p-0">
-                            <?= $form->field($paymentModel, 'payment_amount')->textInput(['readonly' => true, 'id' => 'payment_amount'])->label('Total Due') ?>
+                            <?= $form->field($paymentModel, 'payment_amount')->textInput(['readonly' => true, 'id' => 'payment_amount'])->label('Payment Total') ?>
                         </div>
                     </div>
 
@@ -114,11 +114,11 @@ if ($promos) {
 
 
                     <div class="col-md-4">
-                        <?= $form->field($paymentModel, 'discount')->textInput(['readonly' => true, 'type' => 'number', 'id' => 'discount']) ?>
+                        <?= $form->field($paymentModel, 'discount')->textInput(['readonly' => true, 'type' => 'number', 'id' => 'discount'])->label('Discounted Price') ?>
                     </div>
 
                     <div class="col-md-6">
-                        <?= $form->field($paymentModel, 'amount_tendered')->textInput(['type' => 'number', 'id' => 'amount_tendered']) ?>
+                        <?= $form->field($paymentModel, 'amount_tendered')->textInput(['type' => 'number', 'id' => 'amount_tendered', 'step' => '0.01']) ?>
                     </div>
                     <div class="col-md-6">
                         <?= $form->field($paymentModel, 'change')->textInput(['readonly' => true, 'id' => 'change']) ?>
@@ -128,8 +128,13 @@ if ($promos) {
 
                 <hr>
 
-                <div class="form-group text-end">
-                    <?= Html::submitButton('<i class="fas fa-check"></i>&nbsp Complete', ['class' => 'btn btn-success']) ?>
+                <?= $form->field($paymentModel, 'total_due')->textInput(['type' => 'hidden', 'id' => 'total_due', 'value' => '0.00', 'step' => '0.01'])->label(false) ?>
+
+                <div class="d-flex g-3 justify-content-between">
+                    <h3 class="m-0">Total due: <span id="total-due">0.00</span></h3>
+                    <div class="form-group m-0">
+                        <?= Html::submitButton('<i class="fas fa-check"></i>&nbsp Complete', ['class' => 'btn btn-success']) ?>
+                    </div>
                 </div>
 
 
@@ -150,10 +155,19 @@ $this->registerJs(<<<JS
         $('#amount_tendered').on('input', function() {
             var paymentAmount = parseFloat($('#payment_amount').val());
             var amountTendered = parseFloat($(this).val());
+            var discountedPrice = parseFloat($('#discount').val());
 
             if (!isNaN(paymentAmount) && !isNaN(amountTendered)) {
-                var change = amountTendered - paymentAmount;
-                $('#change').val(change.toFixed(2));
+                var totalAmount = paymentAmount + discountedPrice;
+                if (amountTendered < totalAmount) {
+                    // If amount tendered is less than total amount due
+                    $('#change').val(''); // Clear change value
+                    // You can show a message or take appropriate action here
+                } else {
+                    // Calculate change
+                    var change = amountTendered - totalAmount;
+                    $('#change').val(change.toFixed(2));
+                }
             }
         });
 
@@ -168,11 +182,20 @@ $this->registerJs(<<<JS
                 method: 'GET',
                 data: {promoId: promoId},
                 success: function(response) {
-                    // Update discount field with fetched discount value
-                    $('#discount').val(response);
+                    // Calculate discounted amount
+                    var paymentAmount = parseFloat($('#payment_amount').val());
+                    var percentage = parseFloat(response);
+                    var discountAmount = (percentage / 100) * paymentAmount;
+                    var formattedDiscount = discountAmount === 0 ? '0.00' : '-' + discountAmount.toFixed(2);
+        
+                    $('#discount').val(formattedDiscount);
+                    $('#amount_tendered').val('');
+                    
+                    var totalDue = paymentAmount - discountAmount;
+                    $('#total_due').val(totalDue.toFixed(2));
+                    $('#total-due').text(totalDue.toFixed(2));
                 },
                 error: function(xhr, status, error) {
-                    // Handle error if needed
                     console.error(xhr.responseText);
                 }
             });
@@ -186,6 +209,8 @@ $this->registerJs(<<<JS
         
         // Trigger initial update when the page loads
         updateDiscount();
+        
+        
     });
 JS
 );

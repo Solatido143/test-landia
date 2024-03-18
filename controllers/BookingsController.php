@@ -139,7 +139,9 @@ class BookingsController extends Controller
 
             $timing->fk_employee = $employeeSelectionModel->selectEmployee;
             $timing->fk_booking = $bookingModel->id;
-            $timing->booking_time = $bookingModel->schedule_time;
+            $timing->booking_time = $bookingModel->logged_time;
+            $timing->ongoing_time = date('Y-m-d H:i:s');
+
             if ($bookingModel->save() && $timing->save()) {
                 return $this->redirect(['view', 'id' => $bookingModel->id]);
             }
@@ -148,6 +150,85 @@ class BookingsController extends Controller
             'employeeSelectionModel' => $employeeSelectionModel,
             'bookingModel' => $bookingModel,
         ]);
+    }
+
+    public function actionPayments($id)
+    {
+        $modelPayment = new Payments();
+        $bookingServices = new ActiveDataProvider([
+            'query' => BookingsServices::find()->where(['fk_booking' => $id]),
+            'pagination' => [
+                'pageSize' => 5,
+            ],
+        ]);
+        $bookingModel = $this->findModel($id);
+
+        if ($bookingModel === null) {
+            throw new NotFoundHttpException('The requested booking does not exist.');
+        }
+
+        // Calculate the sum of fk_service
+        $booking_services = BookingsServices::find()->where(['fk_booking' => $id])->all();
+
+        $paymentTotal = 0.00;
+        foreach ($booking_services as $booking_service)
+        {
+            $paymentTotal += $booking_service->fkService->service_fee;
+        }
+
+        $modelPayment->fk_booking = $id;
+        $modelPayment->payment_date = date('Y-m-d');
+        $modelPayment->payment_amount = $paymentTotal;
+
+        $modelPayment->change = 0;
+
+        $modelPayment->logged_by = Yii::$app->user->identity->username;
+        $modelPayment->logged_time = date('H:i:s');
+
+        if ($modelPayment->load(Yii::$app->request->post()) && $modelPayment->save()) {
+
+            $bookingModel->fk_booking_status = 3;
+            if ($bookingModel->save())
+            {
+                Yii::$app->session->setFlash('success', [
+                    'title' => 'Yay!',
+                    'body' => 'Payment created successfully.',
+                ]);
+                return $this->redirect(['view', 'id' => $id]);
+            }
+        }
+
+        return $this->render('payments', [
+            'paymentModel' => $modelPayment,
+            'dataProvider' => $bookingServices,
+            'bookingModel' => $bookingModel,
+        ]);
+    }
+
+    public function actionPromodiscount($promoId)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Find the promo by ID
+        $promo = Promos::findOne($promoId);
+
+        // Check if promo exists
+        if ($promo !== null) {
+            // Return the promo's percentage discount
+            return $promo->percentage;
+        } else {
+            // Promo not found, return 0
+            return 0;
+        }
+
+//        $promos = Promos::find()->where(['id' => $promoId])->all();
+//
+//        $promoDiscounts = [];
+//
+//        foreach ($promos as $promo) {
+//            $promoDiscounts = $promo->percentage;
+//        }
+//        return $promoDiscounts;
     }
 
     public function actionCancel($id)
@@ -169,90 +250,6 @@ class BookingsController extends Controller
 
         return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
     }
-
-    public function actionComplete($id)
-    {
-        $model = $this->findModel($id);
-        $model->fk_booking_status = 3; // Assuming 3 represents the "Complete" status
-
-        if ($model->save()) {
-            Yii::$app->session->setFlash('success', [
-                'title' => 'Yay!',
-                'body' => 'Booking has been completed successfully.',
-            ]);
-        } else {
-            Yii::$app->session->setFlash('error', [
-                'title' => 'Yay!',
-                'body' => 'Failed to complete booking.',
-            ]);
-        }
-
-        return $this->redirect(['index']);
-    }
-
-
-    public function actionPayments($id)
-    {
-        $modelPayment = new Payments();
-        $bookingServices = new ActiveDataProvider([
-            'query' => BookingsServices::find()->where(['fk_booking' => $id]),
-            'pagination' => [
-                'pageSize' => 5,
-            ],
-        ]);
-        $bookingModel = Bookings::findOne($id);
-
-        if ($bookingModel === null) {
-            throw new NotFoundHttpException('The requested booking does not exist.');
-        }
-
-        // Calculate the sum of fk_service
-        $booking_services = BookingsServices::find()->where(['fk_booking' => $id])->all();
-
-        $totaldue = 0;
-        foreach ($booking_services as $booking_service)
-        {
-            $totaldue += $booking_service->fkService->service_fee;
-        }
-
-        $modelPayment->fk_booking = $id;
-        $modelPayment->payment_date = date('Y-m-d');
-        $modelPayment->payment_amount = $totaldue;
-
-        $modelPayment->discount = 0;
-        $modelPayment->change = 0;
-
-        $modelPayment->logged_by = Yii::$app->user->identity->username;
-        $modelPayment->logged_time = date('H:i:s');
-
-        if ($modelPayment->load(Yii::$app->request->post()) && $modelPayment->save()) {
-            Yii::$app->session->setFlash('success', 'Payment created successfully.');
-            return $this->redirect(['view', 'id' => $modelPayment->id]);
-        }
-
-        return $this->render('payments', [
-            'paymentModel' => $modelPayment,
-            'dataProvider' => $bookingServices,
-            'bookingModel' => $bookingModel,
-        ]);
-    }
-
-    public function actionPromodiscount($promoId)
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        // Assuming $id is used to filter the Promos records
-        $promos = Promos::find()->where(['id' => $promoId])->all();
-
-        $promoDiscounts = [];
-
-        foreach ($promos as $promo) {
-            $promoDiscounts = $promo->percentage;
-        }
-
-        return $promoDiscounts;
-    }
-
 
 
 

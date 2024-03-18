@@ -736,8 +736,8 @@ class ApiController extends Controller
             ];
         }
         $service->load(Yii::$app->getRequest()->getBodyParams(), '');
-        $service->updated_time = date('H:i:s');
         if ($service->save()) {
+//            $service->updated_time = date('H:i:s');
             return $service;
         } else {
             return [
