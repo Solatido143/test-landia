@@ -132,3 +132,18 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
     <?php ActiveForm::end(); ?>
 
 </div>
+
+<?php
+$this->registerJs(<<<JS
+    $(document).ready(function() {
+        $('input[name="selectedServices[]"]').on('change', function() {
+            var totalDue = 0;
+            $('input[name="selectedServices[]"]:checked').each(function() {
+                totalDue += parseFloat($(this).data('fee'));
+            });
+            $('#total-due').text(totalDue.toFixed(2));
+        });
+    });
+JS
+);
+?>
