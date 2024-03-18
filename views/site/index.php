@@ -64,8 +64,6 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
             </div>
         </div>
 
-
-
         <div class="col-lg-12">
             <div class="row g-3 mb-3">
                 <?php foreach ($dataProviders as $status => $dataProvider): ?>
@@ -83,7 +81,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                                     }
                                     ?>
                                 </h5>
-                                <a href="#" class="text-decoration-none">View all</a>
+                                <a href="bookings" class="text-decoration-none">View all</a>
                             </div>
                             <div class="card-body">
                                 <?= GridView::widget([

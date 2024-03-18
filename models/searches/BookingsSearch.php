@@ -5,6 +5,7 @@ namespace app\models\searches;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Bookings;
+use yii\db\Expression;
 
 /**
  * BookingsSearch represents the model behind the search form of `app\models\Bookings`.
@@ -49,6 +50,11 @@ class BookingsSearch extends Bookings
             'pagination' => [
                 'pageSize' => 10,
             ],
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ],
+            ],
         ]);
 
         $this->load($params);
@@ -58,6 +64,18 @@ class BookingsSearch extends Bookings
             // $query->where('0=1');
             return $dataProvider;
         }
+
+        // Filter to show only bookings for today
+        $currentDate = date('Y-m-d');
+
+        // Calculate start and end timestamps for today
+        $startOfDay = strtotime($currentDate . ' 00:00:00');
+        $endOfDay = strtotime($currentDate . ' 23:59:59');
+
+        // Filter based on logged_time between start and end of today
+        $query->andFilterWhere(['>=', 'logged_time', date('Y-m-d H:i:s', $startOfDay)])
+            ->andFilterWhere(['<=', 'logged_time', date('Y-m-d H:i:s', $endOfDay)]);
+
 
         // grid filtering conditions
         $query->andFilterWhere([

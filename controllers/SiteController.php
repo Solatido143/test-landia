@@ -66,14 +66,18 @@ class SiteController extends Controller
     {
         // Define queries for each status
         $queries = [
-            1 => Bookings::find()->with('fkBookingStatus')->where(['=', 'schedule_time', date('Y-m-d H:i:s')]),
-            2 => Bookings::find()->with('fkBookingStatus')->where(['=', 'schedule_time', date('Y-m-d H:i:s')]),
-            4 => Bookings::find()->with('fkBookingStatus')->where(['=', 'schedule_time', date('Y-m-d H:i:s')]),
+            1 => Bookings::find()->with('fkBookingStatus'),
+            2 => Bookings::find()->with('fkBookingStatus'),
+            4 => Bookings::find()->with('fkBookingStatus'),
         ];
 
-        // Set conditions for each query
+        $currentDate = date('Y-m-d');
+
+        // Set conditions for each query to filter by current date
         foreach ($queries as $status => $query) {
-            $query->where(['fk_booking_status' => $status]);
+            $query->where(['fk_booking_status' => $status])
+                ->andWhere(['>=', 'DATE(logged_time)', $currentDate])
+                ->andWhere(['<', 'DATE(logged_time)', date('Y-m-d', strtotime($currentDate . ' +1 day'))]);
         }
 
         // Create data providers for each query

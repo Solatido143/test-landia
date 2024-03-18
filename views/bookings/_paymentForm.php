@@ -69,7 +69,7 @@ $promos = $paymentModel->fetchAndMapData(\app\models\Promos::class, 'id', 'promo
 
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="col-md-6">
+                        <div class="col-md-6 p-0">
                             <?= $form->field($paymentModel, 'payment_amount')->textInput(['readonly' => true])->label('Total Due') ?>
                         </div>
                     </div>
@@ -88,16 +88,16 @@ $promos = $paymentModel->fetchAndMapData(\app\models\Promos::class, 'id', 'promo
                     </div>
                     <div class="col-md-4">
                         <?= $form->field($paymentModel, 'fk_promo')->dropdownList(
-                            $promos,
-                            ['prompt' => ''])
-                        ?>
+                            ['0' => 'None'] + $promos
+                        ) ?>
                     </div>
+
                     <div class="col-md-4">
                         <?= $form->field($paymentModel, 'discount')->textInput(['readonly' => true]) ?>
                     </div>
 
                     <div class="col-md-6">
-                        <?= $form->field($paymentModel, 'amount_tendered')->textInput(['type' => 'number', 'value' => 0]) ?>
+                        <?= $form->field($paymentModel, 'amount_tendered')->textInput(['type' => 'number']) ?>
                     </div>
                     <div class="col-md-6">
                         <?= $form->field($paymentModel, 'change')->textInput(['readonly' => true]) ?>
@@ -124,5 +124,18 @@ $promos = $paymentModel->fetchAndMapData(\app\models\Promos::class, 'id', 'promo
 </div>
 
 <?php
+
+$this->registerJs(<<<JS
+    $('#paymentmodel-amount_tendered').on('input', function() {
+        var paymentAmount = parseFloat($('#paymentmodel-payment_amount').val());
+        var amountTendered = parseFloat($(this).val());
+
+        if (!isNaN(paymentAmount) && !isNaN(amountTendered)) {
+            var change = amountTendered - paymentAmount;
+            $('#paymentmodel-change').val(change.toFixed(2));
+        }
+    });
+JS
+);
 
 ?>

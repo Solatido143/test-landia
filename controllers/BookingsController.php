@@ -7,6 +7,7 @@ use app\models\BookingsTiming;
 use app\models\Employees;
 use app\models\EmployeeSelectionForm;
 use app\models\Payments;
+use app\models\Promos;
 use app\models\Services;
 use Yii;
 use app\models\Bookings;
@@ -15,6 +16,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * BookingsController implements the CRUD actions for Bookings model.
@@ -86,6 +88,17 @@ class BookingsController extends Controller
                     'body' => 'Please select at least one service.',
                 ]);
             } else {
+                $existingBooking = Bookings::find()
+                    ->where(['fk_customer' => $model->fk_customer])
+                    ->one();
+
+                if ($existingBooking !== null) {
+                    Yii::$app->session->setFlash('error', [
+                        'title' => 'Error!',
+                        'body' => 'The customer already has a booking.',
+                    ]);
+                    return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
+                }
                 // Validate and save the model
                 if ($model->validate() && $model->save()) {
                     // Iterate through selected services and save them to the bookings_services table
@@ -156,6 +169,7 @@ class BookingsController extends Controller
 
         return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
     }
+
     public function actionComplete($id)
     {
         $model = $this->findModel($id);
@@ -176,10 +190,11 @@ class BookingsController extends Controller
         return $this->redirect(['index']);
     }
 
+
     public function actionPayments($id)
     {
         $modelPayment = new Payments();
-        $dataProvider = new ActiveDataProvider([
+        $bookingServices = new ActiveDataProvider([
             'query' => BookingsServices::find()->where(['fk_booking' => $id]),
             'pagination' => [
                 'pageSize' => 5,
@@ -193,17 +208,21 @@ class BookingsController extends Controller
 
         // Calculate the sum of fk_service
         $booking_services = BookingsServices::find()->where(['fk_booking' => $id])->all();
+
         $totaldue = 0;
         foreach ($booking_services as $booking_service)
         {
             $totaldue += $booking_service->fkService->service_fee;
         }
 
+        $modelPayment->fk_booking = $id;
+        $modelPayment->payment_date = date('Y-m-d');
         $modelPayment->payment_amount = $totaldue;
+
+        $modelPayment->change = 0;
+
         $modelPayment->logged_by = Yii::$app->user->identity->username;
         $modelPayment->logged_time = date('H:i:s');
-        $modelPayment->payment_date = date('Y-m-d');
-        $modelPayment->fk_booking = $id;
 
         if ($modelPayment->load(Yii::$app->request->post()) && $modelPayment->save()) {
             Yii::$app->session->setFlash('success', 'Payment created successfully.');
@@ -212,9 +231,20 @@ class BookingsController extends Controller
 
         return $this->render('payments', [
             'paymentModel' => $modelPayment,
-            'dataProvider' => $dataProvider,
+            'dataProvider' => $bookingServices,
             'bookingModel' => $bookingModel,
         ]);
+    }
+
+    public function actionPromodiscount()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $promos = Promos::find()->all();
+        $promoDiscounts = [];
+        foreach ($promos as $promo) {
+            $promoDiscounts[$promo->id] = $promo->percentage;
+        }
+        return $promoDiscounts;
     }
 
 
@@ -275,6 +305,7 @@ class BookingsController extends Controller
             'services' => $services,
         ]);
     }
+
     /**
      * Finds the Bookings model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -290,6 +321,7 @@ class BookingsController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
     /**
      * Deletes an existing Bookings model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
