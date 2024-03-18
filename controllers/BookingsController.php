@@ -219,6 +219,7 @@ class BookingsController extends Controller
         $modelPayment->payment_date = date('Y-m-d');
         $modelPayment->payment_amount = $totaldue;
 
+        $modelPayment->discount = 0;
         $modelPayment->change = 0;
 
         $modelPayment->logged_by = Yii::$app->user->identity->username;
@@ -236,16 +237,22 @@ class BookingsController extends Controller
         ]);
     }
 
-    public function actionPromodiscount()
+    public function actionPromodiscount($promoId)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $promos = Promos::find()->all();
+
+        // Assuming $id is used to filter the Promos records
+        $promos = Promos::find()->where(['id' => $promoId])->all();
+
         $promoDiscounts = [];
+
         foreach ($promos as $promo) {
-            $promoDiscounts[$promo->id] = $promo->percentage;
+            $promoDiscounts = $promo->percentage;
         }
+
         return $promoDiscounts;
     }
+
 
 
 
