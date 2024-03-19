@@ -1008,11 +1008,27 @@ class ApiController extends Controller
         Yii::$app->response->format = Response::FORMAT_JSON;
         return BookingsStatus::find()->all();
     }
+    
 //  ----- BOOKING TIMING -----
     public function actionGetBookingTiming()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        return BookingsTiming::find()->all();
+        $queryParams = Yii::$app->request->queryParams;
+
+        $query = BookingsTiming::find();
+
+        foreach ($queryParams as $key => $value) {
+            // Only consider parameters that match column names in the Bookings model
+            if (in_array($key, ['id', 'fk_booking', 'fk_employee'])) {
+                $query->andWhere([$key => $value]);
+            }
+        }
+        $booking_timings = $query->all();
+
+        if (!empty($booking_timings))
+        {
+            return $booking_timings;
+        }
     }
     public function actionCreateBookingTiming()
     {
@@ -1034,6 +1050,28 @@ class ApiController extends Controller
             ];
         }
     }
+    public function actionUpdateBookingTiming()
+    {
+        date_default_timezone_set('Asia/Manila');
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $request = Yii::$app->getRequest();
+        $fk_booking = $request->get('fk_booking');
+        $fk_employee = $request->get('fk_employee');
+
+        $condition = [];
+
+        if ($fk_booking !== null) {
+            $condition['fk_booking'] = $fk_booking;
+        } elseif ($fk_employee !== null) {
+            $condition['fk_employee'] = $fk_employee;
+        }
+
+        $booking_timing = $condition ? BookingsTiming::findOne($condition) : null;
+
+        return $booking_timing;
+    }
+
 
 
 

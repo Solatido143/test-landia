@@ -213,7 +213,7 @@ class BookingsController extends Controller
 
         $model->fk_booking_status = 1;
         $model->logged_by = Yii::$app->user->identity->username;
-        $model->logged_time = date('Y-m-d H:i:s');
+        $model->logged_time = date('Y-m-d H:i');
         $model->updated_by = '';
         $model->updated_time = '';
 
