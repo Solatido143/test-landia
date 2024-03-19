@@ -39,9 +39,6 @@ if ($promos) {
                 <!--Bookings Services GridView-->
                 <?= \yii\grid\GridView::widget([
                     'dataProvider' => $dataProvider,
-                    'pagination' => [
-                        ''
-                    ],
                     'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
                     'tableOptions' => ["class" => "table table-striped table-bordered"],
                     'layout' => "{items}\n{pager}",
@@ -80,8 +77,7 @@ if ($promos) {
                     'pager' => [
                         'class' => 'yii\bootstrap4\LinkPager',
                     ]
-                ]);
-                ?>
+                ]);?>
 
             </div>
             <div class="col-md-7">

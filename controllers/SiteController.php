@@ -86,7 +86,7 @@ class SiteController extends Controller
             $dataProviders[$status] = new ActiveDataProvider([
                 'query' => $query,
                 'pagination' => [
-                    'pageSize' => 10,
+                    'pageSize' => 5,
                 ],
             ]);
         }
@@ -163,6 +163,11 @@ class SiteController extends Controller
             'body' => 'Logout successful.',
         ]);
         return $this->redirect(['/site/login']); // Redirects the user to the login page after logout.
+    }
+
+    public function actionSettings()
+    {
+        return $this->render('settings');
     }
 
 }

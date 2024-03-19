@@ -1008,7 +1008,7 @@ class ApiController extends Controller
         Yii::$app->response->format = Response::FORMAT_JSON;
         return BookingsStatus::find()->all();
     }
-    
+
 //  ----- BOOKING TIMING -----
     public function actionGetBookingTiming()
     {
@@ -1023,12 +1023,13 @@ class ApiController extends Controller
                 $query->andWhere([$key => $value]);
             }
         }
+
         $booking_timings = $query->all();
 
-        if (!empty($booking_timings))
-        {
-            return $booking_timings;
+        if (empty($booking_timings)) {
+            return false;
         }
+        return $booking_timings;
     }
     public function actionCreateBookingTiming()
     {

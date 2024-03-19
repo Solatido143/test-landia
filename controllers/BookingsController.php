@@ -62,12 +62,19 @@ class BookingsController extends Controller
     public function actionView($id)
     {
         $model = Bookings::findOne($id);
+        $bookingServices = new ActiveDataProvider([
+            'query' => BookingsServices::find()->where(['fk_booking' => $id]),
+            'pagination' => [
+                'pageSize' => 5,
+            ],
+        ]);
         $bookingsTimingModel = BookingsTiming::findOne(['fk_booking' => $id]);
         if ($model === null) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
         return $this->render('view', [
             'model' => $model,
+            'bookingServices' => $bookingServices,
             'bookingsTimingModel' => $bookingsTimingModel,
         ]);
     }
@@ -124,6 +131,14 @@ class BookingsController extends Controller
         // Calculate the sum of fk_service
         $booking_services = BookingsServices::find()->where(['fk_booking' => $id])->all();
         $booking_timing = BookingsTiming::findOne(['fk_booking' => $id]);
+
+        if ($booking_timing == null || $booking_services == null) {
+            Yii::$app->session->setFlash('error', [
+                'title' => 'Oh no!',
+                'body' => 'An Error Occurred.',
+            ]);
+            return $this->redirect(['view', 'id' => $id]);
+        }
 
         $paymentTotal = 0.00;
         foreach ($booking_services as $booking_service)

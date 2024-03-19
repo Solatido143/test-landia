@@ -5,6 +5,7 @@ use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Bookings */
+/* @var $bookingServices app\models\BookingsServices */
 /* @var $bookingsTimingModel app\models\BookingsTiming */
 
 $this->title = $model->fkBookingStatus->booking_status . ' ' . $model->fkCustomer->customer_name . ' ' . $model->booking_type;
@@ -80,6 +81,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <div class="col-md-6">
                             <?php if ($bookingsTimingModel !== null): ?>
+
                                 <?= DetailView::widget([
                                     'model' => $bookingsTimingModel,
                                     'attributes' => [
@@ -90,15 +92,66 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 return $bookingsTimingModel->fkEmployee->fname . ' ' . $bookingsTimingModel->fkEmployee->lname;
                                             },
                                         ]
-                                        // Add more attributes as needed
                                     ],
                                 ]) ?>
-                            <?php elseif ($model->fk_booking_status != 2) :?>
-                                <div class="d-flex justify-content-center align-items-center h-100">
-                                    <h1>
-                                        Queue Time: <span> 0 </span><span>mins</span>
-                                    </h1>
+
+                            <?php elseif ($model->fk_booking_status != 3) :?>
+
+                                <div class="col-md-12">
+                                    <?= \yii\grid\GridView::widget([
+                                        'dataProvider' => $bookingServices,
+                                        'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
+                                        'tableOptions' => ["class" => "table table-striped table-bordered"],
+                                        'layout' => "{items}\n{pager}",
+                                        'columns' => [
+                                            [
+                                                'attribute' => 'fk_service',
+                                                'label' => 'Service Name',
+                                                'value' => function ($model) {
+                                                    // Access the related Service model
+                                                    $service = $model->fkService;
+                                                    // Check if the service exists
+                                                    if ($service !== null) {
+                                                        // Return the service name
+                                                        return $service->service_name;
+                                                    } else {
+                                                        return null; // or any default value
+                                                    }
+                                                },
+                                            ],
+                                            [
+                                                'attribute' => 'fk_service',
+                                                'label' => 'Service Fee',
+                                                'value' => function ($model) {
+                                                    // Access the related Service model
+                                                    $service = $model->fkService;
+                                                    // Check if the service exists
+                                                    if ($service !== null) {
+                                                        // Return the service fee
+                                                        return '₱' . $service->service_fee;
+                                                    } else {
+                                                        return null; // or any default value
+                                                    }
+                                                },
+                                            ],
+                                        ],
+                                        'pager' => [
+                                            'class' => 'yii\bootstrap4\LinkPager',
+                                        ]
+                                    ]);?>
                                 </div>
+
+                                <?php if ($model->fk_booking_status != 2) :?>
+                                    <div class="col-md-12">
+                                        <div class="d-flex justify-content-center align-items-center h-100">
+                                            <h1>
+                                                Queue Time: <span> 0 </span><span>mins</span>
+                                            </h1>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+
+
                             <?php endif; ?>
 
                         </div>

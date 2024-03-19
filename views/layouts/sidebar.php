@@ -85,7 +85,6 @@
                         'url' => ['/attendances/index'],
                         'icon' => 'clock',
                         'visible' => $isGuest,
-                        'options' => ['style' => 'border-bottom: 1px solid #4b545c;']
                     ],
 
 //                    ['label' => 'Reports', 'url' => ['reports'], 'visible' => $isGuest, 'icon' => 'file-lines'],
@@ -116,7 +115,7 @@
                         'icon' => 'user',
                         'visible' => $isGuest,
                         'items' => [
-                            ['label' => 'Settings', 'url' => ['site/settings'], 'icon' => 'gear'],
+                            ['label' => 'Settings', 'url' => ['user-manage/view', 'id' => Yii::$app->user->identity->id], 'icon' => 'gear'],
                             ['label' => 'Login', 'url' => ['site/login'], 'icon' => 'sign-in-alt', 'visible' => !$isGuest,],
                             ['label' => 'Signup', 'url' => ['site/register'], 'icon' => 'sign-in-alt', 'visible' => !$isGuest,],
 
