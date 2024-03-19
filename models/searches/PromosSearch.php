@@ -67,7 +67,7 @@ class PromosSearch extends Promos
         $query->andFilterWhere(['like', 'promo', $this->promo])
             ->andFilterWhere(['like', 'expiration_date', $this->expiration_date]);
 
-        $query->andWhere(['>', 'expiration_date', date('Y-m-d')]);
+        $query->andWhere(['>=', 'expiration_date', date('Y-m-d')]);
 
         return $dataProvider;
     }

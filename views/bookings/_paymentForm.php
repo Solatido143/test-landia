@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Promos;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 
@@ -12,21 +13,19 @@ use yii\bootstrap4\ActiveForm;
 $promos = $paymentModel->fetchAndMapData(\app\models\Promos::class, 'id', 'promo');
 
 // Initialize dropdown list options with 'None'
-$promosOption = ['0' => 'None'];
+$promosOption = [];
 
 // Check if $promos contains valid data
 if ($promos) {
     // Iterate over each promo and construct the option label
     foreach ($promos as $promoId => $promoName) {
-        // You might need to retrieve the percentage separately based on your model structure
-        // Assuming you have a method to get percentage, replace $promo->percentage with the appropriate call
-        $percentage = \app\models\Promos::findOne($promoId)->percentage;
+        $promo = Promos::findOne($promoId);
 
-        // Construct the option label with promo name and percentage
-        $label = $promoName . ' (' . $percentage . '%)';
-
-        // Add the option to the array with promo ID as the key
-        $promosOption[$promoId] = $label;
+        // Check if the promo's expiration date is not in the past
+        if ($promo && strtotime($promo->expiration_date) >= strtotime(date('Y-m-d'))) {
+            $label = $promoName . ' (' . $promo->percentage . '%)';
+            $promosOption[$promoId] = $label;
+        }
     }
 }
 ?>
@@ -40,6 +39,9 @@ if ($promos) {
                 <!--Bookings Services GridView-->
                 <?= \yii\grid\GridView::widget([
                     'dataProvider' => $dataProvider,
+                    'pagination' => [
+                        ''
+                    ],
                     'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
                     'tableOptions' => ["class" => "table table-striped table-bordered"],
                     'layout' => "{items}\n{pager}",
@@ -106,9 +108,9 @@ if ($promos) {
                         ) ?>
                     </div>
                     <div class="col-md-4">
-                        <?= $form->field($paymentModel, 'fk_promo')->dropdownList(
+                        <?= $form->field($paymentModel, 'promo')->dropdownList(
                             $promosOption,
-                            ['id' => 'fk_promo', 'prompt' => '- Select promo']
+                            ['id' => 'promo', 'prompt' => '- Select promo']
                         ) ?>
                     </div>
 
@@ -174,7 +176,7 @@ $this->registerJs(<<<JS
         // Function to update discount based on selected promo
         function updateDiscount() {
             // Get the selected promo ID
-            var promoId = $('#fk_promo').val();
+            var promoId = $('#promo').val();
             
             // Make AJAX request to fetch promo discount
             $.ajax({
@@ -201,8 +203,8 @@ $this->registerJs(<<<JS
             });
         }
         
-        // Listen for changes in the fk_promo dropdown
-        $('#fk_promo').on('change', function() {
+        // Listen for changes in the promo dropdown
+        $('#promo').on('change', function() {
             // Update discount when dropdown selection changes
             updateDiscount();
         });

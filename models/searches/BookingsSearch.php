@@ -65,23 +65,27 @@ class BookingsSearch extends Bookings
             return $dataProvider;
         }
 
-        // Filter to show only bookings for today
-        $currentDate = date('Y-m-d');
+//        // Filter to show only bookings for today
+//        $currentDate = date('Y-m-d');
+//        // Calculate start and end timestamps for today
+//        $startOfDay = strtotime($currentDate . ' 00:00:00');
+//        $endOfDay = strtotime($currentDate . ' 23:59:59');
+//        // Filter based on logged_time between start and end of today
+//        $query->andFilterWhere(['>=', 'logged_time', date('Y-m-d H:i:s', $startOfDay)])
+//            ->andFilterWhere(['<=', 'logged_time', date('Y-m-d H:i:s', $endOfDay)]);
 
-        // Calculate start and end timestamps for today
-        $startOfDay = strtotime($currentDate . ' 00:00:00');
-        $endOfDay = strtotime($currentDate . ' 23:59:59');
-
-        // Filter based on logged_time between start and end of today
-        $query->andFilterWhere(['>=', 'logged_time', date('Y-m-d H:i:s', $startOfDay)])
-            ->andFilterWhere(['<=', 'logged_time', date('Y-m-d H:i:s', $endOfDay)]);
-
+        // Filter to show bookings for today's date or past dates with fk_booking_status of 2
+        $query->andFilterWhere([
+            'or',
+            ['=', 'DATE(logged_time)', date('Y-m-d')], // Today's date
+            ['and', ['<', 'logged_time', date('Y-m-d 00:00:00')], ['fk_booking_status' => 2]], // Past dates with fk_booking_status of 2
+        ]);
 
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
             'fk_customer' => $this->fk_customer,
-            'fk_booking_status' => $this->fk_booking_status,
+//            'fk_booking_status' => $this->fk_booking_status,
         ]);
 
         $query->andFilterWhere(['like', 'booking_type', $this->booking_type])

@@ -46,6 +46,9 @@ class AttendancesSearch extends AttendancesModel
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => 10, // Adjust the number of items shown per page
+            ],
         ]);
 
         $this->load($params);

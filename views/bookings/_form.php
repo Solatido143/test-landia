@@ -40,7 +40,8 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
                                 'autoclose' => true,
                                 'todayHighlight' => true,
                                 'todayBtn' => true,
-                                'format' => 'mm-dd-yyyy HH:ii:ss'
+                                'startDate' => 'today',
+                                'format' => 'yyyy-mm-dd hh:ii:ss'
                             ],
                             'layout' => '{input}{picker}',
                             'size' => 'sm',
@@ -88,7 +89,7 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
                         </div>
                     </div>
                     <div class="col-md-12">
-                        <?= $form->field($model, 'searchQuery')->textInput(['placeholder' => 'Search services here...'])->label(false) ?>
+                        <input type="text" name="searchQuery" placeholder="Search services here..." class="form-control form-group">
                     </div>
                 </div>
 
@@ -97,7 +98,7 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
                         'allModels' => $services,
                     ]),
                     'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
-                    'tableOptions' => ["class" => "table table-striped table-bordered"],
+                    'tableOptions' => ["class" => "table table-striped table-bordered create-bookings-list-services"],
                     'layout' => "{items}\n{pager}",
                     'columns' => [
                         [
@@ -123,6 +124,9 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
                         'service_name',
                         'service_fee',
                     ],
+                    'pager' => [
+                        'class' => 'yii\bootstrap4\LinkPager',
+                    ]
                 ]) ?>
 
             </div>
@@ -136,6 +140,9 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
 <?php
 $this->registerJs(<<<JS
     $(document).ready(function() {
+        
+        
+        
         // Fetch booking services via AJAX when the page loads
         $.ajax({
             url: '/bookings/booking-services?id=<?= $model->id ?>',

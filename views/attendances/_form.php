@@ -58,27 +58,32 @@ $this->registerJs("
 ?>
 
 <div class="attendances-form">
-
-    <div id="clock" class="clock mb-3"></div>
-
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'fk_employee')->hiddenInput()->label(false) ?>
+    <div class="d-flex justify-content-center align-items-center flex-column">
+        <div id="clock" class="clock mb-3"></div>
 
-    <?= $form->field($model, 'sign_in')->hiddenInput()->label(false) ?>
+        <?php if ($attendance === null || !empty($attendance->sign_in && !empty($attendance->sign_out))) : ?>
+            <div class="form-group">
+                <?= Html::submitButton('Time In', ['class' => 'btn btn-success']) ?>
+            </div>
+        <?php elseif (empty($attendance->sign_out)): ?>
+            <div class="form-group">
+                <?= Html::submitButton('Time Out', ['class' => 'btn btn-danger']) ?>
+            </div>
+        <?php endif; ?>
+    </div>
 
-    <?= $form->field($model, 'sign_in_log')->hiddenInput()->label(false) ?>
 
 
-    <?php if ($attendance === null || (!empty($attendance->sign_in) && !empty($attendance->sign_out))) : ?>
-        <div class="form-group">
-            <?= Html::submitButton('Time In', ['class' => 'btn btn-success']) ?>
-        </div>
-    <?php elseif (empty($attendance->sign_out)): ?>
-        <div class="form-group">
-            <?= Html::submitButton('Time Out', ['class' => 'btn btn-danger']) ?>
-        </div>
-    <?php endif; ?>
+    <div class="d-none">
+        <?= $form->field($model, 'fk_employee')->hiddenInput()->label(false) ?>
+
+        <?= $form->field($model, 'sign_in')->hiddenInput()->label(false) ?>
+
+        <?= $form->field($model, 'sign_in_log')->hiddenInput()->label(false) ?>
+    </div>
+
 
     <?php ActiveForm::end(); ?>
 

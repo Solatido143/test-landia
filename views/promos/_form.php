@@ -29,20 +29,20 @@ use yii\bootstrap4\ActiveForm;
 
                 </div>
                 <div class="col-md-6">
-                        <?= $form->field($model, 'expiration_date')->widget(DatePicker::class, [
-                            'options' => [
-                                'class' => 'form-control',
-                            ],
-                            'pluginOptions' => [
-                                'autoclose' => true,
-                                'format' => 'yyyy-mm-dd',
-                                'todayHighlight' => true,
-                            ],
-                            'layout' => '{input}{picker}',
-                        ]);
-                        ?>
-
-
+                    <?= $form->field($model, 'expiration_date')->widget(DatePicker::class, [
+                        'options' => [
+                            'class' => 'form-control',
+                        ],
+                        'pluginOptions' => [
+                            'autoclose' => true,
+                            'format' => 'yyyy-mm-dd',
+                            'todayHighlight' => true,
+                            'startDate' => 'today',
+//                            'todayBtn' => true,
+                        ],
+                        'layout' => '{input}{picker}',
+                    ]);
+                    ?>
                 </div>
 
             </div>

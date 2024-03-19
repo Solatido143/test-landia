@@ -39,6 +39,14 @@ $this->registerJsFile($publishedRes[1].'/control_sidebar.js', ['depends' => '\ha
         .card-body::-webkit-scrollbar {
             display: none;
         }
+        .datepicker-dropdown {
+            padding: 0.5rem;
+        }
+        .datepicker table tr td, .datepicker table tr th
+        {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
     </style>
 </head>
 <body class="hold-transition sidebar-mini">

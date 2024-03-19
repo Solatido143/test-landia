@@ -1,5 +1,7 @@
 <?php
 
+use app\models\Attendances;
+use app\models\BookingsTiming;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 
@@ -7,8 +9,8 @@ use yii\bootstrap4\ActiveForm;
 /* @var $model app\models\EmployeeSelectionForm */
 /* @var $form yii\bootstrap4\ActiveForm */
 
-$todayDate = date('m-d-Y');
-$employeeAttendanceTimeIn = \app\models\Attendances::find()
+$todayDate = date('Y-m-d');
+$employeeAttendanceTimeIn = Attendances::find()
     ->where(['date' => $todayDate])
     ->andWhere(['sign_out_log' => null])
     ->all();
@@ -18,11 +20,12 @@ $employees = []; // Initialize an empty array to hold employees
 foreach ($employeeAttendanceTimeIn as $attendance) {
     // Access the related employee model for each attendance record
     $employee = $attendance->fkEmployee;
-    $bookingTiming = \app\models\BookingsTiming::findOne(['fk_employee' => $employee->id]);
+    $bookingTiming = BookingsTiming::findOne(['fk_employee' => $employee->id]);
 
-    if ($bookingTiming !== null) {
+    if ($bookingTiming !== null && $bookingTiming->completion_time == null) {
         continue; // Skip this employee if booking timing data exists
     }
+
     if ($employee->fk_position != 3){
         continue; // Skip this employee if position is not 3
     }

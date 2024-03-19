@@ -5,9 +5,9 @@
 /* @var $services app\models\Services */
 /* @var $servicesModel app\models\Services */
 
-$this->title = 'Update Bookings: ' . $model->id;
+$this->title = 'Update Bookings: ' . $model->fkCustomer->customer_name;
 $this->params['breadcrumbs'][] = ['label' => 'Bookings', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = ['label' => $model->fkBookingStatus->booking_status . ' ' . $model->fkCustomer->customer_name, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 

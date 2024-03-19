@@ -12,7 +12,7 @@ use yii\helpers\ArrayHelper;
  * @property int $fk_booking
  * @property string $mode_of_payment
  * @property float $payment_amount
- * @property int $fk_promo
+ * @property int $promo
  * @property float $discount
  * @property string $payment_date
  * @property string $logged_by
@@ -41,13 +41,13 @@ class Payments extends \yii\db\ActiveRecord
     {
         return [
             [['fk_booking', 'mode_of_payment', 'payment_amount', 'discount', 'payment_date', 'logged_by', 'logged_time', 'amount_tendered'], 'required'],
-            [['fk_booking', 'fk_promo'], 'integer'],
+            [['fk_booking', 'promo'], 'integer'],
             [['mode_of_payment'], 'string'],
             [['payment_amount', 'amount_tendered', 'change'], 'number', 'min' => 0],
             [['discount'], 'number'],
             [['payment_date', 'logged_by', 'logged_time'], 'string', 'max' => 255],
             [['fk_booking'], 'exist', 'skipOnError' => true, 'targetClass' => Bookings::class, 'targetAttribute' => ['fk_booking' => 'id']],
-            [['fk_promo'], 'exist', 'skipOnError' => true, 'targetClass' => Promos::class, 'targetAttribute' => ['fk_promo' => 'id']],
+            [['promo'], 'exist', 'skipOnError' => true, 'targetClass' => Promos::class, 'targetAttribute' => ['promo' => 'id']],
             ['amount_tendered', 'compare', 'compareAttribute' => 'total_due', 'operator' => '>=', 'type' => 'number', 'message' => 'Amount tendered must be greater than or equal to Total due.'],
         ];
     }
@@ -62,7 +62,7 @@ class Payments extends \yii\db\ActiveRecord
             'fk_booking' => 'Fk Booking',
             'mode_of_payment' => 'Mode Of Payment',
             'payment_amount' => 'Payment Amount',
-            'fk_promo' => 'Promo',
+            'promo' => 'Promo',
             'discount' => 'Discount',
             'payment_date' => 'Payment Date',
             'logged_by' => 'Logged By',
@@ -87,7 +87,7 @@ class Payments extends \yii\db\ActiveRecord
      */
     public function getFkPromo()
     {
-        return $this->hasOne(Promos::class, ['id' => 'fk_promo']);
+        return $this->hasOne(Promos::class, ['id' => 'promo']);
     }
 
     /**

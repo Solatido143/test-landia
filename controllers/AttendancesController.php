@@ -104,7 +104,7 @@ class AttendancesController extends Controller
         $model->fk_employee = $employee->id;
         $model->sign_in = date('H:i');
         $model->sign_in_log = "Time In";
-        $model->date = date('m-d-Y');
+        $model->date = date('Y-m-d');
         $model->sign_out = "";
         $model->remarks = "";
 
@@ -158,7 +158,7 @@ class AttendancesController extends Controller
             ]);
             return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
         }
-        $today = date('m-d-Y');
+        $today = date('Y-m-d');
         $modelDate = $model->date;
         if ($modelDate != $today) {
             $model->sign_out = date('H:i Y-m-d');

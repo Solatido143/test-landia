@@ -120,7 +120,7 @@ class ApiController extends Controller
         $existingAttendance = Attendances::find()
             ->where([
                 'fk_employee' => $employee->id,
-                'date' => date('m-d-Y'),
+                'date' => date('Y-m-d'),
                 'sign_out' => ''
             ])
             ->exists();
@@ -134,7 +134,7 @@ class ApiController extends Controller
 
         $attendances = new Attendances();
         $attendances->fk_employee = $employee->id;
-        $attendances->date = date('m-d-Y');
+        $attendances->date = date('Y-m-d');
         $attendances->sign_in = date('H:i');
         $attendances->sign_in_log = "Time In";
         $attendances->sign_out = "";
@@ -789,7 +789,7 @@ class ApiController extends Controller
 
         $customer = new Customers();
         $customer->load(Yii::$app->request->getBodyParams(), '');
-        $customer->logged_time = date('m-d-Y H:i:s');
+        $customer->logged_time = date('Y-m-d H:i:s');
         $customer->updated_by = '';
         $customer->updated_time = '';
         if ($customer->save())

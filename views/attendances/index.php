@@ -17,7 +17,7 @@ $attendance = $employee ? Attendances::find()
     ->orderBy(['id' => SORT_DESC])
     ->one() : null;
 
-$today = date('m-d-Y');
+$today = date('Y-m-d');
 $dataProvider->query->andWhere(['date' => $today]);
 
 $dataProvider->sort->defaultOrder = ['id' => SORT_DESC];
@@ -45,6 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     <?= GridView::widget([
                         'dataProvider' => $dataProvider,
+                        'layout' => "{items},{pager}",
                         'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
                         'tableOptions' => ["class" => "table table-striped table-bordered text-nowrap"],
                         'columns' => [

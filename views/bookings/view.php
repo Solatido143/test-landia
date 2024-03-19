@@ -78,8 +78,8 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]) ?>
                         </div>
 
-                        <?php if ($bookingsTimingModel !== null): ?>
-                            <div class="col-md-6">
+                        <div class="col-md-6">
+                            <?php if ($bookingsTimingModel !== null): ?>
                                 <?= DetailView::widget([
                                     'model' => $bookingsTimingModel,
                                     'attributes' => [
@@ -93,10 +93,15 @@ $this->params['breadcrumbs'][] = $this->title;
                                         // Add more attributes as needed
                                     ],
                                 ]) ?>
-                            </div>
-                        <?php endif; ?>
+                            <?php elseif ($model->fk_booking_status != 2) :?>
+                                <div class="d-flex justify-content-center align-items-center h-100">
+                                    <h1>
+                                        Queue Time: <span> 0 </span><span>mins</span>
+                                    </h1>
+                                </div>
+                            <?php endif; ?>
 
-
+                        </div>
                     </div>
                 </div>
                 <!--.col-md-12-->

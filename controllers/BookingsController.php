@@ -84,6 +84,8 @@ class BookingsController extends Controller
         if ($employeeSelectionModel->load(Yii::$app->request->post()) && $employeeSelectionModel->validate()) {
             // Proceed with your logic here
             $bookingModel->fk_booking_status = 2;
+            $bookingModel->updated_by = Yii::$app->user->identity->username;
+            $bookingModel->updated_time = date('Y-m-d H:i:s');
 
             $timing->fk_employee = $employeeSelectionModel->selectEmployee;
             $timing->fk_booking = $bookingModel->id;
@@ -98,6 +100,10 @@ class BookingsController extends Controller
             'employeeSelectionModel' => $employeeSelectionModel,
             'bookingModel' => $bookingModel,
         ]);
+    }
+    public function actionQueueTiming()
+    {
+
     }
 
     public function actionPayments($id)
@@ -132,9 +138,9 @@ class BookingsController extends Controller
         $modelPayment->logged_time = date('H:i:s');
 
         if ($modelPayment->load(Yii::$app->request->post()) && $modelPayment->save()) {
-
+            $booking_timing->completion_time = date('Y-m-d H:i:s');
             $bookingModel->fk_booking_status = 3;
-            if ($bookingModel->save())
+            if ($bookingModel->save() && $booking_timing->save())
             {
                 Yii::$app->session->setFlash('success', [
                     'title' => 'Yay!',
