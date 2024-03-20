@@ -63,9 +63,7 @@ class EmployeesSearch extends Employees
             'id' => $this->id,
             'fk_position' => $this->fk_position,
             'availability' => $this->availability,
-
             'fk_employment_status' => $this->fk_employment_status,
-
             'fk_cluster' => $this->fk_cluster,
             'fk_region' => $this->fk_region,
             'fk_region_area' => $this->fk_region_area,

@@ -41,7 +41,7 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
                                 'todayHighlight' => true,
                                 'todayBtn' => true,
                                 'startDate' => 'today',
-                                'format' => 'yyyy-mm-dd hh:ii:ss'
+                                'format' => 'yyyy-mm-dd hh:ii'
                             ],
                             'layout' => '{input}{picker}',
                             'size' => 'sm',
@@ -140,9 +140,6 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
 <?php
 $this->registerJs(<<<JS
     $(document).ready(function() {
-        
-        
-        
         // Fetch booking services via AJAX when the page loads
         $.ajax({
             url: '/bookings/booking-services?id=<?= $model->id ?>',

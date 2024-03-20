@@ -94,62 +94,71 @@ $this->params['breadcrumbs'][] = $this->title;
                                         ]
                                     ],
                                 ]) ?>
+                            <?php endif; ?>
 
-                            <?php elseif ($model->fk_booking_status != 3) :?>
 
-                                <div class="col-md-12">
-                                    <?= \yii\grid\GridView::widget([
-                                        'dataProvider' => $bookingServices,
-                                        'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
-                                        'tableOptions' => ["class" => "table table-striped table-bordered"],
-                                        'layout' => "{items}\n{pager}",
-                                        'columns' => [
-                                            [
-                                                'attribute' => 'fk_service',
-                                                'label' => 'Service Name',
-                                                'value' => function ($model) {
-                                                    // Access the related Service model
-                                                    $service = $model->fkService;
-                                                    // Check if the service exists
-                                                    if ($service !== null) {
-                                                        // Return the service name
-                                                        return $service->service_name;
-                                                    } else {
-                                                        return null; // or any default value
-                                                    }
-                                                },
-                                            ],
-                                            [
-                                                'attribute' => 'fk_service',
-                                                'label' => 'Service Fee',
-                                                'value' => function ($model) {
-                                                    // Access the related Service model
-                                                    $service = $model->fkService;
-                                                    // Check if the service exists
-                                                    if ($service !== null) {
-                                                        // Return the service fee
-                                                        return '₱' . $service->service_fee;
-                                                    } else {
-                                                        return null; // or any default value
-                                                    }
-                                                },
-                                            ],
+                            <?php if ($model->fk_booking_status != 3) :?>
+
+                                <?= \yii\grid\GridView::widget([
+                                    'dataProvider' => $bookingServices,
+                                    'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
+                                    'tableOptions' => ["class" => "table table-striped table-bordered"],
+                                    'layout' => "{items}\n{pager}",
+                                    'columns' => [
+                                        [
+                                            'attribute' => 'fk_service',
+                                            'label' => 'Service Name',
+                                            'value' => function ($model) {
+                                                // Access the related Service model
+                                                $service = $model->fkService;
+                                                // Check if the service exists
+                                                if ($service !== null) {
+                                                    // Return the service name
+                                                    return $service->service_name;
+                                                } else {
+                                                    return null; // or any default value
+                                                }
+                                            },
                                         ],
-                                        'pager' => [
-                                            'class' => 'yii\bootstrap4\LinkPager',
-                                        ]
-                                    ]);?>
-                                </div>
+                                        [
+                                            'attribute' => 'fk_service',
+                                            'label' => 'Service Fee',
+                                            'value' => function ($model) {
+                                                // Access the related Service model
+                                                $service = $model->fkService;
+                                                // Check if the service exists
+                                                if ($service !== null) {
+                                                    // Return the service fee
+                                                    return '₱' . $service->service_fee;
+                                                } else {
+                                                    return null; // or any default value
+                                                }
+                                            },
+                                        ],
+                                    ],
+                                    'pager' => [
+                                        'class' => 'yii\bootstrap4\LinkPager',
+                                    ]
+                                ]);?>
 
-                                <?php if ($model->fk_booking_status != 2) :?>
+                                <?php if ($model->fk_booking_status == 1) : ?>
                                     <div class="col-md-12">
                                         <div class="d-flex justify-content-center align-items-center h-100">
                                             <h1>
-                                                Queue Time: <span> 0 </span><span>mins</span>
+                                                Queue Time: <span id="minute_number">0</span><span> mins</span>
+                                            </h1>
+                                        </div>
+                                    </div>
+                                <?php elseif ($model->fk_booking_status == 2) : ?>
+                                    <div class="col-md-12">
+                                        <div class="d-flex justify-content-center align-items-center h-100">
+                                            <h1>
+                                                Remaining Time: <span id="minute_number">0</span><span> mins</span>
                                             </h1>
                                         </div>
                                     </div>
                                 <?php endif; ?>
+
 
 
                             <?php endif; ?>
@@ -165,3 +174,44 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <!--.card-->
 </div>
+
+<?php
+$this->registerJs(<<<JS
+    $(document).ready(function () {
+        $.ajax({
+            url: '/bookings/queue-timing?id=$model->id',
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                // Log the response to the browser console
+                // console.log('Response from server:', response);
+                // console.log(this.url);
+                
+                // Update the element with the received data
+                $('#minute_number').text(response);
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+        
+        $.ajax({
+            url: '/bookings/ongoing-timing?id=$model->id',
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                // Log the response to the browser console
+                // console.log('Response from server:', response);
+                // console.log(this.url);
+                
+                // Update the element with the received data
+                $('#minute_number').text(response);
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+    })
+JS
+);
+?>

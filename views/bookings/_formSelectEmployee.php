@@ -20,10 +20,13 @@ $employees = []; // Initialize an empty array to hold employees
 foreach ($employeeAttendanceTimeIn as $attendance) {
     // Access the related employee model for each attendance record
     $employee = $attendance->fkEmployee;
-    $bookingTiming = BookingsTiming::findOne(['fk_employee' => $employee->id]);
+    $bookingTiming = BookingsTiming::find()
+        ->where(['fk_employee' => $employee->id])
+        ->orderBy(['id' => SORT_DESC])
+        ->one();
 
     if ($bookingTiming !== null && $bookingTiming->completion_time == null) {
-        continue; // Skip this employee if booking timing data exists
+        continue;
     }
 
     if ($employee->fk_position != 3){

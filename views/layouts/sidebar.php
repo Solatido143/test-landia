@@ -38,6 +38,7 @@
         <nav>
             <?php
             $isGuest = !Yii::$app->user->isGuest;
+            $userId = Yii::$app->user->id;
             echo \hail812\adminlte\widgets\Menu::widget([
                 'items' => [
 //                    system
@@ -48,7 +49,6 @@
                         'icon' => 'home',
                         'visible' => $isGuest
                     ],
-
                     [
                         'label' => 'Bookings',
                         'url' => ['/bookings'],
@@ -61,19 +61,6 @@
                         'icon' => 'person-circle-plus',
                         'visible' => $isGuest,
                     ],
-
-//                    [
-//                        'label' => 'Sales',
-//                        'icon' => 'sack-dollar',
-//                        'visible' => $isGuest,
-//                        'items' => [
-//                            ['label' => 'Booking', 'url' => ['bookings'], 'icon' => 'check-to-slot'],
-//                            ['label' => 'Sales Receipt', 'url' => ['receipts'], 'icon' => 'receipt'],
-//                            ['label' => 'services', 'url' => ['services'], 'icon' => 'scroll'],
-//
-//                        ]
-//                    ],
-
                     [
                         'label' => 'Inventory',
                         'url' => ['/products/index'],
@@ -110,20 +97,9 @@
                     ['label' => 'User', 'header' => true , 'options' => ['style' => 'color: #6c757d']],
                     ['label' => 'Login', 'url' => ['site/login'], 'icon' => 'sign-in-alt', 'visible' => !$isGuest,],
                     ['label' => 'Signup', 'url' => ['site/register'], 'icon' => 'sign-in-alt', 'visible' => !$isGuest,],
-                    [
-                        'label' => 'Profile',
-                        'icon' => 'user',
-                        'visible' => $isGuest,
-                        'items' => [
-                            ['label' => 'Settings', 'url' => ['user-manage/view', 'id' => Yii::$app->user->identity->id], 'icon' => 'gear'],
-                            ['label' => 'Login', 'url' => ['site/login'], 'icon' => 'sign-in-alt', 'visible' => !$isGuest,],
-                            ['label' => 'Signup', 'url' => ['site/register'], 'icon' => 'sign-in-alt', 'visible' => !$isGuest,],
-
-                            [
-                                'label' => 'Logout',
-                                'url' => ['site/logout'],
-                                'icon' => 'right-from-bracket',
-                                'visible' => $isGuest,
+                    ['label' => 'Profile', 'icon' => 'user', 'visible' => $isGuest, 'items' => [
+                            ['label' => 'Settings', 'url' => ['user-manage/view', 'id' => $userId], 'icon' => 'gear', 'visible' => $isGuest,],
+                            ['label' => 'Logout', 'url' => ['site/logout'], 'icon' => 'right-from-bracket', 'visible' => $isGuest,
                                 'linkTemplate' => '<a class="nav-link {active}" href="{url}" data-method="post">{icon} {label}</a>',
                             ],
                         ]

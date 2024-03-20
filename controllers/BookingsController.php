@@ -13,6 +13,7 @@ use Yii;
 use app\models\Bookings;
 use app\models\searches\BookingsSearch;
 use yii\data\ActiveDataProvider;
+use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -108,10 +109,72 @@ class BookingsController extends Controller
             'bookingModel' => $bookingModel,
         ]);
     }
-    public function actionQueueTiming()
-    {
 
+    public function actionQueueTiming($id)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        // Fetch completion times for queued bookings
+        $bookingInQueueModels = Bookings::find()
+            ->where(['fk_booking_status' => 1])
+            ->andWhere(['not', ['id' => $id]])
+            ->andWhere(['<', 'id', $id])
+            ->all();
+
+
+        $completionTimes = [];
+
+        if (!empty($bookingInQueueModels)) {
+            foreach ($bookingInQueueModels as $bookingInQueueModel) {
+                $bookingServicesModels = BookingsServices::find()
+                    ->where(['fk_booking' => $bookingInQueueModel->id])
+                    ->all();
+
+                foreach ($bookingServicesModels as $bookingServicesModel) {
+                    $completionTime = $bookingServicesModel->fkService->completion_time;
+                    $completionTimes[] = $completionTime;
+                }
+            }
+        } else {
+            return [0];
+        }
+        $sum = array_sum($completionTimes);
+        return $sum;
     }
+
+    public function actionOngoingTiming($id)
+    {
+        //Fetch completion times for ongoing bookings
+        $bookingOngoingModels = Bookings::find()
+            ->where(['fk_booking_status' => 2])
+            ->andWhere(['not', ['id' => $id]])
+            ->all();
+
+        foreach ($bookingOngoingModels as $bookingOngoingModel) {
+            $bookingServicesModels = BookingsServices::find()
+                ->where(['fk_booking' => $bookingOngoingModel->id])
+                ->all();
+
+            foreach ($bookingServicesModels as $bookingServicesModel) {
+                $completionTime = $bookingServicesModel->fkService->completion_time;
+                $completionTimes[] = $completionTime;
+            }
+        }
+        $sum = array_sum($completionTimes);
+
+        // Assuming $sum contains the total sum of completion times in minutes
+        $totalMinutes = $sum;
+        // Convert the string to a Unix timestamp
+        $timestamp = strtotime("+" . $totalMinutes . " minutes");
+        // Convert Unix timestamp to a human-readable date and time
+        $dateTime = date("i:s", $timestamp);
+    }
+
+
+
+
+
+
 
     public function actionPayments($id)
     {
@@ -228,12 +291,11 @@ class BookingsController extends Controller
 
         $model->fk_booking_status = 1;
         $model->logged_by = Yii::$app->user->identity->username;
-        $model->logged_time = date('Y-m-d H:i');
+        $model->logged_time = date('Y-m-d H:i:s');
         $model->updated_by = '';
         $model->updated_time = '';
 
         if ($model->load(Yii::$app->request->post())) {
-            // Get the selected services from the form submission
             $selectedServices = Yii::$app->request->post('selectedServices');
 
             if (empty($selectedServices)) {
@@ -242,10 +304,9 @@ class BookingsController extends Controller
                     'body' => 'Please select at least one service.',
                 ]);
             } else {
-                $existingBooking = Bookings::find()
-                    ->where(['fk_customer' => $model->fk_customer])
-                    ->one();
-
+//                $existingBooking = Bookings::find()
+//                    ->where(['fk_customer' => $model->fk_customer])
+//                    ->one();
 //                if ($existingBooking !== null) {
 //                    Yii::$app->session->setFlash('error', [
 //                        'title' => 'Error!',
@@ -334,10 +395,10 @@ class BookingsController extends Controller
         ]);
     }
 
-    public function actionBookingServices($id)
+    public function actionBookingServices($fk_booking)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
-        $booking_services = BookingsServices::find()->where(['fk_booking' => $id])->all();
+        $booking_services = BookingsServices::find()->where(['fk_booking' => $fk_booking])->all();
         return $booking_services;
     }
 
