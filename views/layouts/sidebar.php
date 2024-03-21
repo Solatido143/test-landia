@@ -74,7 +74,7 @@
                         'visible' => $isGuest,
                     ],
 
-//                    ['label' => 'Reports', 'url' => ['reports'], 'visible' => $isGuest, 'icon' => 'file-lines'],
+                    ['label' => 'Reports', 'url' => ['/site/reports'], 'visible' => $isGuest, 'icon' => 'file-lines'],
 
 //                    admin
                     ['label' => 'Admin', 'header' => true , 'options' => ['style' => 'color: #6c757d'], 'visible' => $isGuest],

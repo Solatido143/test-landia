@@ -41,11 +41,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     </div>
 
-<!--                    --><?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+                    <!--<?php // echo $this->render('_search', ['model' => $searchModel]); ?>-->
 
                     <?= GridView::widget([
                         'dataProvider' => $dataProvider,
-                        'layout' => "{items},{pager}",
+                        'layout' => "{items}{pager}",
                         'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
                         'tableOptions' => ["class" => "table table-striped table-bordered text-nowrap"],
                         'columns' => [
@@ -89,7 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'summaryOptions' => ['class' => 'summary mb-2'],
                         'pager' => [
                             'class' => 'yii\bootstrap4\LinkPager',
-                        ],
+                        ]
                     ]); ?>
 
 

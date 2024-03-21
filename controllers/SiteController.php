@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Bookings;
+use app\models\Payments;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
@@ -165,9 +166,11 @@ class SiteController extends Controller
         return $this->redirect(['/site/login']); // Redirects the user to the login page after logout.
     }
 
-    public function actionSettings()
+    public function actionReports()
     {
-        return $this->render('settings');
+        $paymentModel = Payments::class;
+
+        return $this->render('reports');
     }
 
 }

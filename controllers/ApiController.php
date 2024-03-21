@@ -21,6 +21,7 @@ use app\models\RegisterForm;
 use app\models\Roles;
 use app\models\Services;
 use app\models\User;
+use app\models\WaitingTime;
 use Yii;
 use yii\rest\Controller;
 use yii\web\Response;
@@ -1051,27 +1052,43 @@ class ApiController extends Controller
             ];
         }
     }
-    public function actionUpdateBookingTiming()
+
+    public function actionUpdateBookingTiming($fk_booking = null)
     {
         date_default_timezone_set('Asia/Manila');
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $request = Yii::$app->getRequest();
-        $fk_booking = $request->get('fk_booking');
-        $fk_employee = $request->get('fk_employee');
-
-        $condition = [];
-
-        if ($fk_booking !== null) {
-            $condition['fk_booking'] = $fk_booking;
-        } elseif ($fk_employee !== null) {
-            $condition['fk_employee'] = $fk_employee;
+        if ($fk_booking === null) {
+            Yii::$app->response->statusCode = 400; // Bad Request
+            return [
+                'success' => false,
+                'message' => 'Missing required parameter: fk_booking',
+            ];
         }
 
-        $booking_timing = $condition ? BookingsTiming::findOne($condition) : null;
+        $booking_timing = BookingsTiming::findOne(['fk_booking' => $fk_booking]);
 
-        return $booking_timing;
+        if ($booking_timing === null) {
+            Yii::$app->response->statusCode = 404; // Not Found
+            return [
+                'success' => false,
+                'message' => 'Service not found',
+            ];
+        }
+
+        $booking_timing->load(Yii::$app->getRequest()->getBodyParams(), '');
+
+        if ($booking_timing->save()) {
+            return $booking_timing;
+        } else {
+            return [
+                'message' => 'Failed to update service',
+                'success' => false,
+                'errors' => $booking_timing->errors,
+            ];
+        }
     }
+
 
 
 
@@ -1202,6 +1219,84 @@ class ApiController extends Controller
         $query->select($fields);
         return $queryParams;
     }
+
+    public function actionQueueTime($id = null)
+    {
+        Yii::$app->response->format = Response::FORMAT_RAW;
+
+        if ($id === null) {
+            Yii::$app->response->statusCode = 201;
+            return [
+                'success' => false,
+                'message' => 'Missing required parameter: id',
+            ];
+        }
+
+        $serviceInqueueTime = $this->calculateServiceInqueueTime($id);
+        $serviceInqueueAll = $this->calculateServiceInqueueAll();
+
+        $waiting_time = '0';
+
+        $min_waiting_time = WaitingTime::find()->select('MIN(waiting_time)')->scalar();
+        $max_waiting_time = WaitingTime::find()->select('MAX(waiting_time)')->scalar();
+
+        if (!is_null($min_waiting_time)) {
+            $waiting_time = $min_waiting_time . ' to ' . $max_waiting_time;
+            if ($min_waiting_time == $max_waiting_time) {
+                $waiting_time = $min_waiting_time - $serviceInqueueAll + $serviceInqueueTime;
+            }
+        }
+
+        return $waiting_time;
+    }
+
+    private function calculateServiceInqueueTime($id)
+    {
+        $serviceInqueueTime = 0;
+
+        $bookingInqueueModel = Bookings::find()
+            ->where(['fk_booking_status' => 1])
+            ->andWhere(['not', ['id' => $id]])
+            ->andWhere(['<', 'id', $id])
+            ->all();
+
+        foreach ($bookingInqueueModel as $bookingInqueue) {
+            $serviceInqueueTime += $this->calculateServiceTime($bookingInqueue->id);
+        }
+
+        return $serviceInqueueTime;
+    }
+
+    private function calculateServiceInqueueAll()
+    {
+        $serviceInqueueAll = 0;
+
+        $bookingInqueueAllModel = Bookings::find()
+            ->where(['fk_booking_status' => 1])
+            ->all();
+
+        foreach ($bookingInqueueAllModel as $bookingInqueueAll) {
+            $serviceInqueueAll += $this->calculateServiceTime($bookingInqueueAll->id);
+        }
+
+        return $serviceInqueueAll;
+    }
+
+    private function calculateServiceTime($bookingId)
+    {
+        $serviceTime = 0;
+
+        $booking_Services = BookingsServices::find()
+            ->where(['fk_booking' => $bookingId])
+            ->all();
+
+        foreach ($booking_Services as $booking_Service) {
+            $serviceTime += $booking_Service->fkService->completion_time;
+        }
+
+        return $serviceTime;
+    }
+
 
 
 }

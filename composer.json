@@ -26,7 +26,9 @@
         "kartik-v/yii2-widget-datepicker": "dev-master",
         "kartik-v/yii2-widget-datetimepicker": "dev-master",
         "ext-json": "*",
-        "kartik-v/yii2-export": "dev-master"
+        "kartik-v/yii2-export": "dev-master",
+        "kartik-v/yii2-grid": "dev-master",
+        "kartik-v/yii2-bootstrap4-dropdown": "@dev"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

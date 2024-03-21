@@ -31,12 +31,6 @@ $Roles = $UserModel->fetchAndMapData(\app\models\Roles::class, 'user_access_id',
                 <div class="col-md-12">
                     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
                 </div>
-                <div class="col-md-12">
-                    <?= $form->field($model, 'password')->textInput(['maxlength' => true]) ?>
-                </div>
-                <div class="col-md-12">
-                    <?= $form->field($model, 'confirmPassword')->textInput(['maxlength' => true]) ?>
-                </div>
                 <div class="col-md-6">
                     <?= $form->field($model, 'status')->dropDownList([
                         10 => 'Active',

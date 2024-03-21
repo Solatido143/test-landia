@@ -14,6 +14,12 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
+    'modules' => [
+        'gridview' =>  [
+            'class' => '\kartik\grid\Module'
+        ]
+    ],
+
     'components' => [
 //        'view' => [
 //            'theme' => [
@@ -22,6 +28,10 @@ $config = [
 //                ],
 //            ],
 //        ],
+        'formatter' => [
+            'class' => 'yii\i18n\Formatter',
+            'currencyCode' => 'PHP', // Specify your desired currency code here
+        ],
 
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation

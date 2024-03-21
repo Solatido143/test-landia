@@ -65,15 +65,6 @@ class BookingsSearch extends Bookings
             return $dataProvider;
         }
 
-//        // Filter to show only bookings for today
-//        $currentDate = date('Y-m-d');
-//        // Calculate start and end timestamps for today
-//        $startOfDay = strtotime($currentDate . ' 00:00:00');
-//        $endOfDay = strtotime($currentDate . ' 23:59:59');
-//        // Filter based on logged_time between start and end of today
-//        $query->andFilterWhere(['>=', 'logged_time', date('Y-m-d H:i:s', $startOfDay)])
-//            ->andFilterWhere(['<=', 'logged_time', date('Y-m-d H:i:s', $endOfDay)]);
-
         // Filter to show bookings for today's date or past dates with fk_booking_status of 2
         $query->andFilterWhere([
             'or',

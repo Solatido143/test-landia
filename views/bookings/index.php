@@ -52,8 +52,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                             'data-method' => 'post',
                                         ],
                                         'visible' => true,
-
-                                    ]
+                                    ],
                                 ],
                             ],
                             'booking_type',
@@ -74,10 +73,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                 },
                             ],
                             'remarks:ntext',
-                            //'logged_by',
-                            //'logged_time',
-                            //'updated_by',
-                            //'updated_time',
 
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],

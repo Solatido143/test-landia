@@ -117,6 +117,16 @@ class UserManageController extends Controller
         return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
     }
 
+    public function actionChangePassword($id)
+    {
+
+        $model = $this->findModel($id);
+
+        return $this->render('change-password', [
+            'model' => $model,
+        ]);
+    }
+
     /**
      * Finds the User model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

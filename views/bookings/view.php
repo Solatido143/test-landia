@@ -1,5 +1,6 @@
 <?php
 
+use app\models\WaitingTime;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -7,6 +8,7 @@ use yii\widgets\DetailView;
 /* @var $model app\models\Bookings */
 /* @var $bookingServices app\models\BookingsServices */
 /* @var $bookingsTimingModel app\models\BookingsTiming */
+/* @var $waiting_time WaitingTime */
 
 $this->title = $model->fkBookingStatus->booking_status . ' ' . $model->fkCustomer->customer_name . ' ' . $model->booking_type;
 $this->params['breadcrumbs'][] = ['label' => 'Bookings', 'url' => ['index']];
@@ -96,7 +98,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ]) ?>
                             <?php endif; ?>
 
-
                             <?php if ($model->fk_booking_status != 3) :?>
 
                                 <?= \yii\grid\GridView::widget([
@@ -145,18 +146,18 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <div class="col-md-12">
                                         <div class="d-flex justify-content-center align-items-center h-100">
                                             <h1>
-                                                Queue Time: <span id="minute_number">0</span><span> mins</span>
+                                                Waiting Time: <span id="minute_number"><?=$waiting_time?></span><span> mins</span>
                                             </h1>
                                         </div>
                                     </div>
                                 <?php elseif ($model->fk_booking_status == 2) : ?>
-                                    <div class="col-md-12">
-                                        <div class="d-flex justify-content-center align-items-center h-100">
-                                            <h1>
-                                                Remaining Time: <span id="minute_number">0</span><span> mins</span>
-                                            </h1>
-                                        </div>
-                                    </div>
+<!--                                    <div class="col-md-12">-->
+<!--                                        <div class="d-flex justify-content-center align-items-center h-100">-->
+<!--                                            <h1>-->
+<!--                                                Remaining Time: <span id="minute_number">0</span><span> mins</span>-->
+<!--                                            </h1>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
                                 <?php endif; ?>
 
 
@@ -178,39 +179,39 @@ $this->params['breadcrumbs'][] = $this->title;
 <?php
 $this->registerJs(<<<JS
     $(document).ready(function () {
-        $.ajax({
-            url: '/bookings/queue-timing?id=$model->id',
-            type: 'GET',
-            dataType: 'json',
-            success: function(response) {
-                // Log the response to the browser console
-                // console.log('Response from server:', response);
-                // console.log(this.url);
-                
-                // Update the element with the received data
-                $('#minute_number').text(response);
-            },
-            error: function(xhr, status, error) {
-                console.error(xhr.responseText);
-            }
-        });
+//        $.ajax({
+//            url: '/bookings/queue-timing?id=$model->id',
+//            type: 'GET',
+//            dataType: 'json',
+//            success: function(response) {
+//                // Log the response to the browser console
+//                // console.log('Response from server:', response);
+//                // console.log(this.url);
+//                
+//                // Update the element with the received data
+//                $('#minute_number').text(response);
+//            },
+//            error: function(xhr, status, error) {
+//                console.error(xhr.responseText);
+//            }
+//        });
         
-        $.ajax({
-            url: '/bookings/ongoing-timing?id=$model->id',
-            type: 'GET',
-            dataType: 'json',
-            success: function(response) {
-                // Log the response to the browser console
-                // console.log('Response from server:', response);
-                // console.log(this.url);
-                
-                // Update the element with the received data
-                $('#minute_number').text(response);
-            },
-            error: function(xhr, status, error) {
-                console.error(xhr.responseText);
-            }
-        });
+//        $.ajax({
+//            url: '/bookings/ongoing-timing?id=$model->id',
+//            type: 'GET',
+//            dataType: 'json',
+//            success: function(response) {
+//                // Log the response to the browser console
+//                // console.log('Response from server:', response);
+//                // console.log(this.url);
+//                
+//                // Update the element with the received data
+//                $('#minute_number').text(response);
+//            },
+//            error: function(xhr, status, error) {
+//                console.error(xhr.responseText);
+//            }
+//        });
     })
 JS
 );

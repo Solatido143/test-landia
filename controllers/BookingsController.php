@@ -9,6 +9,7 @@ use app\models\EmployeeSelectionForm;
 use app\models\Payments;
 use app\models\Promos;
 use app\models\Services;
+use app\models\WaitingTime;
 use Yii;
 use app\models\Bookings;
 use app\models\searches\BookingsSearch;
@@ -48,6 +49,8 @@ class BookingsController extends Controller
         $searchModel = new BookingsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -73,10 +76,74 @@ class BookingsController extends Controller
         if ($model === null) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+
+        // Initialize $service outside the loop
+        $serviceInqueueTime = 0;
+        $serviceInqueueAll = 0;
+
+        // Execute the SQL query to get min and max waiting times
+        $min_waiting_time = WaitingTime::find()
+            ->select('MIN(waiting_time)')
+            ->scalar();
+        $max_waiting_time = WaitingTime::find()
+            ->select('MAX(waiting_time)')
+            ->scalar();
+
+        $bookingOngoingModel = Bookings::find()
+            ->where(['fk_booking_status' => 2])
+            ->all();
+        $bookingInqueueModel = Bookings::find()
+            ->where(['fk_booking_status' => 1])
+            ->andWhere(['not', ['id' => $id]])
+            ->andWhere(['<', 'id', $id])
+            ->all();
+        $bookingInqueueAllModel = Bookings::find()
+            ->where(['fk_booking_status' => 1])
+            ->all();
+        foreach ($bookingInqueueAllModel as $bookingInqueueAll){
+            $booking_Services = BookingsServices::find()
+                ->where(['fk_booking' => $bookingInqueueAll->id])
+                ->all();
+
+            foreach ($booking_Services as $booking_Service) {
+                $serviceInqueueAll += $booking_Service->fkService->completion_time;
+            }
+        }
+
+        foreach ($bookingInqueueModel as $bookingInqueue){
+            $booking_Services = BookingsServices::find()
+                ->where(['fk_booking' => $bookingInqueue->id])
+                ->all();
+
+            foreach ($booking_Services as $booking_Service) {
+                $serviceInqueueTime += $booking_Service->fkService->completion_time;
+            }
+        }
+
+        if (empty($bookingOngoingModel)) {
+            // If no ongoing bookings, set waiting time to the accumulated service time
+            $waiting_time = $serviceInqueueTime;
+        } else {
+            // Set waiting time range
+            $waiting_time = $min_waiting_time . ' to ' . $max_waiting_time;
+
+            // If min and max waiting times are equal, set waiting time to min value
+            if ($min_waiting_time == $max_waiting_time) {
+                $waiting_time = $min_waiting_time - $serviceInqueueAll + $serviceInqueueTime;
+            }
+
+            // If waiting time is null, set it to '0'
+            if (is_null($min_waiting_time)) {
+                $waiting_time = '0';
+            }
+        }
+
+
         return $this->render('view', [
             'model' => $model,
             'bookingServices' => $bookingServices,
             'bookingsTimingModel' => $bookingsTimingModel,
+            'waiting_time' => $waiting_time
         ]);
     }
 
@@ -141,36 +208,6 @@ class BookingsController extends Controller
         $sum = array_sum($completionTimes);
         return $sum;
     }
-
-    public function actionOngoingTiming($id)
-    {
-        //Fetch completion times for ongoing bookings
-        $bookingOngoingModels = Bookings::find()
-            ->where(['fk_booking_status' => 2])
-            ->andWhere(['not', ['id' => $id]])
-            ->all();
-
-        foreach ($bookingOngoingModels as $bookingOngoingModel) {
-            $bookingServicesModels = BookingsServices::find()
-                ->where(['fk_booking' => $bookingOngoingModel->id])
-                ->all();
-
-            foreach ($bookingServicesModels as $bookingServicesModel) {
-                $completionTime = $bookingServicesModel->fkService->completion_time;
-                $completionTimes[] = $completionTime;
-            }
-        }
-        $sum = array_sum($completionTimes);
-
-        // Assuming $sum contains the total sum of completion times in minutes
-        $totalMinutes = $sum;
-        // Convert the string to a Unix timestamp
-        $timestamp = strtotime("+" . $totalMinutes . " minutes");
-        // Convert Unix timestamp to a human-readable date and time
-        $dateTime = date("i:s", $timestamp);
-    }
-
-
 
 
 

@@ -51,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-md-6">
                     <p class="text-end">
                         <?= Html::a('<i class="fas fa-pencil"></i>&nbspUpdate Details', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-                        <?= Html::a('<i class="fas fa-key"></i>&nbspChange Password', ['update', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+                        <?= Html::a('<i class="fas fa-key"></i>&nbspChange Password', ['change-password', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
 
                     </p>
                 </div>
