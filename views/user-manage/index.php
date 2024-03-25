@@ -56,20 +56,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
                             'id',
                             'username',
-                            'fk_employee_id',
+                            [
+                                'attribute' => 'fk_employee_id',
+                                'label' => 'Employee ID',
+                            ],
                             'email:email',
-//                            'password_hash',
-                            //'status',
-                            //'password_reset_token',
-                            //'user_access',
-                            //'availability',
-                            //'created_at',
-                            //'updated_at',
-                            //'auth_key',
-                            //'verification_token',
-                            //'managers_code',
-
-//                            ['class' => 'hail812\adminlte3\yii\grid\ActionColumn'],
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],
                         'pager' => [
