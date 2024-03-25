@@ -34,22 +34,21 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'contentOptions' => ['style' => 'white-space: nowrap;'],
                                 'items' => [
                                     [
-                                        'label' => 'Views',
+                                        'label' => '<i class="fas fa-eye"></i>&nbsp; View',
                                         'url' => ['view']
                                     ],
                                     [
-                                        'label' => 'Edit',
-                                        'url' => ['update']
+                                        'label' => '<i class="fas fa-pencil"></i>&nbsp; Edit',
+                                        'url' => ['edit']
                                     ],
                                     [
-                                        'label' => 'Delete',
+                                        'label' => '<i class="fas fa-trash"></i>&nbsp; Delete',
                                         'url' => ['delete'],
                                         'linkOptions' => [
                                             'class' => 'dropdown-item contextDelete',
                                             'data-method' => 'post',
                                         ],
                                         'visible' => true,
-
                                     ]
                                 ],
                             ],
