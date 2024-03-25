@@ -49,8 +49,6 @@ class BookingsController extends Controller
         $searchModel = new BookingsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-
-
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -89,14 +87,13 @@ class BookingsController extends Controller
             ->select('MAX(waiting_time)')
             ->scalar();
 
-        $bookingOngoingModel = Bookings::find()
-            ->where(['fk_booking_status' => 2])
-            ->all();
-        $bookingInqueueModel = Bookings::find()
-            ->where(['fk_booking_status' => 1])
-            ->andWhere(['not', ['id' => $id]])
-            ->andWhere(['<', 'id', $id])
-            ->all();
+        $employees_waiting_time_count = WaitingTime::find()
+            ->select('COUNT(DISTINCT employee_name)')
+            ->scalar();
+
+
+
+
         $bookingInqueueAllModel = Bookings::find()
             ->where(['fk_booking_status' => 1])
             ->all();
@@ -110,6 +107,11 @@ class BookingsController extends Controller
             }
         }
 
+        $bookingInqueueModel = Bookings::find()
+            ->where(['fk_booking_status' => 1])
+            ->andWhere(['not', ['id' => $id]])
+            ->andWhere(['<', 'id', $id])
+            ->all();
         foreach ($bookingInqueueModel as $bookingInqueue){
             $booking_Services = BookingsServices::find()
                 ->where(['fk_booking' => $bookingInqueue->id])
@@ -120,19 +122,18 @@ class BookingsController extends Controller
             }
         }
 
+        $bookingOngoingModel = Bookings::find()
+            ->where(['fk_booking_status' => 2])
+            ->all();
+
         if (empty($bookingOngoingModel)) {
-            // If no ongoing bookings, set waiting time to the accumulated service time
             $waiting_time = $serviceInqueueTime;
         } else {
-            // Set waiting time range
-            $waiting_time = $min_waiting_time . ' to ' . $max_waiting_time;
+            $waiting_time = intval(($min_waiting_time + $serviceInqueueTime) / $employees_waiting_time_count) . ' to ' . intval(($max_waiting_time + $serviceInqueueTime) / $employees_waiting_time_count);
 
-            // If min and max waiting times are equal, set waiting time to min value
             if ($min_waiting_time == $max_waiting_time) {
                 $waiting_time = $min_waiting_time - $serviceInqueueAll + $serviceInqueueTime;
             }
-
-            // If waiting time is null, set it to '0'
             if (is_null($min_waiting_time)) {
                 $waiting_time = '0';
             }
@@ -287,15 +288,6 @@ class BookingsController extends Controller
             // Promo not found, return 0
             return 0;
         }
-
-//        $promos = Promos::find()->where(['id' => $promoId])->all();
-//
-//        $promoDiscounts = [];
-//
-//        foreach ($promos as $promo) {
-//            $promoDiscounts = $promo->percentage;
-//        }
-//        return $promoDiscounts;
     }
 
     public function actionCancel($id)

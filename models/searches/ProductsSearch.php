@@ -11,7 +11,7 @@ use app\models\Products;
  */
 class ProductsSearch extends Products
 {
-    public $searchQuery; // Define a new property to hold the search query
+    public $searchQuery;
 
     /**
      * {@inheritdoc}

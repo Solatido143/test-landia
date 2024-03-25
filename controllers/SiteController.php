@@ -4,8 +4,12 @@ namespace app\controllers;
 
 use app\models\Bookings;
 use app\models\Payments;
+use kartik\export\ExportMenu;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
@@ -74,14 +78,12 @@ class SiteController extends Controller
 
         $currentDate = date('Y-m-d');
 
-        // Set conditions for each query to filter by current date
         foreach ($queries as $status => $query) {
             $query->where(['fk_booking_status' => $status])
                 ->andWhere(['>=', 'DATE(logged_time)', $currentDate])
                 ->andWhere(['<', 'DATE(logged_time)', date('Y-m-d', strtotime($currentDate . ' +1 day'))]);
         }
 
-        // Create data providers for each query
         $dataProviders = [];
         foreach ($queries as $status => $query) {
             $dataProviders[$status] = new ActiveDataProvider([
@@ -92,9 +94,36 @@ class SiteController extends Controller
             ]);
         }
 
+        // Calculate total bookings count
+        $totalBookingsCount = 0;
+        foreach ($dataProviders as $dataProvider) {
+            $totalBookingsCount += $dataProvider->getTotalCount();
+        }
+
+        // Query to count completed and cancelled bookings for today
+        $todayDate = date('Y-m-d');
+        $todayStart = $todayDate . ' 00:00:00';
+        $todayEnd = $todayDate . ' 23:59:59';
+
+        $bookingsCounts = Bookings::find()
+            ->select([
+                'completedBookingsCount' => 'COUNT(CASE WHEN fk_booking_status = 3 THEN 1 END)',
+                'cancelledBookingsCount' => 'COUNT(CASE WHEN fk_booking_status = 4 THEN 1 END)'
+            ])
+            ->andWhere(['between', 'schedule_time', $todayStart, $todayEnd])
+            ->asArray()
+            ->one();
+
+        $completedBookingsCount = $bookingsCounts['completedBookingsCount'];
+        $cancelledBookingsCount = $bookingsCounts['cancelledBookingsCount'];
+
         // Pass the data providers to the view
         return $this->render('index', [
             'dataProviders' => $dataProviders,
+
+            'totalBookingsCount' => $totalBookingsCount,
+            'completedBookingsCount' => $completedBookingsCount,
+            'cancelledBookingsCount' => $cancelledBookingsCount,
         ]);
     }
 
@@ -166,11 +195,204 @@ class SiteController extends Controller
         return $this->redirect(['/site/login']); // Redirects the user to the login page after logout.
     }
 
+//    public function actionReports()
+//    {
+//        date_default_timezone_set('Asia/Manila');
+//
+//        // Fetching payments data with related models if needed
+//        $payments = Payments::find()->all();
+//
+//        // Transforming payments data to match the desired format and calculate totals
+//        $totalSales = 0;
+//        $totalDiscounts = 0;
+//        $exportData = [];
+//        foreach ($payments as $payment) {
+//            $customerName = $payment->fkBooking->fkCustomer->customer_name;
+//
+//            // Increment total sales and total discounts
+//            $totalSales += $payment->payment_amount;
+//            $totalDiscounts += $payment->discount;
+//
+//            $exportData[] = [
+//                'Customer Name' => $customerName,
+//                'Date' => date('Y-m-d', strtotime($payment->payment_date)),
+//                'Availed Services' => '',
+//                'Total Discount' => $payment->discount,
+//                'Total Sales' => $payment->payment_amount,
+//            ];
+//        }
+//
+//        // Add totals row to export data
+//        $exportData[] = [
+//            'Customer Name' => 'Grand Total',
+//            'Date' => '',
+//            'Availed Services' => '',
+//            'Total Discount' => $totalDiscounts,
+//            'Total Sales' => $totalSales,
+//        ];
+//
+//        // Creating the data provider
+//        $dataProvider = new ArrayDataProvider([
+//            'allModels' => $exportData,
+//        ]);
+//
+//        // Configuring export menu
+//        $exportConfig = [
+//            ExportMenu::FORMAT_TEXT => false,
+//            ExportMenu::FORMAT_HTML => false,
+//            ExportMenu::FORMAT_CSV => false,
+//            ExportMenu::FORMAT_PDF => false,
+//            ExportMenu::FORMAT_EXCEL => false,
+//            ExportMenu::FORMAT_EXCEL_X => [
+//                'columns' => [
+//                    'Customer Name',
+//                    'Date',
+//                    'Availed Services',
+//                    'Total Discount',
+//                    'Total Sales',
+//                ],
+//            ],
+//        ];
+//
+//        $todayDate = date('Y-m-d');
+//
+//        return $this->render('reports', [
+//            'dataProvider' => $dataProvider,
+//            'exportConfig' => $exportConfig,
+//            'todayDate' => $todayDate,
+//        ]);
+//    }
+
     public function actionReports()
     {
-        $paymentModel = Payments::class;
+        date_default_timezone_set('Asia/Manila');
 
-        return $this->render('reports');
+        // Fetching payments data with related models if needed
+        $payments = Payments::find()->all();
+
+        // Transforming payments data to match the desired format and calculate totals
+        $totalSales = 0;
+        $totalDiscounts = 0;
+        $exportData = [];
+        foreach ($payments as $payment) {
+            $customerName = $payment->fkBooking->fkCustomer->customer_name;
+
+            // Increment total sales and total discounts
+            $totalSales += $payment->payment_amount;
+            $totalDiscounts += $payment->discount;
+
+            $exportData[] = [
+                'Customer Name' => $customerName,
+                'Date' => date('Y-m-d', strtotime($payment->payment_date)),
+                'Availed Services' => '',
+                'Total Discount' => $payment->discount,
+                'Total Sales' => $payment->payment_amount,
+                'Grand Total' => '',
+            ];
+        }
+
+        $difference = $totalSales + $totalDiscounts;
+
+        // Add totals row to export data
+        $exportData[] = [
+            'Customer Name' => 'Total',
+            'Date' => '',
+            'Availed Services' => '',
+            'Total Discount' => $totalDiscounts,
+            'Total Sales' => $totalSales,
+            'Grand Total' => $difference,
+        ];
+
+        // Creating the data provider
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $exportData,
+        ]);
+
+        // Configuring export menu
+        $exportConfig = [
+            ExportMenu::FORMAT_TEXT => false,
+            ExportMenu::FORMAT_HTML => false,
+            ExportMenu::FORMAT_CSV => false,
+            ExportMenu::FORMAT_PDF => false,
+            ExportMenu::FORMAT_EXCEL => false,
+            ExportMenu::FORMAT_EXCEL_X => [
+                'columns' => [
+                    'Customer Name',
+                    'Date',
+                    'Availed Services',
+                    'Total Discount',
+                    'Total Sales',
+                ],
+            ],
+        ];
+
+        $todayDate = date('Y-m-d');
+
+        return $this->render('reports', [
+            'dataProvider' => $dataProvider,
+            'exportConfig' => $exportConfig,
+            'todayDate' => $todayDate,
+        ]);
     }
+
+
+//    public function actionReports()
+//    {
+//        date_default_timezone_set('Asia/Manila');
+//        $payments = Payments::find()->all();
+//
+//        $logged_in_user_identity = Yii::$app->user->identity;
+//        $logged_in_user_username = $logged_in_user_identity->username;
+//
+//        $spreadsheet = new Spreadsheet();
+//        $sheet = $spreadsheet->getActiveSheet();
+//
+//        $sheet->setCellValue('A1', 'Report Title:');
+//        $sheet->setCellValue('B1', 'Sales Report Data');
+//        $sheet->setCellValue('A2', 'Report Date:');
+//        $sheet->setCellValue('B2', date('Y-m-d H:i:s'));
+//        $sheet->setCellValue('A3', 'Date Generated:');
+//        $sheet->setCellValue('B3', date('Y-m-d H:i:s'));
+//        $sheet->setCellValue('A4', 'Generated By:');
+//        $sheet->setCellValue('B4', $logged_in_user_username);
+//
+//        $sheet->setCellValue('A6', 'Customer Name');
+//        $sheet->setCellValue('B6', 'Date');
+//        $sheet->setCellValue('C6', 'Availed Services');
+//        $sheet->setCellValue('D6', 'Total Discount');
+//        $sheet->setCellValue('E6', 'Total Sales');
+//
+//        $row = 7;
+//        foreach ($payments as $payment) {
+//            $sheet->setCellValue('A' . $row, $payment->fkBooking->fkCustomer->customer_name);
+//            $sheet->setCellValue('B' . $row, date('Y-m-d', strtotime($payment->payment_date)));
+//            $sheet->setCellValue('C' . $row, '');
+//            $sheet->setCellValue('D' . $row, $payment->discount);
+//            $sheet->setCellValue('E' . $row, $payment->payment_amount);
+//            $row++;
+//        }
+//
+//        $sheet->setCellValue('A' . $row, 'Grand Total');
+//        $sheet->setCellValue('D' . $row, '=SUM(D7:D' . ($row - 1) . ')');
+//        $sheet->setCellValue('E' . $row, '=SUM(E7:E' . ($row - 1) . ')');
+//
+//        $sheet->getColumnDimension('A')->setWidth(20);
+//        $sheet->getColumnDimension('B')->setWidth(15);
+//        $sheet->getColumnDimension('C')->setWidth(30);
+//        $sheet->getColumnDimension('D')->setWidth(15);
+//        $sheet->getColumnDimension('E')->setWidth(15);
+//
+//        // Create a new Excel writer object
+//        $writer = new Xlsx($spreadsheet);
+//
+//        // Save the Excel file to a temporary location
+//        $filename = tempnam(sys_get_temp_dir(), 'sales_report');
+//        $writer->save($filename);
+//
+//        // Output the Excel file to the browser
+//        readfile($filename);
+//        // Delete the temporary file
+//        unlink($filename);
+//    }
 
 }

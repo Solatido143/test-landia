@@ -17,12 +17,13 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="card">
                 <div class="card-body">
                     <div class="row mb-2">
-                        <div class="col-md-12">
+                        <div class="col-12 col-md-6 mb-3 mb-md-0">
                             <?= Html::a('<i class="fas fa-plus"></i>&nbspAdd New Bookings', ['create'], ['class' => 'btn btn-success']) ?>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <?= $this->render('_search', ['model' => $searchModel]); ?>
+                        </div>
                     </div>
-
-                    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
                     <?= GridView::widget([
                         'dataProvider' => $dataProvider,
@@ -37,22 +38,23 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'contentOptions' => ['style' => 'white-space: nowrap;'],
                                 'items' => [
                                     [
-                                        'label' => 'Views',
+                                        'label' => '<i class="fas fa-eye"></i>&nbsp; View',
                                         'url' => ['view']
                                     ],
                                     [
-                                        'label' => 'Edit',
-                                        'url' => ['update']
+                                        'label' => '<i class="fas fa-pencil"></i>&nbsp; Edit',
+                                        'url' => ['edit']
                                     ],
                                     [
-                                        'label' => 'Delete',
+                                        'label' => '<i class="fas fa-trash"></i>&nbsp; Delete',
                                         'url' => ['delete'],
                                         'linkOptions' => [
                                             'class' => 'dropdown-item contextDelete',
                                             'data-method' => 'post',
                                         ],
                                         'visible' => true,
-                                    ],
+
+                                    ]
                                 ],
                             ],
                             'booking_type',

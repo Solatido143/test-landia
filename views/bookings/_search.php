@@ -11,37 +11,20 @@ use yii\widgets\ActiveForm;
 <div class="row mt-2">
     <div class="col-md-12">
 
-    <?php $form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
-    ]); ?>
+        <?php $form = ActiveForm::begin([
+            'action' => ['index'],
+            'method' => 'get',
+            'options' => ['class' => 'd-md-flex justify-content-end'],
+        ]); ?>
 
-    <?= $form->field($model, 'id') ?>
+        <?= $form->field($model, 'searchQuery')->textInput(['placeholder' => 'Search'])->label(false) ?>
 
-    <?= $form->field($model, 'booking_type') ?>
-
-    <?= $form->field($model, 'fk_customer') ?>
-
-    <?= $form->field($model, 'fk_booking_status') ?>
-
-    <?= $form->field($model, 'schedule_time') ?>
-
-    <?php // echo $form->field($model, 'remarks') ?>
-
-    <?php // echo $form->field($model, 'logged_by') ?>
-
-    <?php // echo $form->field($model, 'logged_time') ?>
-
-    <?php // echo $form->field($model, 'updated_by') ?>
-
-    <?php // echo $form->field($model, 'updated_time') ?>
-
-    <div class="form-group">
+        <div class="form-group ms-1 text-nowrap ">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
         <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
-    </div>
+        </div>
 
-    <?php ActiveForm::end(); ?>
+        <?php ActiveForm::end(); ?>
 
     </div>
     <!--.col-md-12-->

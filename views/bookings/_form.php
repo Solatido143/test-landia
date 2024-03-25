@@ -39,12 +39,11 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
                             'pluginOptions' => [
                                 'autoclose' => true,
                                 'todayHighlight' => true,
-                                'todayBtn' => true,
                                 'startDate' => 'today',
-                                'format' => 'yyyy-mm-dd hh:ii'
+                                'todayBtn' => true,
+                                'format' => 'yyyy-mm-dd hh:ii',
                             ],
                             'layout' => '{input}{picker}',
-                            'size' => 'sm',
                         ]);
                         ?>
                     </div>

@@ -12,6 +12,7 @@ use yii\db\Expression;
  */
 class BookingsSearch extends Bookings
 {
+    public $searchQuery;
     /**
      * {@inheritdoc}
      */
@@ -19,7 +20,7 @@ class BookingsSearch extends Bookings
     {
         return [
             [['id', 'fk_customer', 'fk_booking_status'], 'integer'],
-            [['booking_type', 'schedule_time', 'remarks', 'logged_by', 'logged_time', 'updated_by', 'updated_time'], 'safe'],
+            [['searchQuery', 'booking_type', 'schedule_time', 'remarks', 'logged_by', 'logged_time', 'updated_by', 'updated_time', 'fk_booking_status'], 'safe'],
         ];
     }
 
@@ -68,24 +69,25 @@ class BookingsSearch extends Bookings
         // Filter to show bookings for today's date or past dates with fk_booking_status of 2
         $query->andFilterWhere([
             'or',
-            ['=', 'DATE(logged_time)', date('Y-m-d')], // Today's date
-            ['and', ['<', 'logged_time', date('Y-m-d 00:00:00')], ['fk_booking_status' => 2]], // Past dates with fk_booking_status of 2
+            ['=', 'DATE(logged_time)', date('Y-m-d')],
+            ['and', ['<', 'logged_time', date('Y-m-d 00:00:00')], ['fk_booking_status' => 2]],
         ]);
 
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
             'fk_customer' => $this->fk_customer,
-//            'fk_booking_status' => $this->fk_booking_status,
+            'fk_booking_status' => $this->fk_booking_status,
         ]);
 
-        $query->andFilterWhere(['like', 'booking_type', $this->booking_type])
-            ->andFilterWhere(['like', 'schedule_time', $this->schedule_time])
-            ->andFilterWhere(['like', 'remarks', $this->remarks])
-            ->andFilterWhere(['like', 'logged_by', $this->logged_by])
-            ->andFilterWhere(['like', 'logged_time', $this->logged_time])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'updated_time', $this->updated_time]);
+        // Perform a generalized search across multiple attributes
+        $query->andFilterWhere(['or',
+            ['like', 'booking_type', $this->searchQuery],
+            ['like', 'fk_booking_status', $this->searchQuery],
+            ['like', 'fk_customer', $this->searchQuery],
+            ['like', 'schedule_time', $this->searchQuery],
+            ['like', 'remarks', $this->searchQuery],
+        ]);
 
         return $dataProvider;
     }

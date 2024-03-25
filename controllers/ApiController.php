@@ -890,6 +890,8 @@ class ApiController extends Controller
         $booking = new Bookings();
         $booking->logged_time = date('Y-m-d H:i:s');
         $booking->fk_booking_status = 1;
+        $booking->updated_time = '';
+        $booking->updated_by = '';
         $booking->load(Yii::$app->request->getBodyParams(), '');
         if ($booking->save()) {
             Yii::$app->response->setStatusCode(201); // Created
@@ -1232,6 +1234,10 @@ class ApiController extends Controller
             ];
         }
 
+        $employees_waiting_time_count = WaitingTime::find()
+            ->select('COUNT(DISTINCT employee_name)')
+            ->scalar();
+
         $serviceInqueueTime = $this->calculateServiceInqueueTime($id);
         $serviceInqueueAll = $this->calculateServiceInqueueAll();
 
@@ -1241,7 +1247,7 @@ class ApiController extends Controller
         $max_waiting_time = WaitingTime::find()->select('MAX(waiting_time)')->scalar();
 
         if (!is_null($min_waiting_time)) {
-            $waiting_time = $min_waiting_time . ' to ' . $max_waiting_time;
+            $waiting_time = intval(($min_waiting_time + $serviceInqueueTime) / $employees_waiting_time_count) . ' to ' . intval(($max_waiting_time + $serviceInqueueTime) / $employees_waiting_time_count);
             if ($min_waiting_time == $max_waiting_time) {
                 $waiting_time = $min_waiting_time - $serviceInqueueAll + $serviceInqueueTime;
             }

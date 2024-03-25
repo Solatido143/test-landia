@@ -22,28 +22,25 @@ $this->params['breadcrumbs'][] = $this->title;
                         'attributes' => [
                             //'id',
                             'username',
-                            'fk_employee_id',
+                            [
+                                'label' => 'Employee ID',
+                                'value' => function ($model) {
+                                    return $model->fk_employee_id;
+                                }
+                            ],
                             'email:email',
-                            //'password_hash',
                             [
                                 'label' => 'Status',
                                 'value' => function ($model) {
                                     return $model->status === 10 ? 'Active' : 'Inactive';
                                 }
                             ],
-                            //'password_reset_token',
                             [
                                 'label' => 'User Access',
                                 'value' => function ($model) {
                                     return $model->roles->name;
                                 }
                             ],
-                            //'availability',
-                            //'created_at',
-                            //'updated_at',
-                            //'auth_key',
-                            //'verification_token',
-                            //'managers_code',
                         ],
                     ]) ?>
                 </div>

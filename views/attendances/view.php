@@ -31,8 +31,30 @@ $this->params['breadcrumbs'][] = $this->title;
                                     return $employee ? $employee->fname . " " . $employee->lname : null;
                                 }
                             ],
+                            'date',
                             'sign_in',
                             'sign_out',
+                            [
+                                'label' => 'Total Hours',
+                                'value' => function($model) {
+                                    if ($model->sign_in && $model->sign_out) {
+                                        $signInTime = new DateTime($model->sign_in);
+                                        $signOutTime = new DateTime($model->sign_out);
+                                        $interval = $signInTime->diff($signOutTime);
+
+                                        $output = '';
+                                        if ($interval->d > 0) {
+                                            $output .= $interval->d . ' days ';
+                                        }
+                                        $output .= $interval->h . ' hours ';
+                                        $output .= $interval->i . ' minutes';
+
+                                        return $output;
+                                    } else {
+                                        return 'N/A';
+                                    }
+                                }
+                            ],
                             'remarks:ntext',
                             //'sign_in_log',
                             //'sign_out_log',

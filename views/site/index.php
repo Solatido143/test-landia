@@ -1,8 +1,9 @@
 <?php
 
-
 /* @var $dataProviders yii\data\ActiveDataProvider */
-
+/* @var $totalBookingsCount int */
+/* @var $completedBookingsCount int */
+/* @var $cancelledBookingsCount int */
 
 use yii\grid\GridView;
 
@@ -15,35 +16,41 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
             <div class="row mb-3">
                 <div class="col-lg-12">
                         <?= \hail812\adminlte\widgets\SmallBox::widget([
-                            'title' => '0',
+                            'title' => $totalBookingsCount,
                             'text' => 'Total Bookings',
                             'icon' => 'fas fa-calendar',
                             'theme' => 'success',
                             'options' => [
                                 'class' => 'small-box bg-success',
                             ],
+                            'linkUrl' => ['/bookings'],
+                            'linkText' => 'More Info',
                         ]) ?>
                 </div>
                 <div class="col-lg-12">
                     <?= \hail812\adminlte\widgets\SmallBox::widget([
-                        'title' => '0',
+                        'title' => $completedBookingsCount,
                         'text' => 'Completed Bookings',
                         'icon' => 'fas fa-check',
                         'theme' => 'primary',
                         'options' => [
                             'class' => 'small-box bg-primary',
                         ],
+                        'linkUrl' => ['/bookings'],
+                        'linkText' => 'More Info',
                     ]) ?>
                 </div>
                 <div class="col-lg-12">
                     <?= \hail812\adminlte\widgets\SmallBox::widget([
-                        'title' => '0',
+                        'title' => $cancelledBookingsCount,
                         'text' => 'Cancelled Bookings',
-                        'icon' => 'fas fa-cancel',
+                        'icon' => 'fas fa-ban',
                         'theme' => 'danger',
                         'options' => [
                             'class' => 'small-box bg-danger',
                         ],
+                        'linkUrl' => ['/bookings'],
+                        'linkText' => 'More Info',
                     ]) ?>
                 </div>
             </div>

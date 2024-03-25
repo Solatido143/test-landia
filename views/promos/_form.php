@@ -38,7 +38,6 @@ use yii\bootstrap4\ActiveForm;
                             'format' => 'yyyy-mm-dd',
                             'todayHighlight' => true,
                             'startDate' => 'today',
-//                            'todayBtn' => true,
                         ],
                         'layout' => '{input}{picker}',
                     ]);

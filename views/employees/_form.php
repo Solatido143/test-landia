@@ -206,8 +206,6 @@ $Status = $employeesModel->fetchAndMapData(\app\models\EmployeesStatus::class, '
 
     </div>
 
-
-
     <?php ActiveForm::end(); ?>
 </div>
 

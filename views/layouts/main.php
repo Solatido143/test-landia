@@ -47,6 +47,24 @@ $this->registerJsFile($publishedRes[1].'/control_sidebar.js', ['depends' => '\ha
             width: 1.5rem;
             height: 1.5rem;
         }
+
+        .datetimepicker table tr td, .datetimepicker table tr th
+        {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .btn.btn-outline-secondary .fa-file-excel {
+            color: green;
+        }
+        .btn.btn-outline-secondary:hover .fa-file-excel {
+            color: #fff;
+        }
+        .list-unstyled-li {
+            list-style-type: none; /* Remove bullets */
+        }
+
+
     </style>
 </head>
 <body class="hold-transition sidebar-mini">
