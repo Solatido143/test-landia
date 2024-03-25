@@ -60,7 +60,7 @@ class RegisterForm extends Model
             $user->fk_employee_id = $employee->employee_id;
             $user->password_reset_token = null;
             $user->user_access = 3;
-            $user->status = 10;
+            $user->status = 1;
             $user->created_at = date('Y-m-d H:i:s');
 
             if ($user->save()) {

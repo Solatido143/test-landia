@@ -24,14 +24,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="d-flex justify-content-between">
                         <div>
                             <p>
-
-                                <?php if ($model->fk_booking_status != 4 && $model->fk_booking_status != 3) : ?>
+                                <?php if ($model->fk_booking_status == 1 || $model->fk_booking_status == 2) : ?>
                                     <?= Html::a('<i class="fa fa-cancel"></i>&nbsp;Cancel', ['cancel', 'id' => $model->id], ['class' => 'btn btn-danger']) ?>
                                     <?= Html::a('<i class="fa fa-pencil"></i>&nbsp;Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
                                 <?php else : ?>
                                     <?= Html::a('<i class="fa fa-arrow-left"></i>&nbsp;Back', ['index'], ['class' => 'btn btn-secondary']) ?>
                                 <?php endif; ?>
-
                             </p>
                         </div>
                         <div>
@@ -50,7 +48,6 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?= DetailView::widget([
                                 'model' => $model,
                                 'attributes' => [
-                                    'booking_type',
                                     [
                                         'attribute' => 'fk_customer',
                                         'label' => 'Customer Name',
@@ -58,6 +55,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                             return $model->fkCustomer->customer_name;
                                         },
                                     ],
+                                    'schedule_time',
+                                    'booking_type',
                                     [
                                         'attribute' => 'fk_booking_status',
                                         'label' => 'Booking Status',
@@ -65,7 +64,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                             return $model->fkBookingStatus->booking_status;
                                         },
                                     ],
-                                    'schedule_time',
                                     'remarks:ntext',
                                 ],
                             ]) ?>
@@ -75,6 +73,11 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'attributes' => [
                                     'logged_by',
                                     'logged_time',
+                                ],
+                            ]) ?>
+                            <?= DetailView::widget([
+                                'model' => $model,
+                                'attributes' => [
                                     'updated_by',
                                     'updated_time',
                                 ],
@@ -83,7 +86,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <div class="col-md-6">
                             <?php if ($bookingsTimingModel !== null): ?>
-
                                 <?= DetailView::widget([
                                     'model' => $bookingsTimingModel,
                                     'attributes' => [
@@ -98,7 +100,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ]) ?>
                             <?php endif; ?>
 
-                            <?php if ($model->fk_booking_status != 3) :?>
+                            <?php if ($bookingServices !== null) :?>
 
                                 <?= \yii\grid\GridView::widget([
                                     'dataProvider' => $bookingServices,
@@ -175,44 +177,3 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <!--.card-->
 </div>
-
-<?php
-$this->registerJs(<<<JS
-    $(document).ready(function () {
-//        $.ajax({
-//            url: '/bookings/queue-timing?id=$model->id',
-//            type: 'GET',
-//            dataType: 'json',
-//            success: function(response) {
-//                // Log the response to the browser console
-//                // console.log('Response from server:', response);
-//                // console.log(this.url);
-//                
-//                // Update the element with the received data
-//                $('#minute_number').text(response);
-//            },
-//            error: function(xhr, status, error) {
-//                console.error(xhr.responseText);
-//            }
-//        });
-        
-//        $.ajax({
-//            url: '/bookings/ongoing-timing?id=$model->id',
-//            type: 'GET',
-//            dataType: 'json',
-//            success: function(response) {
-//                // Log the response to the browser console
-//                // console.log('Response from server:', response);
-//                // console.log(this.url);
-//                
-//                // Update the element with the received data
-//                $('#minute_number').text(response);
-//            },
-//            error: function(xhr, status, error) {
-//                console.error(xhr.responseText);
-//            }
-//        });
-    })
-JS
-);
-?>

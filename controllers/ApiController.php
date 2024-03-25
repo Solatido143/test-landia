@@ -95,6 +95,46 @@ class ApiController extends Controller
             return ['error' => 'No attendance found matching the provided criteria.'];
         }
     }
+
+    public function actionAttendanceButton($id = null)
+    {
+        date_default_timezone_set('Asia/Manila');
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if ($id === null) {
+            return [
+                'success' => false,
+                'error' => 'Missing parameter',
+                'message' => 'The required parameter id is missing.'
+            ];
+        }
+
+        $employee = Employees::findOne(['id' => $id]);
+        if (!$employee) {
+            return [
+                'success' => false,
+                'error' => 'Employee not found',
+                'message' => 'Employee with the provided id does not exist.'
+            ];
+        }
+
+        $attendance = Attendances::find()
+            ->where(['fk_employee' => $employee->id])
+            ->orderBy(['id' => SORT_DESC])
+            ->one();
+
+        if ($attendance === null || !empty($attendance->sign_in && !empty($attendance->sign_out))) {
+            return [
+                'timeIn' => true,
+            ];
+        } else {
+            return [
+                'timeOut' => true,
+            ];
+        }
+    }
+
+
     public function actionCreateAttendance()
     {
         date_default_timezone_set('Asia/Manila');
@@ -1303,6 +1343,40 @@ class ApiController extends Controller
         return $serviceTime;
     }
 
+    public function actionSelectEmployee()
+    {
+        date_default_timezone_set('Asia/Manila');
+        Yii::$app->response->format = Response::FORMAT_JSON;
 
+        $todayDate = date('Y-m-d');
+        $employeeAttendanceTimeIn = Attendances::find()
+            ->where(['date' => $todayDate])
+            ->andWhere(['sign_out_log' => null])
+            ->all();
 
+        $employees = []; // Initialize an empty array to hold employees
+
+        foreach ($employeeAttendanceTimeIn as $attendance) {
+            // Access the related employee model for each attendance record
+            $employee = $attendance->fkEmployee;
+            $bookingTiming = BookingsTiming::find()
+                ->where(['fk_employee' => $employee->id])
+                ->orderBy(['id' => SORT_DESC])
+                ->one();
+
+            if ($bookingTiming !== null && $bookingTiming->completion_time == null) {
+                continue;
+            }
+
+            if ($employee->fk_position != 3){
+                continue; // Skip this employee if position is not 3
+            }
+
+            $employees[] = [
+                'id' => $employee->id,
+                'full_name' => $employee->fname . ' ' . $employee->lname,
+            ];
+        }
+        return $employees;
+    }
 }

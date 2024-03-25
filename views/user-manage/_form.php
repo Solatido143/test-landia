@@ -33,7 +33,7 @@ $Roles = $UserModel->fetchAndMapData(\app\models\Roles::class, 'user_access_id',
                 </div>
                 <div class="col-md-6">
                     <?= $form->field($model, 'status')->dropDownList([
-                        10 => 'Active',
+                        1 => 'Active',
                         0 => 'Inactive',
                     ]) ?>
                 </div>
@@ -43,16 +43,6 @@ $Roles = $UserModel->fetchAndMapData(\app\models\Roles::class, 'user_access_id',
                 </div>
 
             </div>
-
-        </div>
-        <div class="col-md-6">
-            <?= DetailView::widget([
-                'model' => $model,
-                'attributes' => [
-                    'created_at',
-                    'updated_at',
-                ],
-            ]) ?>
 
         </div>
 

@@ -178,42 +178,6 @@ class BookingsController extends Controller
         ]);
     }
 
-    public function actionQueueTiming($id)
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        // Fetch completion times for queued bookings
-        $bookingInQueueModels = Bookings::find()
-            ->where(['fk_booking_status' => 1])
-            ->andWhere(['not', ['id' => $id]])
-            ->andWhere(['<', 'id', $id])
-            ->all();
-
-
-        $completionTimes = [];
-
-        if (!empty($bookingInQueueModels)) {
-            foreach ($bookingInQueueModels as $bookingInQueueModel) {
-                $bookingServicesModels = BookingsServices::find()
-                    ->where(['fk_booking' => $bookingInQueueModel->id])
-                    ->all();
-
-                foreach ($bookingServicesModels as $bookingServicesModel) {
-                    $completionTime = $bookingServicesModel->fkService->completion_time;
-                    $completionTimes[] = $completionTime;
-                }
-            }
-        } else {
-            return [0];
-        }
-        $sum = array_sum($completionTimes);
-        return $sum;
-    }
-
-
-
-
-
     public function actionPayments($id)
     {
         $modelPayment = new Payments();
