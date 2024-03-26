@@ -19,7 +19,7 @@ class ProductsSearch extends Products
     public function rules()
     {
         return [
-            [['id', 'stock_quantity', 'isRemove'], 'integer'],
+            [['id', 'stock_quantity'], 'integer'],
             [['product_name', 'description', 'searchQuery'], 'safe'],
         ];
     }
@@ -48,6 +48,9 @@ class ProductsSearch extends Products
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
         ]);
 
         $this->load($params);
@@ -58,17 +61,12 @@ class ProductsSearch extends Products
             return $dataProvider;
         }
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'stock_quantity' => $this->stock_quantity,
-        ]);
-
         // Perform a generalized search across multiple attributes
         $query->andFilterWhere(['or',
             ['like', 'product_name', $this->searchQuery],
             ['like', 'id', $this->searchQuery],
             ['like', 'description', $this->searchQuery],
+            ['like', 'stock_quantity', $this->searchQuery],
         ]);
 
         return $dataProvider;

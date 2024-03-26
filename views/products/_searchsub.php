@@ -8,8 +8,6 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-
-
 <?php $form = ActiveForm::begin([
     'action' => ['index'],
     'method' => 'get',
@@ -19,8 +17,8 @@ use yii\widgets\ActiveForm;
 <?= $form->field($model, 'searchField')->textInput(['placeholder' => 'Search'])->label(false) ?>
 
 <div class="form-group ms-1 text-nowrap">
-    <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-    <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
+    <?= Html::submitButton('<i class="fas fa-magnifying-glass"></i> Search', ['class' => 'btn btn-primary']) ?>
+    <?= Html::resetButton('<i class="fas fa-undo"></i> Reset', ['class' => 'btn btn-outline-secondary']) ?>
 </div>
 
 <?php ActiveForm::end(); ?>

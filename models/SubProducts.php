@@ -9,14 +9,17 @@ use Yii;
  *
  * @property int $id
  * @property int $product_id
- * @property string sub_products_name
+ * @property string $sub_products_name
  * @property string $description
  * @property int $quantity
  *
- * @property Products $subProduct
+ * @property InventoryUpdates[] $inventoryUpdates
+ * @property Products $product
  */
 class SubProducts extends \yii\db\ActiveRecord
 {
+    public $fk_item_status;
+    public $new_stock_quantity;
     /**
      * {@inheritdoc}
      */
@@ -32,7 +35,8 @@ class SubProducts extends \yii\db\ActiveRecord
     {
         return [
             [['product_id', 'sub_products_name', 'description', 'quantity'], 'required'],
-            [['product_id', 'quantity'], 'integer'],
+            [['product_id', 'fk_item_status', 'new_stock_quantity'], 'integer'],
+            [['quantity'], 'integer', 'min' => 0],
             [['sub_products_name'], 'string', 'max' => 50],
             [['description'], 'string', 'max' => 100],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Products::class, 'targetAttribute' => ['product_id' => 'id']],
@@ -46,19 +50,29 @@ class SubProducts extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'product_id' => 'Sub Product ID',
-            'sub_products_name' => 'Name',
+            'product_id' => 'Product ID',
+            'sub_products_name' => 'Sub Products Name',
             'description' => 'Description',
             'quantity' => 'Quantity',
         ];
     }
 
     /**
-     * Gets query for [[SubProduct]].
+     * Gets query for [[InventoryUpdates]].
+     *
+     * @return \yii\db\ActiveQuery|\app\models\query\InventoryUpdatesQuery
+     */
+    public function getInventoryUpdates()
+    {
+        return $this->hasMany(InventoryUpdates::class, ['fk_id_sub_item_name' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Product]].
      *
      * @return \yii\db\ActiveQuery|\app\models\query\ProductsQuery
      */
-    public function getProducts()
+    public function getProduct()
     {
         return $this->hasOne(Products::class, ['id' => 'product_id']);
     }
@@ -70,5 +84,11 @@ class SubProducts extends \yii\db\ActiveRecord
     public static function find()
     {
         return new \app\models\query\SubProductsQuery(get_called_class());
+    }
+
+    public function fetchAndMapData($modelClass, $valueField, $textField)
+    {
+        $data = $modelClass::find()->select([$valueField, $textField])->asArray()->all();
+        return \yii\helpers\ArrayHelper::map($data, $valueField, $textField);
     }
 }

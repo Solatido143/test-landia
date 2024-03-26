@@ -17,17 +17,15 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-12 col-md-6 mb-3 mb-md-0">
+                        <div class="col-md-6">
                             <?= Html::a('<i class="fas fa-plus"></i>&nbspCreate Products', ['create'], ['class' => 'btn btn-success text-nowrap']) ?>
                         </div>
-                        <div class="col-12 col-md-6">
+                        <div class="col-md-6 mt-3 mt-md-0">
                             <?= $this->render('_search', ['model' => $searchModel]); ?>
                         </div>
                     </div>
 
-                    <?php
-                    $dataProvider->query->andWhere(['isRemove' => 0]);
-                    echo GridView::widget([
+                    <?= GridView::widget([
                         'dataProvider' => $dataProvider,
                         'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
                         'tableOptions' => ["class" => "table table-striped table-bordered"],
@@ -43,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ],
                                     [
                                         'label' => '<i class="fas fa-pencil"></i>&nbsp; Edit',
-                                        'url' => ['edit']
+                                        'url' => ['update']
                                     ],
                                     [
                                         'label' => '<i class="fas fa-trash"></i>&nbsp; Delete',
@@ -56,13 +54,20 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ]
                                 ],
                             ],
-                            'id',
                             'product_name',
                             [
                                 'attribute' => 'description',
                                 'format' => 'ntext',
                                 'value' => function ($model) {
-                                    return \yii\helpers\StringHelper::truncate($model->description, 50); // Adjust the number of characters as needed
+                                    $maxWords = 10; // Adjust the number of words as needed
+                                    $words = preg_split('/\s+/', $model->description, $maxWords + 1);
+                                    if (count($words) > $maxWords) {
+                                        array_pop($words);
+                                        $truncatedDescription = implode(' ', $words) . '...'; // Adding ellipsis to indicate truncation
+                                        return $truncatedDescription;
+                                    } else {
+                                        return $model->description;
+                                    }
                                 },
                                 'contentOptions' => ['style' => 'white-space: nowrap;'],
                             ],

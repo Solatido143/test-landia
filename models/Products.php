@@ -10,13 +10,15 @@ use Yii;
  * @property int $id
  * @property string $product_name
  * @property string $description
- * @property int $stock_quantity
- * @property int $isRemove
+ * @property int|null $stock_quantity
  *
- * @property SubProducts[] $sub-products
+ * @property InventoryUpdates[] $inventoryUpdates
+ * @property SubProducts[] $subProducts
  */
 class Products extends \yii\db\ActiveRecord
 {
+    public $new_stock_quantity;
+    public $fk_item_status;
     /**
      * {@inheritdoc}
      */
@@ -32,10 +34,10 @@ class Products extends \yii\db\ActiveRecord
     {
         return [
             [['product_name', 'description'], 'required'],
-            [['product_name'], 'string', 'max' => 100],
             [['description'], 'string'],
-            [['stock_quantity', 'isRemove'], 'integer'],
-            ['stock_quantity', 'integer', 'min' => 0], // Ensure stock_quantity is an integer with a minimum value of 0
+            [['fk_item_status'], 'integer'],
+            [['stock_quantity', 'new_stock_quantity'], 'integer', 'min' => 0],
+            [['product_name'], 'string', 'max' => 100],
         ];
     }
 
@@ -46,20 +48,44 @@ class Products extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'product_name' => 'Name',
+            'product_name' => 'Product Name',
             'description' => 'Description',
             'stock_quantity' => 'Stock Quantity',
-            'isRemove' => 'Is Remove',
         ];
+    }
+
+    /**
+     * Gets query for [[InventoryUpdates]].
+     *
+     * @return \yii\db\ActiveQuery|\app\models\query\InventoryUpdatesQuery
+     */
+    public function getInventoryUpdates()
+    {
+        return $this->hasMany(InventoryUpdates::class, ['fk_id_item_name' => 'id']);
     }
 
     /**
      * Gets query for [[SubProducts]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery|\app\models\query\SubProductsQuery
      */
     public function getSubProducts()
     {
         return $this->hasMany(SubProducts::class, ['product_id' => 'id']);
+    }
+
+    /**
+     * {@inheritdoc}
+     * @return \app\models\query\ProductsQuery the active query used by this AR class.
+     */
+    public static function find()
+    {
+        return new \app\models\query\ProductsQuery(get_called_class());
+    }
+
+    public function fetchAndMapData($modelClass, $valueField, $textField)
+    {
+        $data = $modelClass::find()->select([$valueField, $textField])->asArray()->all();
+        return \yii\helpers\ArrayHelper::map($data, $valueField, $textField);
     }
 }
