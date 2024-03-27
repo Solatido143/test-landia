@@ -1621,12 +1621,6 @@ class ApiController extends Controller
 
 //    ---------- Formats -----------
 
-    /**
-     * Formats a product along with its subproducts.
-     *
-     * @param Products $product The product model instance
-     * @return array The formatted product data
-     */
     private function getFormattedProduct($product)
     {
         $formattedProduct = [
@@ -1655,12 +1649,6 @@ class ApiController extends Controller
         return $formattedProduct;
     }
 
-    /**
-     * Formats a subproduct along with its product.
-     *
-     * @param SubProducts $subProduct The subproduct model instance
-     * @return array The formatted subproduct data
-     */
     private function getFormattedSubProduct($subProduct)
     {
         $formattedSubProduct = [
