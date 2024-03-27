@@ -1501,22 +1501,16 @@ class ApiController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        if (!empty($id))
-        {
+        if (!empty($id)){
             return $this->actionViewSubProducts($id);
         }
 
         $subProducts = SubProducts::find()->with('products')->all();
 
-        // Prepare an array to hold the formatted sub-product data
         $formattedSubProducts = [];
 
-        // Loop through each sub-product
         foreach ($subProducts as $subProduct) {
-            // Prepare an array to hold the formatted sub-product data
             $formattedSubProduct = $this->getFormattedSubProduct($subProduct);
-
-            // Add the formatted sub-product to the array of formatted products
             $formattedSubProducts[] = $formattedSubProduct;
         }
 
