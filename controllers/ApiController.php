@@ -1572,17 +1572,13 @@ class ApiController extends Controller
 
         $model = Products::findOne($id);
         if ($model === null) {
-            return [
-                'success' => false,
-                'error' => 'Product not found',
-                'message' => 'Product not found for the given ID.'
-            ];
+            return ['success' => false];
         }
 
         if ($model->load(Yii::$app->getRequest()->getBodyParams(), '') && $model->validate()) {
             if (empty($model->new_stock_quantity) && empty($model->fk_item_status)) {
                 if ($model->save()) {
-                    return true;
+                    return ['success' => true];
                 }
             } elseif (empty($model->new_stock_quantity)) {
                 $model->addError('new_stock_quantity', 'Quantity cannot be empty.');
@@ -1604,17 +1600,14 @@ class ApiController extends Controller
                 $updateProductsModel->updated_time = date('Y-m-d H:i:s');
 
                 if ($model->save() && $updateProductsModel->save()) {
-                    return true;
+                    return ['success' => true];
                 } else {
-                    return false;
+                    return ['success' => false];
                 }
             }
         }
 
-        return [
-            'success' => false,
-            'errors' => $model->errors,
-        ];
+        return ['success' => false];
     }
 
 

@@ -97,6 +97,8 @@ class ProductsController extends Controller
                 return $this->redirect(['view', 'id' => $model->id]);
             } elseif (empty($model->new_stock_quantity)) {
                 $model->addError('new_stock_quantity', 'Quantity cannot be empty.');
+            } elseif ($model->new_stock_quantity > $model->stock_quantity) {
+                $model->addError('new_stock_quantity', 'Quantity cannot be greater than stock.');
             } elseif (empty($model->fk_item_status)) {
                 $model->addError('fk_item_status', 'Status cannot be empty.');
             } else {
@@ -107,13 +109,15 @@ class ProductsController extends Controller
                             'title' => 'Yay',
                             'body' => 'Added ' . $model->new_stock_quantity . ' to the stock quantity',
                         ]);
-                    } else {
+                    }
+                    if ($model->fk_item_status > 1 && ($model->new_stock_quantity <= $model->stock_quantity)) {
                         $model->stock_quantity -= intval($model->new_stock_quantity);
                         Yii::$app->session->setFlash('success', [
                             'title' => 'Yay',
                             'body' => 'Decreased ' . $model->new_stock_quantity . ' from the stock quantity',
                         ]);
                     }
+
                     $update_productsModel->fk_id_item = $model->id;
                     $update_productsModel->fk_id_sub_item = null;
                     $update_productsModel->fk_item_status = $model->fk_item_status;
