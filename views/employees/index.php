@@ -56,7 +56,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ]
                                 ],
                             ],
-                            'id',
                             'employee_id',
                             [
                                 'attribute' => 'fk_position',

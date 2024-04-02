@@ -8,8 +8,8 @@ use Yii;
  * This is the model class for table "inventory_updates".
  *
  * @property int $id
- * @property int $fk_id_item_name
- * @property int $fk_id_sub_item_name
+ * @property int $fk_id_item
+ * @property int $fk_id_sub_item
  * @property int $fk_item_status
  * @property int $quantity
  * @property string|null $updated_by
@@ -35,11 +35,11 @@ class InventoryUpdates extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['fk_id_item_name', 'fk_id_sub_item_name', 'fk_item_status', 'quantity'], 'required'],
-            [['fk_id_item_name', 'fk_id_sub_item_name', 'fk_item_status', 'quantity'], 'integer'],
+            [['fk_id_item', 'fk_id_sub_item', 'fk_item_status', 'quantity'], 'integer'],
+            [['quantity'], 'integer', 'min' => 0],
             [['updated_by', 'updated_time'], 'string', 'max' => 255],
-            [['fk_id_item_name'], 'exist', 'skipOnError' => true, 'targetClass' => Products::class, 'targetAttribute' => ['fk_id_item_name' => 'id']],
-            [['fk_id_sub_item_name'], 'exist', 'skipOnError' => true, 'targetClass' => SubProducts::class, 'targetAttribute' => ['fk_id_sub_item_name' => 'id']],
+            [['fk_id_item'], 'exist', 'skipOnError' => true, 'targetClass' => Products::class, 'targetAttribute' => ['fk_id_item' => 'id']],
+            [['fk_id_sub_item'], 'exist', 'skipOnError' => true, 'targetClass' => SubProducts::class, 'targetAttribute' => ['fk_id_sub_item' => 'id']],
             [['fk_item_status'], 'exist', 'skipOnError' => true, 'targetClass' => InventoryStatus::class, 'targetAttribute' => ['fk_item_status' => 'id']],
         ];
     }
@@ -51,8 +51,8 @@ class InventoryUpdates extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'fk_id_item_name' => 'Item Name',
-            'fk_id_sub_item_name' => 'Sub Item Name',
+            'fk_id_item' => 'Item Name',
+            'fk_id_sub_item' => 'Sub Item Name',
             'fk_item_status' => 'Status',
             'quantity' => 'Quantity',
             'updated_by' => 'Updated By',
@@ -67,7 +67,7 @@ class InventoryUpdates extends \yii\db\ActiveRecord
      */
     public function getFkIdItemName()
     {
-        return $this->hasOne(Products::class, ['id' => 'fk_id_item_name']);
+        return $this->hasOne(Products::class, ['id' => 'fk_id_item']);
     }
 
     /**
@@ -77,7 +77,7 @@ class InventoryUpdates extends \yii\db\ActiveRecord
      */
     public function getFkIdSubItemName()
     {
-        return $this->hasOne(SubProducts::class, ['id' => 'fk_id_sub_item_name']);
+        return $this->hasOne(SubProducts::class, ['id' => 'fk_id_sub_item']);
     }
 
     /**

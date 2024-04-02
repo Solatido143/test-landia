@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = [
     'label' => $productmodel->product_name,
     'url' => ['view', 'id' => $productmodel->id],
 ];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = 'Create Sub Item: ';
 
 $mainProducts = \app\models\Products::find()
     ->select(['id', 'product_name'])

@@ -60,12 +60,26 @@ class ProductsApiController extends ActiveController
 
         Yii::$app->response->format = Response::FORMAT_JSON;
 
+        if (!$this->validateProduct($model)) {
+            return false;
+        }
+
         if ($model->save()) {
             Yii::$app->response->setStatusCode(201); // Created
             return $model;
         } else {
             return ['errors' => $model->errors];
         }
+    }
+    public function validateProduct($model)
+    {
+        $existingProduct = Products::findOne(['product_name' => $model->product_name]);
+        if ($existingProduct !== null) {
+            $model->addError('product_name', 'Product already exist!');
+            return false;
+        }
+
+        return true;
     }
 
     // Custom action to view a single product
@@ -130,8 +144,9 @@ class ProductsApiController extends ActiveController
         }
     }
 
-//    ---------- Sub Products -----------
 
+
+//    ---------- Sub Products -----------
     public function actionGetSubProducts($id = NULL)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;

@@ -12,6 +12,7 @@ use app\models\Clusters;
 use app\models\Customers;
 use app\models\Employees;
 use app\models\EmployeesStatus;
+use app\models\InventoryUpdates;
 use app\models\Payments;
 use app\models\Positions;
 use app\models\Products;
@@ -24,7 +25,11 @@ use app\models\Services;
 use app\models\SubProducts;
 use app\models\User;
 use app\models\WaitingTime;
+use kartik\export\ExportMenu;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Yii;
+use yii\data\ArrayDataProvider;
 use yii\rest\Controller;
 use yii\web\Response;
 
@@ -127,11 +132,11 @@ class ApiController extends Controller
 
         if ($attendance === null || !empty($attendance->sign_in && !empty($attendance->sign_out))) {
             return [
-                'timeIn' => true,
+                'attendance' => true,
             ];
         } else {
             return [
-                'timeOut' => true,
+                'attendance' => false,
             ];
         }
     }
@@ -1384,11 +1389,144 @@ class ApiController extends Controller
 
 
 
+    public function actionAndroidReports()
+    {
+        Yii::$app->response->format = Response::FORMAT_RAW;
+
+        date_default_timezone_set('Asia/Manila');
+
+        // Fetching payments data with related models if needed
+        $payments = Payments::find()->all();
+
+        // Create a new Spreadsheet object
+        $spreadsheet = new Spreadsheet();
+
+        // Set document properties
+        $spreadsheet->getProperties()->setCreator('Your Name')
+            ->setLastModifiedBy('Your Name')
+            ->setTitle('Sales Report')
+            ->setDescription('Sales Report');
+
+        // Set up the active sheet
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Sales Data');
+
+        // Add headers
+        $sheet->setCellValue('A1', 'Customer Name');
+        $sheet->setCellValue('B1', 'Date');
+        $sheet->setCellValue('C1', 'Availed Services');
+        $sheet->setCellValue('D1', 'Total Discount');
+        $sheet->setCellValue('E1', 'Total Sales');
+        $sheet->setCellValue('F1', 'Grand Total');
+
+        // Populate data and calculate totals
+        $row = 2;
+        $totalDiscountSum = 0;
+        $totalSalesSum = 0;
+        foreach ($payments as $payment) {
+            $customerName = $payment->fkBooking->fkCustomer->customer_name;
+            $date = date('Y-m-d', strtotime($payment->payment_date));
+            $totalDiscount = $payment->discount;
+            $totalSales = $payment->payment_amount;
+
+            $sheet->setCellValue('A' . $row, $customerName);
+            $sheet->setCellValue('B' . $row, $date);
+            $sheet->setCellValue('C' . $row, ''); // Add availed services if applicable
+            $sheet->setCellValue('D' . $row, $totalDiscount);
+            $sheet->setCellValue('E' . $row, $totalSales);
+            $sheet->setCellValue('F' . $row, $totalDiscount + $totalSales);
+
+            $totalDiscountSum += $totalDiscount;
+            $totalSalesSum += $totalSales;
+
+            $row++;
+        }
+
+        // Add row for total discounts, total sales, and grand total
+        $sheet->setCellValue('A' . $row, 'Total');
+        $sheet->setCellValue('D' . $row, $totalDiscountSum);
+        $sheet->setCellValue('E' . $row, $totalSalesSum);
+        $sheet->setCellValue('F' . $row, $totalDiscountSum + $totalSalesSum);
+
+        // Create a new Xlsx writer and save the file
+        $writer = new Xlsx($spreadsheet);
+
+        // Set response headers for download
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Sales_Report_' . date('Y-m-d') . '.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        // Save Excel file to output stream
+        $writer->save('php://output');
+
+        exit;
+    }
 
 
 
 
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+
+
+
+
+
+
+
+//  PRODUCTS
+    public function actionGetProducts()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $queryParams = Yii::$app->request->queryParams;
+
+        $query = Products::find();
+
+        $fields = ['id', 'product_name', 'description', 'stock_quantity'];
+        $query->select($fields);
+
+        foreach ($queryParams as $key => $value) {
+            if (in_array($key, ['id', 'product_name', 'description', 'stock_quantity'])) {
+                $query->andWhere([$key => $value]);
+            }
+        }
+
+        $products = $query->orderBy(['id' => SORT_DESC])->all();
+
+        if (!empty($products)) {
+            // Iterate over products and set has_sub_item property
+            $result = [];
+            foreach ($products as $product) {
+                $result[] = [
+                    'id' => $product->id,
+                    'product_name' => $product->product_name,
+                    'description' => $product->description,
+                    'stock_quantity' => $product->stock_quantity,
+                    'has_sub_item' => $this->actionHasSubItem($product),
+                    'sub_item' => $product->subProducts,
+                ];
+            }
+            return $result;
+        } else {
+            Yii::$app->response->statusCode = 404; // Not Found
+            return ['error' => 'No products found matching the provided criteria.'];
+        }
+    }
+    public function actionHasSubItem($product_model)
+    {
+        $has_sub_item = SubProducts::find()
+            ->where(['product_id' => $product_model->id])
+            ->exists();
+
+        return $has_sub_item;
+    }
+
+    public function actionCreateProduct()
+=======
+>>>>>>> Stashed changes
 //  PRODUCTS
     public function actionGetProducts($id = NULL)
     {
@@ -1419,19 +1557,60 @@ class ApiController extends Controller
 
     // Custom action to create a new product
     public function actionCreateProducts()
+<<<<<<< Updated upstream
+=======
+>>>>>>> e5470d666c31021055c4c748578ddd2e5d5ba2c6
+>>>>>>> Stashed changes
     {
         $model = new Products();
         $model->load(Yii::$app->getRequest()->getBodyParams(), '');
 
         Yii::$app->response->format = Response::FORMAT_JSON;
 
+<<<<<<< Updated upstream
         if ($model->save()) {
             Yii::$app->response->setStatusCode(201); // Created
             return $model;
+=======
+<<<<<<< HEAD
+        if (!$this->validateProduct($model)) {
+            return [
+                'success' => false,
+                'errors' => $model->errors
+            ];
+        }
+
+        if ($model->save()) {
+            Yii::$app->response->setStatusCode(201); // Created
+            return true;
+=======
+        if ($model->save()) {
+            Yii::$app->response->setStatusCode(201); // Created
+            return $model;
+>>>>>>> e5470d666c31021055c4c748578ddd2e5d5ba2c6
+>>>>>>> Stashed changes
         } else {
             return ['errors' => $model->errors];
         }
     }
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+    public function validateProduct($model)
+    {
+        $existingProduct = Products::findOne(['product_name' => $model->product_name]);
+        if ($existingProduct !== null) {
+            $model->addError('product_name', 'Product already exist!');
+            return false;
+        }
+        return true;
+    }
+
+    public function actionUpdateProduct($id = null)
+    {
+        date_default_timezone_set('Asia/Manila');
+=======
+>>>>>>> Stashed changes
 
     // Custom action to view a single product
     public function actionViewProducts($id = null)
@@ -1464,6 +1643,10 @@ class ApiController extends Controller
     // Custom action to update a product
     public function actionUpdateProducts($id = null)
     {
+<<<<<<< Updated upstream
+=======
+>>>>>>> e5470d666c31021055c4c748578ddd2e5d5ba2c6
+>>>>>>> Stashed changes
         Yii::$app->getResponse()->format = Response::FORMAT_JSON;
 
         if ($id === null) {
@@ -1483,6 +1666,92 @@ class ApiController extends Controller
             ];
         }
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+        if ($model->load(Yii::$app->getRequest()->getBodyParams(), '') && $model->validate()) {
+            if (empty($model->new_stock_quantity) && empty($model->fk_item_status)) {
+                if ($model->save()) {
+                    return true;
+                }
+            } elseif (empty($model->new_stock_quantity)) {
+                $model->addError('new_stock_quantity', 'Quantity cannot be empty.');
+            } elseif (empty($model->fk_item_status)) {
+                $model->addError('fk_item_status', 'Status cannot be empty.');
+            } else {
+                if ($model->fk_item_status == 1) {
+                    $model->stock_quantity += intval($model->new_stock_quantity);
+                } else {
+                    $model->stock_quantity -= intval($model->new_stock_quantity);
+                }
+
+                $updateProductsModel = new InventoryUpdates();
+                $updateProductsModel->fk_id_item = $model->id;
+                $updateProductsModel->fk_id_sub_item = null;
+                $updateProductsModel->fk_item_status = $model->fk_item_status;
+                $updateProductsModel->quantity = $model->new_stock_quantity;
+                $updateProductsModel->updated_by = Yii::$app->getRequest()->getBodyParam('updated_by');
+                $updateProductsModel->updated_time = date('Y-m-d H:i:s');
+
+                if ($model->save() && $updateProductsModel->save()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        return [
+            'success' => false,
+            'errors' => $model->errors,
+        ];
+    }
+
+
+
+
+
+//    ---------- Sub Products -----------
+    public function actionGetSubItems()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $queryParams = Yii::$app->request->queryParams;
+
+        $query = SubProducts::find();
+
+        $fields = ['id', 'product_id', 'sub_products_name', 'description', 'quantity'];
+        $query->select($fields);
+
+        foreach ($queryParams as $key => $value) {
+            if (in_array($key, ['id', 'product_name', 'description', 'stock_quantity'])) {
+                $query->andWhere([$key => $value]);
+            }
+        }
+
+        $subItems = $query->orderBy(['id' => SORT_DESC])->all();
+
+        if (!empty($subItems)) {
+            foreach ($subItems as $subItem){
+                $result[] = [
+                    'id' => $subItem->id,
+                    'sub_item_name' => $subItem->sub_products_name,
+                    'description' => $subItem->description,
+                    'quantity' => $subItem->quantity,
+                    'main_product' => $subItem->product,
+                ];
+            }
+
+            return $result;
+        } else {
+            Yii::$app->response->statusCode = 404; // Not Found
+            return ['error' => 'No sub Items found matching the provided criteria.'];
+        }
+    }
+
+    public function actionCreateSubItem($id = null)
+=======
+>>>>>>> Stashed changes
         $model->load(Yii::$app->getRequest()->getBodyParams(), '');
         if ($model->save()) {
             return $model;
@@ -1519,17 +1788,146 @@ class ApiController extends Controller
 
     // Custom action to Create Sub Products
     public function actionCreateSubProducts($id = NULL)
+<<<<<<< Updated upstream
+=======
+>>>>>>> e5470d666c31021055c4c748578ddd2e5d5ba2c6
+>>>>>>> Stashed changes
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if ($id === null) {
             return [
                 'success' => false,
+<<<<<<< Updated upstream
                 'name' => 'Bad Request',
+=======
+<<<<<<< HEAD
+                'error' => 'Bad Request',
+                'message' => 'Missing required parameter: id of main_product'
+            ];
+        }
+
+        $modelSubProducts = new SubProducts();
+        $modelSubProducts->load(Yii::$app->getRequest()->getBodyParams(), '');
+        $modelProducts = Products::findOne($id);
+
+        if ($modelProducts === null) {
+            return [
+                'success' => false,
+                'error' => 'Not Found',
+                'message' => 'Main product not found for the given ID.'
+            ];
+        }
+
+        if (empty($modelProducts->subProducts)) {
+            $modelProducts->stock_quantity = 0;
+        }
+
+        $modelSubProducts->product_id = $id;
+
+        if ($this->validateSubItems($modelSubProducts)) {
+            if ($modelSubProducts->save()) {
+                $modelProducts->stock_quantity += $modelSubProducts->quantity;
+                if ($modelProducts->save()) {
+                    return true;
+                } else {
+                    return [
+                        'success' => false,
+                        'error' => 'Failed to update main product',
+                        'errors' => $modelProducts->errors,
+                    ];
+                }
+            } else {
+                return [
+                    'success' => false,
+                    'error' => 'Failed to save sub-item',
+                    'errors' => $modelSubProducts->errors,
+                ];
+            }
+        } else {
+            return [
+                'success' => false,
+                'error' => 'Validation Error',
+                'errors' => $modelSubProducts->errors,
+            ];
+        }
+    }
+
+    public function validateSubItems($modelSubProducts)
+    {
+        $existingProduct = SubProducts::findOne(['sub_products_name' => $modelSubProducts->sub_products_name]);
+        if ($existingProduct !== null) {
+            $modelSubProducts->addError('sub_products_name', 'Sub Item already exists!');
+            return false;
+        }
+        return true;
+    }
+
+    public function actionUpdateSubItem($id = null)
+    {
+        date_default_timezone_set('Asia/Manila');
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if ($id === null) {
+            return [
+                'success' => false,
+                'error' => 'Bad Request',
+=======
+                'name' => 'Bad Request',
+>>>>>>> e5470d666c31021055c4c748578ddd2e5d5ba2c6
+>>>>>>> Stashed changes
                 'message' => 'Missing required parameter: id'
             ];
         }
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+        $subItemModel = SubProducts::findOne($id);
+        $productModel = Products::find()
+            ->where(['id' => $subItemModel->product_id])
+            ->one();
+
+        if ($subItemModel->load(Yii::$app->request->getBodyParams(), '') && $subItemModel->validate()) {
+            if (empty($subItemModel->new_stock_quantity) && empty($subItemModel->fk_item_status)) {
+                if ($subItemModel->save()) {
+                    return true;
+                }
+            }
+            $quantityChange = intval($subItemModel->new_stock_quantity);
+            if ($subItemModel->fk_item_status == 1) {
+                $subItemModel->quantity += $quantityChange;
+                $productModel->stock_quantity += $quantityChange;
+            } else {
+                if ($subItemModel->quantity >= $quantityChange) {
+                    $subItemModel->quantity -= $quantityChange;
+                    $productModel->stock_quantity -= $quantityChange;
+                } else {
+                    return [
+                        'success' => false,
+                        'error' => 'Quantity Error',
+                        'message' => 'The requested quantity cannot be decreased. Current quantity is too low for ' . $subItemModel->sub_products_name,
+                    ];
+                }
+            }
+
+            $updateProductsModel = new InventoryUpdates();
+            $updateProductsModel->fk_id_item = $productModel->id;
+            $updateProductsModel->fk_id_sub_item = $subItemModel->id;
+            $updateProductsModel->fk_item_status = $subItemModel->fk_item_status;
+            $updateProductsModel->quantity = $subItemModel->new_stock_quantity;
+            $updateProductsModel->updated_by = Yii::$app->getRequest()->getBodyParam('updated_by');
+            $updateProductsModel->updated_time = date('Y-m-d H:i:s');
+
+            if ($subItemModel->save() && $updateProductsModel->save() && $productModel->save()) {
+                return $productModel;
+            } else {
+                return [
+                    'success' => false,
+                    'error' => 'Update Error',
+                    'message' => 'Failed to update product.',
+=======
+>>>>>>> Stashed changes
         $model = new SubProducts();
         $model->load(Yii::$app->getRequest()->getBodyParams(), '');
 
@@ -1642,10 +2040,26 @@ class ApiController extends Controller
                     'name' => $subProduct->sub_products_name,
                     'description' => $subProduct->description,
                     'quantity' => $subProduct->quantity,
+<<<<<<< Updated upstream
+=======
+>>>>>>> e5470d666c31021055c4c748578ddd2e5d5ba2c6
+>>>>>>> Stashed changes
                 ];
             }
         }
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+        return [
+            'success' => false,
+            'error' => 'Validation Error',
+            'errors' => $subItemModel->errors,
+        ];
+    }
+
+=======
+>>>>>>> Stashed changes
         return $formattedProduct;
     }
 
@@ -1671,4 +2085,8 @@ class ApiController extends Controller
 
         return $formattedSubProduct;
     }
+<<<<<<< Updated upstream
+=======
+>>>>>>> e5470d666c31021055c4c748578ddd2e5d5ba2c6
+>>>>>>> Stashed changes
 }

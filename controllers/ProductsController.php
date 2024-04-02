@@ -55,8 +55,12 @@ class ProductsController extends Controller
     {
         $model = new Products();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+            if ($this->validateProduct($model)) {
+                if ($model->save()){
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
+            }
         }
 
         return $this->render('create', [
@@ -64,38 +68,66 @@ class ProductsController extends Controller
         ]);
     }
 
+    public function validateProduct($model)
+    {
+        $existingProduct = Products::findOne(['product_name' => $model->product_name]);
+        if ($existingProduct !== null) {
+            $model->addError('product_name', 'Product already exist!');
+            return false;
+        }
+
+        return true;
+    }
 
     public function actionUpdate($id)
     {
+        date_default_timezone_set('Asia/Manila');
         $model = $this->findProductsModel($id);
+        $update_productsModel = new InventoryUpdates();
 
         if ($model->load(Yii::$app->request->post())) {
+            if (empty($model->new_stock_quantity) && empty($model->fk_item_status)) {
+                Yii::$app->session->setFlash('success', [
+                    'title' => 'Yay',
+                    'body' => 'Update saved successfully.',
+                ]);
+                return $this->redirect(['view', 'id' => $model->id]);
+            } elseif (empty($model->new_stock_quantity)) {
+                $model->addError('new_stock_quantity', 'Quantity cannot be empty.');
+            } elseif (empty($model->fk_item_status)) {
+                $model->addError('fk_item_status', 'Status cannot be empty.');
+            } else {
+                if ($model->validate()) {
+                    if ($model->fk_item_status == 1) {
+                        $model->stock_quantity += intval($model->new_stock_quantity);
+                        Yii::$app->session->setFlash('success', [
+                            'title' => 'Yay',
+                            'body' => 'Added ' . $model->new_stock_quantity . ' to the stock quantity',
+                        ]);
+                    } else {
+                        $model->stock_quantity -= intval($model->new_stock_quantity);
+                        Yii::$app->session->setFlash('success', [
+                            'title' => 'Yay',
+                            'body' => 'Decreased ' . $model->new_stock_quantity . ' from the stock quantity',
+                        ]);
+                    }
+                    $update_productsModel->fk_id_item = $model->id;
+                    $update_productsModel->fk_id_sub_item = null;
+                    $update_productsModel->fk_item_status = $model->fk_item_status;
+                    $update_productsModel->quantity = $model->new_stock_quantity;
+                    $update_productsModel->updated_by = Yii::$app->user->identity->username;
+                    $update_productsModel->updated_time = date('Y-m-d H:i:s');
 
-            if (empty($model->fk_item_status)) {
-                if ($model->save()) {
-                    Yii::$app->session->setFlash('success', [
-                        'title' => 'Yay',
-                        'body' => 'Successfully updated product - <b>' . $model->product_name . '</b>',
-                    ]);
-                    return $this->redirect(['view', 'id' => $model->id]);
+                    if ($model->save() && $update_productsModel->save()) {
+                        return $this->redirect(['view', 'id' => $model->id]);
+                    } else {
+                        Yii::$app->session->setFlash('error', [
+                            'title' => 'Oh no!',
+                            'body' => 'Failed to update product.',
+                        ]);
+                    }
                 }
             }
-
-            if ($model->fk_item_status == 1) {
-                $model->stock_quantity += intval($model->new_stock_quantity);
-                Yii::$app->session->setFlash('success', [
-                    'title' => 'Yay',
-                    'body' => 'Added '. $model->new_stock_quantity . ' to the stock quantity',
-                ]);
-            } else {
-                $model->stock_quantity -= intval($model->new_stock_quantity);
-                Yii::$app->session->setFlash('success', [
-                    'title' => 'Yay',
-                    'body' => 'Decrease '. $model->new_stock_quantity . ' to the stock quantity',
-                ]);
-            }
-            $model->save();
-            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
@@ -113,13 +145,6 @@ class ProductsController extends Controller
         return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
     }
 
-    /**
-     * Finds the Products model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return Products the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     protected function findProductsModel($id)
     {
         if (($model = Products::findOne($id)) !== null) {
@@ -157,6 +182,44 @@ class ProductsController extends Controller
         }
     }
 
+    public function actionSubItemsCreate($id)
+    {
+        $modelSubProducts = new SubProducts();
+        $modelProducts = $this->findProductsModel($id);
+
+        $modelHasSub = SubProducts::find()
+            ->where(['product_id' => $id])
+            ->one();
+
+        if ($modelSubProducts->load(Yii::$app->request->post())) {
+            if ($this->validateSubItems($modelSubProducts)){
+                if ($modelSubProducts->save()) {
+                    if (empty($modelHasSub)) {
+                        $modelProducts->stock_quantity = intval($modelSubProducts->quantity);
+                    } else {
+                        $modelProducts->stock_quantity = intval($modelProducts->stock_quantity) + intval($modelSubProducts->quantity);
+                    }
+                    $modelProducts->save();
+                    return $this->redirect(['view', 'id' => $modelProducts->id]);
+                }
+            }
+        }
+
+        return $this->render('createsub', [
+            'model' => $modelSubProducts,
+            'productmodel' => $modelProducts,
+        ]);
+    }
+
+    public function validateSubItems($modelSubProducts)
+    {
+        $existingProduct = SubProducts::findOne(['sub_products_name' => $modelSubProducts->sub_products_name]);
+        if ($existingProduct !== null) {
+            $modelSubProducts->addError('sub_products_name', 'Sub Item already exist!');
+            return false;
+        }
+        return true;
+    }
 
     public function actionSubItemsUpdate($id)
     {
@@ -164,36 +227,40 @@ class ProductsController extends Controller
         $modelProducts = $this->findProductsModel($model->product_id);
 
         if ($model->load(Yii::$app->request->post())) {
-            if (empty($model->fk_item_status) && !empty($model->new_stock_quantity)) {
-                Yii::$app->session->setFlash('error', [
-                    'title' => 'Oh no!',
-                    'body' => 'Select a status type for - <b>' . $model->sub_products_name . '</b>',
-                ]);
-                return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
-            }
-
             if (empty($model->fk_item_status) && empty($model->new_stock_quantity)) {
                 Yii::$app->session->setFlash('success', [
                     'title' => 'Yay',
-                    'body' => 'Successfully updated product - <b>' . $model->sub_products_name . '</b>',
+                    'body' => 'Update saved successfully',
                 ]);
                 return $this->redirect(['view', 'id' => $modelProducts->id]);
+            }
+
+            if (empty($model->fk_item_status)) {
+                $model->addError('fk_item_status', 'Status cannot be empty.');
+            }
+
+            if (empty($model->new_stock_quantity)) {
+                $model->addError('new_stock_quantity', 'Quantity cannot be empty.');
+            }
+
+            if ($model->hasErrors()) {
+                return $this->render('updatesub', ['model' => $model]);
             }
 
             $quantityChange = intval($model->new_stock_quantity);
             if ($model->fk_item_status == 1) {
                 $model->quantity += $quantityChange;
                 $modelProducts->stock_quantity += $quantityChange;
-                $flashMessage = 'Added ' . $quantityChange . ' to the sub item quantity';
+                $flashMessage = 'Added ' . $quantityChange . ' to the sub-item quantity for ' . $model->sub_products_name;
             } else {
                 if ($model->quantity >= $quantityChange) {
                     $model->quantity -= $quantityChange;
                     $modelProducts->stock_quantity -= $quantityChange;
-                    $flashMessage = 'Decreased ' . $quantityChange . ' from the sub item quantity';
+                    $flashMessage = 'Decreased ' . $quantityChange . ' from the sub-item quantity for ' . $model->sub_products_name;
                 } else {
                     Yii::$app->session->setFlash('error', [
                         'title' => 'Oh no!',
-                        'body' => 'The requested quantity cannot be decreased. Current quantity is too low.',
+                        'body' => 'The requested quantity cannot be decreased. Current quantity is too low for ' . $model->sub_products_name,
                     ]);
                     return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
                 }
@@ -204,17 +271,28 @@ class ProductsController extends Controller
                 'body' => $flashMessage,
             ]);
 
-            $model->save();
-            $modelProducts->save();
+            $update_productsModel = new InventoryUpdates();
+            $update_productsModel->fk_id_item = $modelProducts->id;
+            $update_productsModel->fk_id_sub_item = $model->id;
+            $update_productsModel->fk_item_status = $model->fk_item_status;
+            $update_productsModel->quantity = $model->new_stock_quantity;
+            $update_productsModel->updated_by = Yii::$app->user->identity->username;
+            $update_productsModel->updated_time = date('Y-m-d H:i:s');
 
-            return $this->redirect(['view', 'id' => $modelProducts->id]);
+            if ($model->save() && $update_productsModel->save() && $modelProducts->save()) {
+                return $this->redirect(['view', 'id' => $modelProducts->id]);
+            } else {
+                Yii::$app->session->setFlash('error', [
+                    'title' => 'Oh no!',
+                    'body' => 'Failed to update product.',
+                ]);
+            }
         }
 
         return $this->render('updatesub', [
             'model' => $model,
         ]);
     }
-
     public function actionSubItemsDelete(){
         Yii::$app->session->setFlash('error', [
             'title' => 'Oh no!',
@@ -222,32 +300,6 @@ class ProductsController extends Controller
         ]);
         return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
     }
-
-    public function actionSubItemsCreate($id)
-    {
-        $modelSubProducts = new SubProducts();
-        $modelProducts = $this->findProductsModel($id);
-
-        $modelHasSub = SubProducts::find()
-            ->where(['product_id' => $id])
-            ->one();
-
-        if ($modelSubProducts->load(Yii::$app->request->post()) && $modelSubProducts->save()) {
-            if (empty($modelHasSub)) {
-                $modelProducts->stock_quantity = intval($modelSubProducts->quantity);;
-            } else {
-                $modelProducts->stock_quantity = intval($modelProducts->stock_quantity) + intval($modelSubProducts->quantity);
-            }
-            $modelProducts->save();
-            return $this->redirect(['view', 'id' => $modelProducts->id]);
-        }
-
-        return $this->render('createsub', [
-            'model' => $modelSubProducts,
-            'productmodel' => $modelProducts,
-        ]);
-    }
-
     protected function findSubItemsModel($id)
     {
         if (($model = SubProducts::findOne($id)) !== null) {

@@ -133,6 +133,7 @@ $config = [
                     'get-preferences',
                     'save-location',
                     'admin-request',
+                    'android-reports'
                 ],
                 'allow' => true,
             ],
