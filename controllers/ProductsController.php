@@ -56,6 +56,9 @@ class ProductsController extends Controller
         $model = new Products();
 
         if ($model->load(Yii::$app->request->post())) {
+            if (empty($model->stock_quantity)){
+                $model->stock_quantity = 0;
+            }
             if ($this->validateProduct($model)) {
                 if ($model->save()){
                     return $this->redirect(['view', 'id' => $model->id]);

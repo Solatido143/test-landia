@@ -13,16 +13,20 @@ $this->title = $model->product_name;
 $this->params['breadcrumbs'][] = ['label' => 'Products', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
+
+$hasSubItem = \app\models\SubProducts::find()
+    ->where(['product_id' => $model->id])
+    ->one();
 ?>
 
 <div class="container-fluid">
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
 
                             <div class="row">
                                 <div class="col-md-12">
@@ -55,6 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <!--.card-->
         </div>
 
+        <?php if (!empty($hasSubItem)) : ?>
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
@@ -103,6 +108,8 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <!--card-->
         </div>
+        <?php endif; ?>
+
     </div>
 
 

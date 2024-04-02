@@ -1495,14 +1495,21 @@ class ApiController extends Controller
             // Iterate over products and set has_sub_item property
             $result = [];
             foreach ($products as $product) {
-                $result[] = [
+                $hasSubItem = $this->actionHasSubItem($product);
+                $productArray = [
                     'id' => $product->id,
                     'product_name' => $product->product_name,
                     'description' => $product->description,
                     'stock_quantity' => $product->stock_quantity,
-                    'has_sub_item' => $this->actionHasSubItem($product),
-                    'sub_item' => $product->subProducts,
+                    'has_sub_item' => $hasSubItem,
                 ];
+
+                // Only include sub_item if has_sub_item is true
+                if ($hasSubItem) {
+                    $productArray['sub_item'] = $product->subProducts;
+                }
+
+                $result[] = $productArray;
             }
             return $result;
         } else {

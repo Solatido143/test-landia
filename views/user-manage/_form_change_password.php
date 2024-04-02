@@ -27,10 +27,10 @@ $Roles = $UserModel->fetchAndMapData(\app\models\Roles::class, 'user_access_id',
                 </div>
 
                 <div class="col-md-12">
-                    <?= $form->field($model, 'password')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'password')->textInput(['maxlength' => true])->label('New Password') ?>
                 </div>
                 <div class="col-md-12">
-                    <?= $form->field($model, 'confirmPassword')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'confirmPassword')->textInput(['maxlength' => true])->label('Confirm Password') ?>
                 </div>
 
             </div>
