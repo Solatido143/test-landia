@@ -1466,9 +1466,6 @@ class ApiController extends Controller
 
 
 
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
 
 
 
@@ -1525,54 +1522,12 @@ class ApiController extends Controller
     }
 
     public function actionCreateProduct()
-=======
->>>>>>> Stashed changes
-//  PRODUCTS
-    public function actionGetProducts($id = NULL)
-    {
-
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        if (!empty($id))
-        {
-            return $this->actionViewProducts($id);
-        }
-
-        $products = Products::find()->with('subProducts')->all();
-
-        // Prepare an array to hold the formatted product data
-        $formattedProducts = [];
-
-        // Loop through each product
-        foreach ($products as $product) {
-            // Create an array to hold the product data
-            $formattedProduct = $this->getFormattedProduct($product);
-
-            // Add the formatted product to the array of formatted products
-            $formattedProducts[] = $formattedProduct;
-        }
-
-        return $formattedProducts;
-    }
-
-    // Custom action to create a new product
-    public function actionCreateProducts()
-<<<<<<< Updated upstream
-=======
->>>>>>> e5470d666c31021055c4c748578ddd2e5d5ba2c6
->>>>>>> Stashed changes
     {
         $model = new Products();
         $model->load(Yii::$app->getRequest()->getBodyParams(), '');
 
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-<<<<<<< Updated upstream
-        if ($model->save()) {
-            Yii::$app->response->setStatusCode(201); // Created
-            return $model;
-=======
-<<<<<<< HEAD
         if (!$this->validateProduct($model)) {
             return [
                 'success' => false,
@@ -1583,19 +1538,10 @@ class ApiController extends Controller
         if ($model->save()) {
             Yii::$app->response->setStatusCode(201); // Created
             return true;
-=======
-        if ($model->save()) {
-            Yii::$app->response->setStatusCode(201); // Created
-            return $model;
->>>>>>> e5470d666c31021055c4c748578ddd2e5d5ba2c6
->>>>>>> Stashed changes
         } else {
             return ['errors' => $model->errors];
         }
     }
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
     public function validateProduct($model)
     {
         $existingProduct = Products::findOne(['product_name' => $model->product_name]);
@@ -1609,44 +1555,6 @@ class ApiController extends Controller
     public function actionUpdateProduct($id = null)
     {
         date_default_timezone_set('Asia/Manila');
-=======
->>>>>>> Stashed changes
-
-    // Custom action to view a single product
-    public function actionViewProducts($id = null)
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        if ($id === null) {
-            return [
-                'success' => false,
-                'name' => 'Bad Request',
-                'message' => 'Missing required parameter: id'
-            ];
-        }
-
-        $product = Products::findOne($id);
-        if ($product === null) {
-            return [
-                'isProductExist' => false,
-                'name' => 'Not Found',
-                'message' => 'Product not found.'
-            ];
-        }
-
-        // Prepare an array to hold the formatted product data
-        $formattedProduct = $this->getFormattedProduct($product);
-
-        return $formattedProduct;
-    }
-
-    // Custom action to update a product
-    public function actionUpdateProducts($id = null)
-    {
-<<<<<<< Updated upstream
-=======
->>>>>>> e5470d666c31021055c4c748578ddd2e5d5ba2c6
->>>>>>> Stashed changes
         Yii::$app->getResponse()->format = Response::FORMAT_JSON;
 
         if ($id === null) {
@@ -1666,9 +1574,6 @@ class ApiController extends Controller
             ];
         }
 
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
         if ($model->load(Yii::$app->getRequest()->getBodyParams(), '') && $model->validate()) {
             if (empty($model->new_stock_quantity) && empty($model->fk_item_status)) {
                 if ($model->save()) {
@@ -1750,58 +1655,12 @@ class ApiController extends Controller
     }
 
     public function actionCreateSubItem($id = null)
-=======
->>>>>>> Stashed changes
-        $model->load(Yii::$app->getRequest()->getBodyParams(), '');
-        if ($model->save()) {
-            return $model;
-        } else {
-            return [
-                'success' => false,
-                'errors' => $model->errors,
-                'message' => 'Failed to update product.'
-            ];
-        }
-    }
-
-//    ---------- Sub Products -----------
-
-    public function actionGetSubProducts($id = NULL)
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        if (!empty($id)){
-            return $this->actionViewSubProducts($id);
-        }
-
-        $subProducts = SubProducts::find()->with('products')->all();
-
-        $formattedSubProducts = [];
-
-        foreach ($subProducts as $subProduct) {
-            $formattedSubProduct = $this->getFormattedSubProduct($subProduct);
-            $formattedSubProducts[] = $formattedSubProduct;
-        }
-
-        return $formattedSubProducts;
-    }
-
-    // Custom action to Create Sub Products
-    public function actionCreateSubProducts($id = NULL)
-<<<<<<< Updated upstream
-=======
->>>>>>> e5470d666c31021055c4c748578ddd2e5d5ba2c6
->>>>>>> Stashed changes
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         if ($id === null) {
             return [
                 'success' => false,
-<<<<<<< Updated upstream
-                'name' => 'Bad Request',
-=======
-<<<<<<< HEAD
                 'error' => 'Bad Request',
                 'message' => 'Missing required parameter: id of main_product'
             ];
@@ -1872,17 +1731,10 @@ class ApiController extends Controller
             return [
                 'success' => false,
                 'error' => 'Bad Request',
-=======
-                'name' => 'Bad Request',
->>>>>>> e5470d666c31021055c4c748578ddd2e5d5ba2c6
->>>>>>> Stashed changes
                 'message' => 'Missing required parameter: id'
             ];
         }
 
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
         $subItemModel = SubProducts::findOne($id);
         $productModel = Products::find()
             ->where(['id' => $subItemModel->product_id])
@@ -1926,131 +1778,10 @@ class ApiController extends Controller
                     'success' => false,
                     'error' => 'Update Error',
                     'message' => 'Failed to update product.',
-=======
->>>>>>> Stashed changes
-        $model = new SubProducts();
-        $model->load(Yii::$app->getRequest()->getBodyParams(), '');
-
-        $modelProducts = Products::findOne($id); // Assuming you have a method to find the products model by ID
-
-        if ($model->save()) {
-            $modelProducts->stock_quantity = intval($modelProducts->stock_quantity) + intval($model->quantity);
-            $modelProducts->save();
-            Yii::$app->response->setStatusCode(201); // Created
-            return $model;
-        } else {
-            return ['errors' => $model->errors];
-        }
-    }
-
-    // Custom action to view a single sub product
-    public function actionViewSubProducts($id = null)
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        // Check if $id is provided
-        if ($id === null) {
-            return [
-                'success' => false,
-                'name' => 'Bad Request',
-                'message' => 'Missing required parameter: id'
-            ];
-        }
-
-        // Find the product by $id
-        $subproduct = SubProducts::findOne($id);
-
-        // Check if the product is found
-        if ($subproduct === null) {
-            return [
-                'isProductExist' => false,
-                'name' => 'Not Found',
-                'message' => 'Product not found.'
-            ];
-        }
-
-        // Prepare an array to hold the formatted product data
-        $formattedProduct = $this->getFormattedSubProduct($subproduct);
-
-        return $formattedProduct;
-    }
-
-    // Custom action to update a single sub product
-    public function actionUpdateSubProducts($id = null)
-    {
-        Yii::$app->getResponse()->format = Response::FORMAT_JSON;
-
-        if ($id === null) {
-            return [
-                'success' => false,
-                'error' => 'Missing parameter',
-                'message' => 'The required parameter id is missing.'
-            ];
-        }
-
-        $subProductsModel = SubProducts::findOne($id);
-
-        if ($subProductsModel === null) {
-            return [
-                'success' => false,
-                'error' => 'Product not found',
-                'message' => 'Product not found for the given ID.'
-            ];
-        }
-
-        $modelProducts = $subProductsModel->product_id;
-        $modelProducts = Products::findOne($modelProducts);
-
-        $modelProducts->stock_quantity = intval($modelProducts->stock_quantity) - intval($subProductsModel->quantity);
-
-        $subProductsModel->load(Yii::$app->getRequest()->getBodyParams(), '');
-        if ($subProductsModel->save()) {
-            $modelProducts->stock_quantity = intval($modelProducts->stock_quantity) + intval($subProductsModel->quantity);
-            $modelProducts->save();
-            return $subProductsModel;
-        } else {
-            return [
-                'success' => false,
-                'errors' => $subProductsModel->errors,
-                'message' => 'Failed to update product.'
-            ];
-        }
-    }
-
-//    ---------- Formats -----------
-
-    private function getFormattedProduct($product)
-    {
-        $formattedProduct = [
-            'id' => $product->id,
-            'name' => $product->product_name,
-            'description' => $product->description,
-            'stock_quantity' => $product->stock_quantity,
-        ];
-
-        // Check if 'expand' parameter is provided and set to 'subProducts'
-        $expandSubProducts = Yii::$app->request->get('expand') === 'subprod';
-
-        // Include subproducts if 'expand' parameter is provided and set to 'subProducts'
-        if ($expandSubProducts) {
-            $formattedProduct['subProducts'] = NULL;
-            foreach ($product->subProducts as $subProduct) {
-                $formattedProduct['subProducts'][] = [
-                    'id' => $subProduct->id,
-                    'name' => $subProduct->sub_products_name,
-                    'description' => $subProduct->description,
-                    'quantity' => $subProduct->quantity,
-<<<<<<< Updated upstream
-=======
->>>>>>> e5470d666c31021055c4c748578ddd2e5d5ba2c6
->>>>>>> Stashed changes
                 ];
             }
         }
 
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
         return [
             'success' => false,
             'error' => 'Validation Error',
@@ -2058,35 +1789,4 @@ class ApiController extends Controller
         ];
     }
 
-=======
->>>>>>> Stashed changes
-        return $formattedProduct;
-    }
-
-    private function getFormattedSubProduct($subProduct)
-    {
-        $formattedSubProduct = [
-            'id' => $subProduct->id,
-            'name' => $subProduct->sub_products_name,
-            'description' => $subProduct->description,
-            'stock_quantity' => $subProduct->quantity,
-        ];
-
-        // Check if 'expand' parameter is provided and set to 'product'
-        $expandProduct = Yii::$app->request->get('expand') === 'product';
-
-        // Include main product by default
-        $formattedSubProduct['main_product'] = $expandProduct ? $subProduct->products->product_name : null;
-
-        // If 'expand' parameter is not provided or not set to 'product', hide main product
-        if (!$expandProduct) {
-            unset($formattedSubProduct['main_product']);
-        }
-
-        return $formattedSubProduct;
-    }
-<<<<<<< Updated upstream
-=======
->>>>>>> e5470d666c31021055c4c748578ddd2e5d5ba2c6
->>>>>>> Stashed changes
 }
