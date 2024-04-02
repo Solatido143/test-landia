@@ -84,13 +84,11 @@ class ApiController extends Controller
         if (!empty($attendances)) {
             // Fetch the corresponding employee data for each attendance record
             foreach ($attendances as &$attendance) {
-                // Retrieve the employee record based on the fk_employee value
-                $employee = Employees::findOne($attendance->fk_employee);
                 // If employee record is found, include the first name in the JSON response
-                if ($employee !== null) {
-                    // Convert attendance record and include 'full_name' field
+                if ($attendance->fkEmployee !== null) {
+                    // Include 'full_name' field
                     $attendanceArray = $attendance->toArray();
-                    $attendanceArray['full_name'] = $employee->fname . " " . $employee->lname;
+                    $attendanceArray['full_name'] = $attendance->fkEmployee->fname . " " . $attendance->fkEmployee->lname;
                     $attendance = $attendanceArray; // Assign the modified array back to $attendance
                 }
             }
