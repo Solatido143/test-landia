@@ -86,7 +86,7 @@ class ProductsController extends Controller
     {
         date_default_timezone_set('Asia/Manila');
         $model = $this->findProductsModel($id);
-        $update_productsModel = new InventoryUpdates();
+        $logged_in_username = Yii::$app->user->identity->username;
 
         if ($model->load(Yii::$app->request->post())) {
             if (empty($model->new_stock_quantity) && empty($model->fk_item_status)) {
@@ -97,8 +97,6 @@ class ProductsController extends Controller
                 return $this->redirect(['view', 'id' => $model->id]);
             } elseif (empty($model->new_stock_quantity)) {
                 $model->addError('new_stock_quantity', 'Quantity cannot be empty.');
-            } elseif ($model->new_stock_quantity > $model->stock_quantity) {
-                $model->addError('new_stock_quantity', 'Quantity cannot be greater than stock.');
             } elseif (empty($model->fk_item_status)) {
                 $model->addError('fk_item_status', 'Status cannot be empty.');
             } else {
@@ -109,29 +107,56 @@ class ProductsController extends Controller
                             'title' => 'Yay',
                             'body' => 'Added ' . $model->new_stock_quantity . ' to the stock quantity',
                         ]);
-                    }
-                    if ($model->fk_item_status > 1 && ($model->new_stock_quantity <= $model->stock_quantity)) {
-                        $model->stock_quantity -= intval($model->new_stock_quantity);
-                        Yii::$app->session->setFlash('success', [
-                            'title' => 'Yay',
-                            'body' => 'Decreased ' . $model->new_stock_quantity . ' from the stock quantity',
-                        ]);
-                    }
-
-                    $update_productsModel->fk_id_item = $model->id;
-                    $update_productsModel->fk_id_sub_item = null;
-                    $update_productsModel->fk_item_status = $model->fk_item_status;
-                    $update_productsModel->quantity = $model->new_stock_quantity;
-                    $update_productsModel->updated_by = Yii::$app->user->identity->username;
-                    $update_productsModel->updated_time = date('Y-m-d H:i:s');
-
-                    if ($model->save() && $update_productsModel->save()) {
-                        return $this->redirect(['view', 'id' => $model->id]);
                     } else {
-                        Yii::$app->session->setFlash('error', [
-                            'title' => 'Oh no!',
-                            'body' => 'Failed to update product.',
-                        ]);
+                        if ($model->stock_quantity >= intval($model->new_stock_quantity)) {
+                            $model->stock_quantity -= intval($model->new_stock_quantity);
+                            Yii::$app->session->setFlash('success', [
+                                'title' => 'Yay',
+                                'body' => 'Decreased ' . $model->new_stock_quantity . ' from the stock quantity',
+                            ]);
+                        } else {
+                            Yii::$app->session->setFlash('error', [
+                                'title' => 'Oh no!',
+                                'body' => 'The requested quantity cannot be decreased. Current stock quantity is too low for ' . $model->product_name,
+                            ]);
+                        }
+                    }
+
+                    $inventoryUpdatesQuery = InventoryUpdates::find()
+                        ->where(['fk_id_item' => $model->id])
+                        ->andWhere(['fk_item_status' => $model->fk_item_status])
+                        ->one();
+
+                    if ($inventoryUpdatesQuery !== null) {
+                        $inventoryUpdatesQuery->quantity += $model->new_stock_quantity;
+                        $inventoryUpdatesQuery->updated_by = $logged_in_username;
+                        $inventoryUpdatesQuery->updated_time = date('Y-m-d H:i:s');
+                        if ($model->save() && $inventoryUpdatesQuery->save()) {
+                            return $this->redirect(['view', 'id' => $model->id]);
+                        } else {
+                            Yii::$app->session->setFlash('error', [
+                                'title' => 'Oh no!',
+                                'body' => 'Failed to update product.',
+                            ]);
+                        }
+                    } else {
+                        // Create new record
+                        $updateProductsModel = new InventoryUpdates();
+                        $updateProductsModel->fk_id_item = $model->id;
+                        $updateProductsModel->fk_id_sub_item = null;
+                        $updateProductsModel->fk_item_status = $model->fk_item_status;
+                        $updateProductsModel->quantity = $model->new_stock_quantity;
+                        $updateProductsModel->updated_by = $logged_in_username;
+                        $updateProductsModel->updated_time = date('Y-m-d H:i:s');
+
+                        if ($model->save() && $updateProductsModel->save()) {
+                            return $this->redirect(['view', 'id' => $model->id]);
+                        } else {
+                            Yii::$app->session->setFlash('error', [
+                                'title' => 'Oh no!',
+                                'body' => 'Failed to update product.',
+                            ]);
+                        }
                     }
                 }
             }
@@ -232,6 +257,7 @@ class ProductsController extends Controller
     {
         $model = $this->findSubItemsModel($id);
         $modelProducts = $this->findProductsModel($model->product_id);
+        $logged_in_username = Yii::$app->user->identity->username;
 
         if ($model->load(Yii::$app->request->post())) {
             if (empty($model->fk_item_status) && empty($model->new_stock_quantity)) {
@@ -241,20 +267,18 @@ class ProductsController extends Controller
                 ]);
                 return $this->redirect(['view', 'id' => $modelProducts->id]);
             }
-
             if (empty($model->fk_item_status)) {
                 $model->addError('fk_item_status', 'Status cannot be empty.');
             }
-
             if (empty($model->new_stock_quantity)) {
                 $model->addError('new_stock_quantity', 'Quantity cannot be empty.');
             }
-
             if ($model->hasErrors()) {
                 return $this->render('updatesub', ['model' => $model]);
             }
 
             $quantityChange = intval($model->new_stock_quantity);
+
             if ($model->fk_item_status == 1) {
                 $model->quantity += $quantityChange;
                 $modelProducts->stock_quantity += $quantityChange;
@@ -278,21 +302,42 @@ class ProductsController extends Controller
                 'body' => $flashMessage,
             ]);
 
-            $update_productsModel = new InventoryUpdates();
-            $update_productsModel->fk_id_item = $modelProducts->id;
-            $update_productsModel->fk_id_sub_item = $model->id;
-            $update_productsModel->fk_item_status = $model->fk_item_status;
-            $update_productsModel->quantity = $model->new_stock_quantity;
-            $update_productsModel->updated_by = Yii::$app->user->identity->username;
-            $update_productsModel->updated_time = date('Y-m-d H:i:s');
+            $inventoryUpdatesQuery = InventoryUpdates::find()
+                ->where(['fk_id_item' => $modelProducts->id])
+                ->andWhere(['fk_item_status' => $model->fk_item_status])
+                ->one();
 
-            if ($model->save() && $update_productsModel->save() && $modelProducts->save()) {
-                return $this->redirect(['view', 'id' => $modelProducts->id]);
+            if ($inventoryUpdatesQuery !== null) {
+                $inventoryUpdatesQuery->quantity += $model->new_stock_quantity;
+                $inventoryUpdatesQuery->fk_id_sub_item = $model->id;
+                $inventoryUpdatesQuery->updated_by = $logged_in_username;
+                $inventoryUpdatesQuery->updated_time = date('Y-m-d H:i:s');
+                if ($model->save() && $inventoryUpdatesQuery->save() && $modelProducts->save()) {
+                    return $this->redirect(['view', 'id' => $modelProducts->id]);
+                } else {
+                    Yii::$app->session->setFlash('error', [
+                        'title' => 'Oh no!',
+                        'body' => 'Failed to update product.',
+                    ]);
+                }
             } else {
-                Yii::$app->session->setFlash('error', [
-                    'title' => 'Oh no!',
-                    'body' => 'Failed to update product.',
-                ]);
+                // Create new record
+                $updateProductsModel = new InventoryUpdates();
+                $updateProductsModel->fk_id_item = $modelProducts->id;
+                $updateProductsModel->fk_id_sub_item = $model->id;
+                $updateProductsModel->fk_item_status = $model->fk_item_status;
+                $updateProductsModel->quantity = $model->new_stock_quantity;
+                $updateProductsModel->updated_by = $logged_in_username;
+                $updateProductsModel->updated_time = date('Y-m-d H:i:s');
+
+                if ($model->save() && $updateProductsModel->save() && $modelProducts->save()) {
+                    return $this->redirect(['view', 'id' => $modelProducts->id]);
+                } else {
+                    Yii::$app->session->setFlash('error', [
+                        'title' => 'Oh no!',
+                        'body' => 'Failed to update product.',
+                    ]);
+                }
             }
         }
 

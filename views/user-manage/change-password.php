@@ -3,11 +3,13 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\User */
+/* @var $model app\models\ChangePasswordForm */
+/* @var $user app\models\User */
+
 
 $this->title = 'Change Password';
 $this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->fk_employee_id, 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = ['label' => $user->fk_employee_id, 'url' => ['view', 'id' => $user->id]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 

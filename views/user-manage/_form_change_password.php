@@ -2,15 +2,11 @@
 
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
-use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\User */
+/* @var $model app\models\ChangePasswordForm */
+/* @var $user app\models\User */
 /* @var $form yii\bootstrap4\ActiveForm */
-
-$UserModel = new \app\models\User();
-$Roles = $UserModel->fetchAndMapData(\app\models\Roles::class, 'user_access_id', 'name');
-
 ?>
 
 <div class="user-form">
@@ -23,14 +19,15 @@ $Roles = $UserModel->fetchAndMapData(\app\models\Roles::class, 'user_access_id',
             <div class="row">
 
                 <div class="col-md-12">
-                    <?= $form->field($model, 'old_password')->textInput(['maxlength' => true]) ?>
+                    <?= $form->field($model, 'old_password')->passwordInput(['maxlength' => true]) ?>
                 </div>
 
                 <div class="col-md-12">
-                    <?= $form->field($model, 'password')->textInput(['maxlength' => true])->label('New Password') ?>
+                    <?= $form->field($model, 'new_password')->passwordInput(['maxlength' => true])->label('New Password') ?>
                 </div>
+
                 <div class="col-md-12">
-                    <?= $form->field($model, 'confirmPassword')->textInput(['maxlength' => true])->label('Confirm Password') ?>
+                    <?= $form->field($model, 'confirm_new_password')->passwordInput(['maxlength' => true])->label('Confirm Password') ?>
                 </div>
 
             </div>

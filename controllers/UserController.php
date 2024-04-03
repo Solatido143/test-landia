@@ -126,21 +126,7 @@ class UserController extends Controller
             return ['errors' => $model->errors];
         }
     }
-    public function actionDeleteUsers($id)
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $model = User::findOne($id);
-        if ($model === null) {
-            return [
-                'isUserExist' => false,
-                'name' => 'Not found',
-                'message' => 'User not found.'
-            ];
-        }
-        $model->delete();
-        Yii::$app->getResponse()->setStatusCode(204); // No content
-    }
     public function actionValidateLogin($username, $password)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;

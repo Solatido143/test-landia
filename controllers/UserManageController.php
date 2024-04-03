@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\ChangePasswordForm;
 use Yii;
 use app\models\User;
 use app\models\searches\UserManageSearch;
@@ -117,15 +118,40 @@ class UserManageController extends Controller
         return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
     }
 
-    public function actionChangePassword($id)
+    public function actionChangePassword($email)
     {
+        $user = User::findOne(['email' => $email]);
+        if (!$user) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
 
-        $model = $this->findModel($id);
+        $model = new ChangePasswordForm();
+        $model->user = $user;
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $user->password_hash = Yii::$app->security->generatePasswordHash($model->new_password);
+
+            if ($user->save()) {
+                Yii::$app->session->setFlash('success', [
+                    'title' => 'Yay!',
+                    'body' => 'Password changed successfully.',
+                ]);
+                return $this->redirect(['user-manage/view', 'id' => $user->id]);
+            } else {
+                Yii::$app->session->setFlash('error', [
+                    'title' => 'Oh no!',
+                    'body' => 'Failed to change password.',
+                ]);
+            }
+        }
 
         return $this->render('change-password', [
+            'user' => $user,
             'model' => $model,
         ]);
     }
+
+
 
     /**
      * Finds the User model based on its primary key value.

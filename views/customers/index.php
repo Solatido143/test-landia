@@ -25,6 +25,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
                     <?= GridView::widget([
+                        'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
+                        'tableOptions' => ["class" => "table table-striped table-bordered text-nowrap"],
                         'dataProvider' => $dataProvider,
                         'columns' => [
                             //['class' => 'yii\grid\SerialColumn'],

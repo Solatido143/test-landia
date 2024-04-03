@@ -7,6 +7,7 @@ use app\models\Bookings;
 use app\models\BookingsServices;
 use app\models\BookingsStatus;
 use app\models\BookingsTiming;
+use app\models\ChangePasswordForm;
 use app\models\Cities;
 use app\models\Clusters;
 use app\models\Customers;
@@ -31,6 +32,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\rest\Controller;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 class ApiController extends Controller
@@ -97,7 +99,10 @@ class ApiController extends Controller
         } else {
             // If no attendance records are found, set response status code to 404 (Not Found) and return error message
             Yii::$app->response->statusCode = 404; // Not Found
-            return ['error' => 'No attendance found matching the provided criteria.'];
+            return [
+                'success' => false,
+                'error' => 'No attendance found matching the provided criteria.',
+            ];
         }
     }
 
@@ -1517,6 +1522,7 @@ class ApiController extends Controller
             return ['error' => 'No products found matching the provided criteria.'];
         }
     }
+
     public function actionHasSubItem($product_model)
     {
         $has_sub_item = SubProducts::find()
@@ -1576,6 +1582,7 @@ class ApiController extends Controller
         }
 
         if ($model->load(Yii::$app->getRequest()->getBodyParams(), '') && $model->validate()) {
+
             if (empty($model->new_stock_quantity) && empty($model->fk_item_status)) {
                 if ($model->save()) {
                     return ['success' => true];
@@ -1588,22 +1595,56 @@ class ApiController extends Controller
                 if ($model->fk_item_status == 1) {
                     $model->stock_quantity += intval($model->new_stock_quantity);
                 } else {
-                    $model->stock_quantity -= intval($model->new_stock_quantity);
+                    if ($model->stock_quantity >= intval($model->new_stock_quantity)) {
+                        $model->stock_quantity -= intval($model->new_stock_quantity);
+                    } else {
+                        return [
+                            'success' => false,
+                            'error' => 'Quantity Error',
+                            'message' => 'The requested quantity cannot be decreased. Current stock quantity is too low for ' . $model->product_name,
+                        ];
+                    }
                 }
 
-                $updateProductsModel = new InventoryUpdates();
-                $updateProductsModel->fk_id_item = $model->id;
-                $updateProductsModel->fk_id_sub_item = null;
-                $updateProductsModel->fk_item_status = $model->fk_item_status;
-                $updateProductsModel->quantity = $model->new_stock_quantity;
-                $updateProductsModel->updated_by = Yii::$app->getRequest()->getBodyParam('updated_by');
-                $updateProductsModel->updated_time = date('Y-m-d H:i:s');
+                $updatedBy = Yii::$app->request->getBodyParam('updated_by');
+                if (!$updatedBy) {
+                    return [
+                        'success' => false,
+                        'message' => 'Missing required parameter: updated_by'
+                    ];
+                }
 
-                if ($model->save() && $updateProductsModel->save()) {
-                    return ['success' => true];
+                $inventoryUpdatesQuery = InventoryUpdates::find()
+                    ->where(['fk_id_item' => $model->id])
+                    ->andWhere(['fk_item_status' => $model->fk_item_status])
+                    ->one();
+
+                if ($inventoryUpdatesQuery !== null) {
+                    $inventoryUpdatesQuery->quantity += $model->new_stock_quantity;
+                    $inventoryUpdatesQuery->updated_by = $updatedBy;
+                    $inventoryUpdatesQuery->updated_time = date('Y-m-d H:i:s');
+                    if ($model->save() && $inventoryUpdatesQuery->save()) {
+                        return ['success' => true];
+                    } else {
+                        return ['success' => false];
+                    }
                 } else {
-                    return ['success' => false];
+                    // Create new record
+                    $updateProductsModel = new InventoryUpdates();
+                    $updateProductsModel->fk_id_item = $model->id;
+                    $updateProductsModel->fk_id_sub_item = null;
+                    $updateProductsModel->fk_item_status = $model->fk_item_status;
+                    $updateProductsModel->quantity = $model->new_stock_quantity;
+                    $updateProductsModel->updated_by = $updatedBy;
+                    $updateProductsModel->updated_time = date('Y-m-d H:i:s');
+
+                    if ($model->save() && $updateProductsModel->save()) {
+                        return ['success' => true];
+                    } else {
+                        return ['success' => false];
+                    }
                 }
+
             }
         }
 
@@ -1638,10 +1679,13 @@ class ApiController extends Controller
             foreach ($subItems as $subItem){
                 $result[] = [
                     'id' => $subItem->id,
-                    'sub_item_name' => $subItem->sub_products_name,
+                    'sub_products_name' => $subItem->sub_products_name,
                     'description' => $subItem->description,
                     'quantity' => $subItem->quantity,
-                    'main_product' => $subItem->product,
+                    'main_product' => [
+                        'id' => $subItem->product->id,
+                        'stock_quantity' => $subItem->product->stock_quantity,
+                    ],
                 ];
             }
 
@@ -1734,57 +1778,142 @@ class ApiController extends Controller
         }
 
         $subItemModel = SubProducts::findOne($id);
-        $productModel = Products::find()
-            ->where(['id' => $subItemModel->product_id])
-            ->one();
+
+        if (!empty($subItemModel)) {
+            $productModel = Products::find()
+                ->where(['id' => $subItemModel->product_id])
+                ->one();
+        } else {
+            return [
+                'success' => false
+            ];
+        }
 
         if ($subItemModel->load(Yii::$app->request->getBodyParams(), '') && $subItemModel->validate()) {
+
             if (empty($subItemModel->new_stock_quantity) && empty($subItemModel->fk_item_status)) {
                 if ($subItemModel->save()) {
-                    return true;
+                    return [
+                        'success' => true
+                    ];
                 }
             }
-            $quantityChange = intval($subItemModel->new_stock_quantity);
+            if (empty($subItemModel->fk_item_status)) {
+                return [
+                    'success' => false,
+                    'message' => 'Missing fk_item_status',
+                ];
+            }
+            if (empty($subItemModel->new_stock_quantity)) {
+                return [
+                    'success' => false,
+                    'message' => 'Missing new_stock_quantity',
+                ];
+            }
+
             if ($subItemModel->fk_item_status == 1) {
-                $subItemModel->quantity += $quantityChange;
-                $productModel->stock_quantity += $quantityChange;
-            } else {
-                if ($subItemModel->quantity >= $quantityChange) {
-                    $subItemModel->quantity -= $quantityChange;
-                    $productModel->stock_quantity -= $quantityChange;
+                $subItemModel->quantity += $subItemModel->new_stock_quantity;
+                $productModel->stock_quantity += $subItemModel->new_stock_quantity;
+            }
+            if ($subItemModel->fk_item_status > 1) {
+                if ($subItemModel->quantity >= $subItemModel->new_stock_quantity) {
+                    $subItemModel->quantity -= $subItemModel->new_stock_quantity;
+                    $productModel->stock_quantity -= $subItemModel->new_stock_quantity;
                 } else {
                     return [
                         'success' => false,
                         'error' => 'Quantity Error',
-                        'message' => 'The requested quantity cannot be decreased. Current quantity is too low for ' . $subItemModel->sub_products_name,
+                        'message' => 'The requested quantity cannot be decreased. Current stock quantity is too low for ' . $subItemModel->sub_products_name,
                     ];
                 }
             }
 
-            $updateProductsModel = new InventoryUpdates();
-            $updateProductsModel->fk_id_item = $productModel->id;
-            $updateProductsModel->fk_id_sub_item = $subItemModel->id;
-            $updateProductsModel->fk_item_status = $subItemModel->fk_item_status;
-            $updateProductsModel->quantity = $subItemModel->new_stock_quantity;
-            $updateProductsModel->updated_by = Yii::$app->getRequest()->getBodyParam('updated_by');
-            $updateProductsModel->updated_time = date('Y-m-d H:i:s');
-
-            if ($subItemModel->save() && $updateProductsModel->save() && $productModel->save()) {
-                return $productModel;
-            } else {
+            $updatedBy = Yii::$app->request->getBodyParam('updated_by');
+            if (!$updatedBy) {
                 return [
                     'success' => false,
-                    'error' => 'Update Error',
-                    'message' => 'Failed to update product.',
+                    'message' => 'Missing required parameter: updated_by'
                 ];
             }
-        }
 
+            $inventoryUpdatesQuery = InventoryUpdates::find()
+                ->where(['fk_id_item' => $productModel->id])
+                ->andWhere(['fk_item_status' => $subItemModel->fk_item_status])
+                ->one();
+
+            if ($inventoryUpdatesQuery !== null) {
+                $inventoryUpdatesQuery->quantity += $subItemModel->new_stock_quantity;
+                $inventoryUpdatesQuery->fk_id_sub_item = $subItemModel->id;
+                $inventoryUpdatesQuery->updated_by = $updatedBy;
+                $inventoryUpdatesQuery->updated_time = date('Y-m-d H:i:s');
+                if ($subItemModel->save() && $inventoryUpdatesQuery->save() && $productModel->save()) {
+                    return [
+                        'success' => true,
+                    ];
+                } else {
+                    return [
+                        'success' => false,
+                    ];
+                }
+            } else {
+                $updateProductsModel = new InventoryUpdates();
+                $updateProductsModel->fk_id_item = $productModel->id;
+                $updateProductsModel->fk_id_sub_item = $subItemModel->id;
+                $updateProductsModel->fk_item_status = $subItemModel->fk_item_status;
+                $updateProductsModel->quantity = $subItemModel->new_stock_quantity;
+                $updateProductsModel->updated_by = $updatedBy;
+                $updateProductsModel->updated_time = date('Y-m-d H:i:s');
+
+                if ($subItemModel->save() && $updateProductsModel->save() && $productModel->save()) {
+                    return [
+                        'success' => true
+                    ];
+                } else {
+                    return [
+                        'success' => false,
+                        'message' => 'Failed to update product.',
+                        'errors' => $subItemModel->errors,
+                    ];
+                }
+            }
+        }
         return [
             'success' => false,
-            'error' => 'Validation Error',
-            'errors' => $subItemModel->errors,
         ];
+    }
+
+    public function actionChangePassword($email = null)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if ($email == null) {
+            return [
+                'success' => false,
+                'error' => 'Bad Request',
+                'message' => 'Missing required parameter: email'
+            ];
+        }
+
+        $user = User::findOne(['email' => $email]);
+        if (!$user) {
+            throw new NotFoundHttpException('User not found.');
+        }
+
+        $model = new ChangePasswordForm();
+        $model->user = $user;
+        $model->load(Yii::$app->request->getBodyParams(), '');
+
+        if ($model->validate()) {
+            $user->password_hash = Yii::$app->security->generatePasswordHash($model->new_password);
+
+            if ($user->save()) {
+                return ['success' => true, 'message' => 'Password changed successfully.'];
+            } else {
+                return ['success' => false, 'message' => 'Failed to save the new password.'];
+            }
+        } else {
+            return ['success' => false, 'message' => 'Validation failed.', 'errors' => $model->errors];
+        }
     }
 
 }
