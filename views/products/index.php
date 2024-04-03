@@ -30,6 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
                         'tableOptions' => ["class" => "table table-striped table-bordered text-nowrap"],
                         'columns' => [
+                            ['class' => 'yii\grid\SerialColumn'],
                             [
                                 'class' => DropDownActionColumn::className(),
                                 'header' => 'Actions',

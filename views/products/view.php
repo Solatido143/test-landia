@@ -78,7 +78,7 @@ $hasSubItem = \app\models\SubProducts::find()
                             <?= GridView::widget([
                                 'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
                                 'dataProvider' => new \yii\data\ActiveDataProvider([
-                                    'query' => $model->getSubProducts(),
+                                    'query' => $model->getSubProducts()->orderBy(['id' => SORT_DESC]),
                                     'pagination' => [
                                         'pageSize' => 5,
                                     ],
@@ -86,6 +86,7 @@ $hasSubItem = \app\models\SubProducts::find()
                                 'tableOptions' => ["class" => "table table-striped table-bordered text-nowrap"],
                                 'layout' => '{items}{pager}',
                                 'columns' => [
+                                    ['class' => 'yii\grid\SerialColumn'],
                                     [
                                         'class' => DropDownActionColumn::className(),
                                         'header' => 'Actions',
@@ -100,6 +101,9 @@ $hasSubItem = \app\models\SubProducts::find()
                                     'sub_products_name',
                                     'description',
                                     'quantity',
+                                ],
+                                'pager' => [
+                                    'class' => 'yii\bootstrap4\LinkPager',
                                 ],
                             ]) ?>
                         </div>
