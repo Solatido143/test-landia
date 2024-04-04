@@ -126,4 +126,6 @@ class PromosController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+
 }

@@ -159,6 +159,7 @@ class ApiController extends Controller
             ];
         }
         $employee = Employees::findOne(['employee_id' => $fkEmployeeId]);
+
         if ($employee === null) {
             return [
                 'success' => false,
@@ -1668,12 +1669,14 @@ class ApiController extends Controller
         $query->select($fields);
 
         foreach ($queryParams as $key => $value) {
-            if (in_array($key, ['id', 'product_name', 'description', 'stock_quantity'])) {
+            if (in_array($key, ['id', 'product_id', 'description', 'quantity'])) {
                 $query->andWhere([$key => $value]);
             }
         }
 
         $subItems = $query->orderBy(['id' => SORT_DESC])->all();
+
+        $result = [];
 
         if (!empty($subItems)) {
             foreach ($subItems as $subItem){
@@ -1688,12 +1691,9 @@ class ApiController extends Controller
                     ],
                 ];
             }
-
-            return $result;
-        } else {
-            Yii::$app->response->statusCode = 404; // Not Found
-            return ['error' => 'No sub Items found matching the provided criteria.'];
         }
+
+        return $result;
     }
 
     public function actionCreateSubItem($id = null)

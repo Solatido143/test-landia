@@ -186,7 +186,6 @@ class SiteController extends Controller
      */
     public function actionLogout()
     {
-
         Yii::$app->user->logout(); // Logs out the currently logged in user.
         Yii::$app->session->setFlash('success', [
             'title' => 'Owmen!',

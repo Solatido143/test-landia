@@ -28,6 +28,9 @@ $config = [
 //                ],
 //            ],
 //        ],
+//        'authManager' => [
+//            'class' => 'yii\rbac\DbManager',
+//        ],
         'formatter' => [
             'class' => 'yii\i18n\Formatter',
             'currencyCode' => 'PHP', // Specify your desired currency code here
@@ -53,7 +56,6 @@ $config = [
         'mailer' => [
             'class' => \yii\symfonymailer\Mailer::class,
             'viewPath' => '@app/mail',
-            // send all mails to a file by default.
             'useFileTransport' => true,
         ],
         'log' => [
@@ -70,13 +72,12 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-//                api
 
+//                api
                 'product-list/products' => 'products-api/get-products',
                 'product-list/create' => 'products-api/create-products',
                 'product-list/view' => 'products-api/view-products',
                 'product-list/update' => 'products-api/update-products',
-
                 'product-list/subprod' => 'products-api/get-sub-products',
                 'product-list/createsubprod' => 'products-api/create-sub-products',
                 'product-list/viewsubprod' => 'products-api/view-sub-products',
@@ -114,8 +115,9 @@ $config = [
     'as beforeRequest' => [  //if guest user access site so, redirect to login page.
         'class' => 'yii\filters\AccessControl',
         'rules' => [
+
+//            controller actions
             [
-//                controller actions
                 'actions' => [
                     'login',
                     'error',
@@ -125,23 +127,39 @@ $config = [
                 ],
                 'allow' => true,
             ],
+
 //            api controller actions
             [
                 'actions' => [
                     'login-user',
                     'attendance',
-                    'get-preferences',
-                    'save-location',
-                    'admin-request',
                     'android-reports'
                 ],
                 'allow' => true,
             ],
+
 //            controllers
             [
-                'controllers' => ['products', 'api', 'products-api', 'user', 'attendance'],
+                'controllers' => [
+                    'products',
+                    'api',
+                    'products-api',
+                    'user',
+                    'attendance'
+                ],
                 'allow' => true,
             ],
+
+//            [
+//                'controllers' => [
+//                    'bookings'
+//                ],
+//                'matchCallback' => function ($rule, $action) {
+//                    return !Yii::$app->user->isGuest && Yii::$app->user->identity->user_access == 1;
+//                },
+//                'allow' => true,
+//            ],
+
             [
                 'allow' => true,
                 'roles' => ['@'],

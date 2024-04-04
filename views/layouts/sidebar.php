@@ -29,7 +29,7 @@
                         <?php
                         $userAccessId = Yii::$app->user->identity->user_access;
                         $role = \app\models\Roles::findOne($userAccessId); // Assuming Roles is your role model
-                        echo $role ? $role->name : 'No Role';
+                        echo $role ? $role->name : 'No user access';
                         ?>
                     </p>
                 </div>
@@ -41,13 +41,14 @@
             $userId = Yii::$app->user->id;
             echo \hail812\adminlte\widgets\Menu::widget([
                 'items' => [
+
 //                    system
                     ['label' => 'System', 'header' => true , 'options' => ['style' => 'color: #6c757d'], 'visible' => $isGuest],
                     [
                         'label' => 'Dashboard',
                         'url' => ['site/index'],
                         'icon' => 'home',
-                        'visible' => $isGuest
+                        'visible' => $isGuest,
                     ],
                     [
                         'label' => 'Bookings',
