@@ -141,7 +141,6 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-//            Send notification messages
             Yii::$app->session->setFlash('success', [
                 'title' => 'Yay!',
                 'body' => 'Login successful.',

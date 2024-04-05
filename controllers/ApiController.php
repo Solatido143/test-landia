@@ -10,6 +10,7 @@ use app\models\BookingsTiming;
 use app\models\ChangePasswordForm;
 use app\models\Cities;
 use app\models\Clusters;
+use app\models\CustomerRegisterForm;
 use app\models\Customers;
 use app\models\Employees;
 use app\models\EmployeesStatus;
@@ -1930,6 +1931,16 @@ class ApiController extends Controller
     }
 
     public function actionRegisterCustomer(){
-        
+
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $model = new CustomerRegisterForm();
+        $model->load(Yii::$app->getRequest()->getBodyParams(), '');
+
+        if ($model->validate()){
+            return true;
+        } else {
+            return $model->errors;
+        }
     }
 }

@@ -7,6 +7,9 @@ use yii\validators\UniqueValidator;
 
 class CustomerRegisterForm extends Model
 {
+    public $username;
+    public $email;
+    public $password;
     public $confirmPassword;
 
     public function rules()
