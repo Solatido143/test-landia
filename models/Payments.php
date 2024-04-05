@@ -26,6 +26,7 @@ class Payments extends \yii\db\ActiveRecord
     public $change;
     public $amount_tendered;
     public $total_due;
+    public $special;
     /**
      * {@inheritdoc}
      */

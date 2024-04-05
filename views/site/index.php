@@ -36,7 +36,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         'options' => [
                             'class' => 'small-box bg-primary',
                         ],
-                        'linkUrl' => ['/bookings'],
+                        'linkUrl' => ['/bookings', 'status' => 3],
                         'linkText' => 'More Info',
                     ]) ?>
                 </div>
@@ -49,7 +49,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                         'options' => [
                             'class' => 'small-box bg-danger',
                         ],
-                        'linkUrl' => ['/bookings'],
+                        'linkUrl' => ['/bookings', 'status' => 4],
                         'linkText' => 'More Info',
                     ]) ?>
                 </div>
@@ -83,12 +83,12 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
                                         echo 'In queue';
                                     } elseif ($status == 2) {
                                         echo 'On going';
-                                    } elseif ($status == 4) {
+                                    } elseif ($status == 3) {
                                         echo 'Complete';
                                     }
                                     ?>
                                 </h5>
-                                <a href="bookings" class="text-decoration-none">View all</a>
+                                <a href="<?= Yii::$app->urlManager->createUrl(['bookings/index', 'status' => $status]) ?>" class="text-decoration-none">View all</a>
                             </div>
                             <div class="card-body">
                                 <?= GridView::widget([

@@ -1916,4 +1916,20 @@ class ApiController extends Controller
         }
     }
 
+    public function actionPromoDiscount($promoId)
+    {
+        Yii::$app->response->format = Response::FORMAT_RAW;
+
+        $promo = Promos::findOne($promoId);
+
+        if ($promo !== null) {
+            return $promo->percentage;
+        } else {
+            return 0;
+        }
+    }
+
+    public function actionRegisterCustomer(){
+        
+    }
 }

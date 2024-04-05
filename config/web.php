@@ -145,7 +145,7 @@ $config = [
                     'api',
                     'products-api',
                     'user',
-                    'attendance'
+                    'attendance',
                 ],
                 'allow' => true,
             ],

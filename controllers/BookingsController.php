@@ -40,20 +40,22 @@ class BookingsController extends Controller
         ];
     }
 
-    /**
-     * Lists all Bookings models.
-     * @return mixed
-     */
-    public function actionIndex()
+    public function actionIndex($status = null)
     {
         $searchModel = new BookingsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        // If $status is provided and it's a valid integer between 1 and 5
+        if (is_numeric($status)) {
+            $dataProvider->query->andWhere(['fk_booking_status' => $status]);
+        }
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
+
 
     /**
      * Displays a single Bookings model.
@@ -240,15 +242,11 @@ class BookingsController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Find the promo by ID
         $promo = Promos::findOne($promoId);
 
-        // Check if promo exists
         if ($promo !== null) {
-            // Return the promo's percentage discount
             return $promo->percentage;
         } else {
-            // Promo not found, return 0
             return 0;
         }
     }

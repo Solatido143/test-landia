@@ -73,7 +73,7 @@ class SiteController extends Controller
         $queries = [
             1 => Bookings::find()->with('fkBookingStatus'),
             2 => Bookings::find()->with('fkBookingStatus'),
-            4 => Bookings::find()->with('fkBookingStatus'),
+            3 => Bookings::find()->with('fkBookingStatus'),
         ];
 
         $currentDate = date('Y-m-d');

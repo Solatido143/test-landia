@@ -108,6 +108,17 @@ if ($promos) {
                             $promosOption,
                             ['id' => 'promo', 'prompt' => '- Select promo']
                         ) ?>
+
+
+
+                    </div>
+                    <div class="col-md-4">
+                        <?= $form->field($paymentModel, 'special')->dropDownList(
+                            ['13' => 'PWD/Senior'],
+                            ['prompt' => '- Select Option', 'id' => 'senior-pwd-dropdown',]
+                        ) ?>
+
+
                     </div>
 
 
@@ -158,31 +169,30 @@ $this->registerJs(<<<JS
             if (!isNaN(paymentAmount) && !isNaN(amountTendered)) {
                 var totalAmount = paymentAmount + discountedPrice;
                 if (amountTendered < totalAmount) {
-                    // If amount tendered is less than total amount due
-                    $('#change').val(''); // Clear change value
-                    // You can show a message or take appropriate action here
+                    $('#change').val('');
                 } else {
-                    // Calculate change
                     var change = amountTendered - totalAmount;
                     $('#change').val(change.toFixed(2));
                 }
             }
         });
-
-        // Function to update discount based on selected promo
+        
         function updateDiscount() {
-            // Get the selected promo ID
             var promoId = $('#promo').val();
+            var seniorPwdValue = $('#senior-pwd-dropdown').val();
             
-            // Make AJAX request to fetch promo discount
+            if (seniorPwdValue === '' || isNaN(parseFloat(seniorPwdValue))) {
+                seniorPwdValue = 0;
+            }
+            
             $.ajax({
-                url: '/bookings/promodiscount', // Update URL as needed
+                url: '/bookings/promodiscount',
                 method: 'GET',
                 data: {promoId: promoId},
                 success: function(response) {
-                    // Calculate discounted amount
                     var paymentAmount = parseFloat($('#payment_amount').val());
-                    var percentage = parseFloat(response);
+                    var percentage = parseFloat(response) + parseFloat(seniorPwdValue);
+                    
                     var discountAmount = (percentage / 100) * paymentAmount;
                     var formattedDiscount = discountAmount === 0 ? '0.00' : '-' + discountAmount.toFixed(2);
         
@@ -199,16 +209,11 @@ $this->registerJs(<<<JS
             });
         }
         
-        // Listen for changes in the promo dropdown
-        $('#promo').on('change', function() {
-            // Update discount when dropdown selection changes
+        $('#promo, #senior-pwd-dropdown').on('change', function() {
             updateDiscount();
         });
         
-        // Trigger initial update when the page loads
         updateDiscount();
-        
-        
     });
 JS
 );
