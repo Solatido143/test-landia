@@ -92,8 +92,6 @@ class BookingsController extends Controller
             ->scalar();
 
 
-
-
         $bookingInqueueAllModel = Bookings::find()
             ->where(['fk_booking_status' => 1])
             ->all();
@@ -112,6 +110,7 @@ class BookingsController extends Controller
             ->andWhere(['not', ['id' => $id]])
             ->andWhere(['<', 'id', $id])
             ->all();
+
         foreach ($bookingInqueueModel as $bookingInqueue){
             $booking_Services = BookingsServices::find()
                 ->where(['fk_booking' => $bookingInqueue->id])
