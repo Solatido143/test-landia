@@ -200,16 +200,15 @@ $this->registerJs(<<<JS
 
 
 $(document).ready(function() {
+    // Restore checked services upon page load
+    restoreCheckedServices();
+
     // Listen for changes in the checkboxes
     $('input[name="selectedServices[]"]').on('change', function() {
         var checkedServices = getCheckedServices();
-        console.log('Selected Services:', checkedServices);
         updateTotalDue(checkedServices);
-        saveCheckedServicesToStorage(checkedServices); // Save checked services to sessionStorage
+        saveCheckedServicesToStorage(checkedServices);
     });
-    
-    // Restore checkbox state upon page load
-    restoreCheckboxState();
 });
 
 // Function to retrieve the IDs of checked services
@@ -244,11 +243,10 @@ function saveCheckedServicesToStorage(checkedServices) {
 }
 
 // Function to restore the state of checkboxes
-function restoreCheckboxState() {
+function restoreCheckedServices() {
     var storedCheckedServices = sessionStorage.getItem('checkedServices');
     if (storedCheckedServices) {
         var checkedServices = JSON.parse(storedCheckedServices);
-        // Set checkboxes as checked based on stored state
         $('input[name="selectedServices[]"]').each(function() {
             var serviceId = $(this).val();
             if (checkedServices.indexOf(serviceId) !== -1) {
@@ -258,6 +256,7 @@ function restoreCheckboxState() {
         updateTotalDue(checkedServices); // Update total due amount
     }
 }
+
 
 
 JS
