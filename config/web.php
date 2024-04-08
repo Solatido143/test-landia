@@ -133,7 +133,8 @@ $config = [
                 'actions' => [
                     'login-user',
                     'attendance',
-                    'android-reports'
+                    'android-reports',
+                    'get-service-fees'
                 ],
                 'allow' => true,
             ],

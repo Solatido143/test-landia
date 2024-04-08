@@ -2,12 +2,14 @@
 
 namespace app\controllers;
 
+use app\models\Bookings;
 use Yii;
 use app\models\Services;
 use app\models\searches\Services as ServicesSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * ServicesController implements the CRUD actions for services model.
@@ -138,4 +140,27 @@ class ServicesController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    public function actionGetServiceFees()
+    {
+        $ids = Yii::$app->request->post('services'); // Retrieve the array of service IDs from POST data
+
+        // Convert the comma-separated string of IDs into an array
+        if (!empty($ids)) {
+            $ids = explode(',', $ids);
+        } else {
+            return 0; // Return 0 if no service IDs are provided
+        }
+
+        Yii::$app->response->format = Response::FORMAT_RAW;
+
+        // Find the services based on the provided $ids array
+        $totalServiceFee = Services::find()
+            ->where(['id' => $ids])
+            ->sum('service_fee');
+
+        // Return the total service fee as a number
+        return $totalServiceFee;
+    }
+
 }

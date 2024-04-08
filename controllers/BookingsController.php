@@ -278,7 +278,7 @@ class BookingsController extends Controller
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => 5,
+                'pageSize' => 3,
             ],
         ]);
 
@@ -331,7 +331,7 @@ class BookingsController extends Controller
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => 5,
+                'pageSize' => 3,
             ],
         ]);
 

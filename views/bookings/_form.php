@@ -107,14 +107,14 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
                 <?= \yii\grid\GridView::widget([
                     'dataProvider' => $dataProvider,
                     'id' => 'service-grid-view',
-                    'options' => ['class' => 'grid-view', 'id' => 'dynamic-grid', 'style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
+                    'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
                     'tableOptions' => ["class" => "table table-striped table-bordered create-bookings-list-services"],
                     'layout' => "{items}\n{pager}",
                     'columns' => [
                         [
                             'class' => 'yii\grid\CheckboxColumn',
                             'header' => '',
-                            'name' => 'selectedServices[]',
+                            'name' => 'selectedServices',
                             'checkboxOptions' => function ($service, $key, $index, $column) use ($booking_services) {
                                 $isChecked = false;
                                 foreach ($booking_services as $booking_service) {
@@ -137,11 +137,11 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
                         'class' => 'yii\bootstrap4\LinkPager',
                         'maxButtonCount' => 5, // adjust as per your need
                         'options' => [
-                            'class' => 'pagination justify-content-center', // css class for the pagination container
+                            'class' => 'pagination justify-content-center',
                         ],
-                        'prevPageCssClass' => 'page-item', // css class for the "previous" page link
-                        'nextPageCssClass' => 'page-item', // css class for the "next" page link
-                        'linkOptions' => ['class' => 'page-link'], // css class for the pagination links
+                        'prevPageCssClass' => 'page-item',
+                        'nextPageCssClass' => 'page-item',
+                        'linkOptions' => ['class' => 'page-link'],
                     ],
                     'summary' => '',
                     'emptyText' => 'No records found',
@@ -158,42 +158,108 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
 
 <?php
 $this->registerJs(<<<JS
-    $(document).ready(function() {
-        // Fetch booking services via AJAX when the page loads
-        $.ajax({
-            url: '/bookings/booking-services?fk_booking=<?= $model->id ?>',
-            type: 'GET',
-            dataType: 'json',
-            success: function(response) {
-                // Iterate over the fetched services and check the corresponding checkboxes
-                $.each(response, function(index, service) {
-                    $('input[name="selectedServices[]"][value="' + service.fk_service + '"]').prop('checked', true);
-                });
-                
-                calculateTotalDue();
-            },
-            error: function(xhr, status, error) {
-                console.error(xhr.responseText);
+//    $(document).ready(function() {
+//        // Fetch booking services via AJAX when the page loads
+//        $.ajax({
+/*            url: '/bookings/booking-services?fk_booking=<?= $model->id ?>',*/
+//            type: 'GET',
+//            dataType: 'json',
+//            success: function(response) {
+//                // Iterate over the fetched services and check the corresponding checkboxes
+//                $.each(response, function(index, service) {
+//                    $('input[name="selectedServices[]"][value="' + service.fk_service + '"]').prop('checked', true);
+//                });
+//                
+//                calculateTotalDue();
+//            },
+//            error: function(xhr, status, error) {
+//                console.error(xhr.responseText);
+//            }
+//        });
+//
+//        // Listen for changes in the checkboxes
+//        $('input[name="selectedServices[]"]').on('change', function() {
+//            // Calculate and display the total due amount
+//            calculateTotalDue();
+//        });
+//
+//        // Function to calculate and display the total due amount
+//        function calculateTotalDue() {
+//            var totalDue = 0;
+//            $('input[name="selectedServices[]"]:checked').each(function() {
+//                totalDue += parseFloat($(this).data('fee'));
+//            });
+//            $('#total-due').text(totalDue.toFixed(2));
+//        }
+//    });
+
+
+
+
+
+
+
+$(document).ready(function() {
+    // Listen for changes in the checkboxes
+    $('input[name="selectedServices[]"]').on('change', function() {
+        var checkedServices = getCheckedServices();
+        console.log('Selected Services:', checkedServices);
+        updateTotalDue(checkedServices);
+        saveCheckedServicesToStorage(checkedServices); // Save checked services to sessionStorage
+    });
+    
+    // Restore checkbox state upon page load
+    restoreCheckboxState();
+});
+
+// Function to retrieve the IDs of checked services
+function getCheckedServices() {
+    var checkedServices = [];
+    $('input[name="selectedServices[]"]:checked').each(function() {
+        checkedServices.push($(this).val());
+    });
+    return checkedServices;
+}
+
+// Function to update the total due amount
+function updateTotalDue(checkedServices) {
+    $.ajax({
+        url: '/services/get-service-fees',
+        type: 'POST',
+        dataType: 'json',
+        data: { services: checkedServices.join(',') },
+        success: function(response) {
+            $('#total-due').text(response.toFixed(2));
+        },
+        error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+        }
+    });
+}
+
+// Function to save checked services to sessionStorage
+function saveCheckedServicesToStorage(checkedServices) {
+    var checkedServicesJson = JSON.stringify(checkedServices);
+    sessionStorage.setItem('checkedServices', checkedServicesJson);
+}
+
+// Function to restore the state of checkboxes
+function restoreCheckboxState() {
+    var storedCheckedServices = sessionStorage.getItem('checkedServices');
+    if (storedCheckedServices) {
+        var checkedServices = JSON.parse(storedCheckedServices);
+        // Set checkboxes as checked based on stored state
+        $('input[name="selectedServices[]"]').each(function() {
+            var serviceId = $(this).val();
+            if (checkedServices.indexOf(serviceId) !== -1) {
+                $(this).prop('checked', true);
             }
         });
+        updateTotalDue(checkedServices); // Update total due amount
+    }
+}
 
-        // Listen for changes in the checkboxes
-        $('input[name="selectedServices[]"]').on('change', function() {
-            // Calculate and display the total due amount
-            calculateTotalDue();
-        });
 
-        // Function to calculate and display the total due amount
-        function calculateTotalDue() {
-            var totalDue = 0;
-            $('input[name="selectedServices[]"]:checked').each(function() {
-                totalDue += parseFloat($(this).data('fee'));
-            });
-            $('#total-due').text(totalDue.toFixed(2));
-        }
-        
-        
-    });
 JS
 );
 ?>
