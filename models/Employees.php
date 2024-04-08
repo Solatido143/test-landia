@@ -202,4 +202,5 @@ class Employees extends \yii\db\ActiveRecord
         $data = $modelClass::find()->select([$valueField, $textField])->asArray()->all();
         return \yii\helpers\ArrayHelper::map($data, $valueField, $textField);
     }
+
 }

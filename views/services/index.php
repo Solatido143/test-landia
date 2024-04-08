@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             $dataProvider = new yii\data\ActiveDataProvider([
                                 'query' => $query, // $query should be your ActiveRecord query
                                 'pagination' => [
-                                    'pageSize' => 5, // Adjust the number of items per page here
+                                    'pageSize' => 8, // Adjust the number of items per page here
                                 ],
                             ]);
                             ?>

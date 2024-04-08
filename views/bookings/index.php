@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="row mb-2">
+                    <div class="row">
                         <div class="col-12 col-md-6 mb-3 mb-md-0">
                             <?= Html::a('<i class="fas fa-plus"></i>&nbspAdd New Bookings', ['create'], ['class' => 'btn btn-success']) ?>
                         </div>
@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ],
                                     [
                                         'label' => '<i class="fas fa-pencil"></i>&nbsp; Edit',
-                                        'url' => ['edit']
+                                        'url' => ['update']
                                     ],
                                     [
                                         'label' => '<i class="fas fa-trash"></i>&nbsp; Delete',

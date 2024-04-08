@@ -8,7 +8,7 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="row mt-2">
+<div class="row">
     <div class="col-md-12">
 
         <?php $form = ActiveForm::begin([
@@ -20,8 +20,8 @@ use yii\widgets\ActiveForm;
         <?= $form->field($model, 'searchQuery')->textInput(['placeholder' => 'Search'])->label(false) ?>
 
         <div class="form-group ms-1 text-nowrap ">
-        <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
+            <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
+            <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>

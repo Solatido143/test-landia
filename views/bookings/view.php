@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="d-flex justify-content-between">
                         <div>
                             <p>
-                                <?php if ($model->fk_booking_status == 1 || $model->fk_booking_status == 2) : ?>
+                                <?php if ($model->fk_booking_status == 1 || $model->fk_booking_status == 2 || $model->fk_booking_status == 5) : ?>
                                     <?= Html::a('<i class="fa fa-cancel"></i>&nbsp;Cancel', ['cancel', 'id' => $model->id], ['class' => 'btn btn-danger']) ?>
                                     <?= Html::a('<i class="fa fa-pencil"></i>&nbsp;Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
                                 <?php else : ?>
@@ -35,9 +35,17 @@ $this->params['breadcrumbs'][] = $this->title;
                         <div>
                             <p>
                                 <?php if ($model->fk_booking_status == 1) : ?>
+
                                     <?= Html::a('<i class="fa fa-forward-step"></i>&nbsp; Set as Ongoing', ['ongoing', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+
                                 <?php elseif ($model->fk_booking_status == 2) : ?>
+
                                     <?= Html::a('<i class="fa fa-cash-register"></i>&nbsp; Set as Complete', ['payments', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+
+                                <?php elseif ($model->fk_booking_status == 5) : ?>
+
+                                    <?= Html::a('<i class="fa fa-check"></i>&nbsp; Approve', ['approve', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+
                                 <?php endif; ?>
                             </p>
                         </div>

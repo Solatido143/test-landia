@@ -31,7 +31,10 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="card">
                 <div class="card-body">
                     <div class="row mb-2">
-                        <div class="col-md-12 text-end">
+                        <div class="col-12 col-md-6">
+                            <?= $this->render('_search', ['model' => $searchModel]); ?>
+                        </div>
+                        <div class="col-12 col-md-6 text-end">
                             <?php if ($attendance === null || (!empty($attendance->sign_in) && !empty($attendance->sign_out))): ?>
                                 <?= Html::a('<i class="fas fa-clock"></i>&nbsp;Time In', ['create'], ['class' => 'btn btn-success']) ?>
                             <?php elseif (empty($attendance->sign_out)): ?>
@@ -40,8 +43,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
 
                     </div>
-
-                    <!--<?php // echo $this->render('_search', ['model' => $searchModel]); ?>-->
 
                     <?= GridView::widget([
                         'dataProvider' => $dataProvider,

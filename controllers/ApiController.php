@@ -202,6 +202,7 @@ class ApiController extends Controller
             return ['errors' => $attendances->errors];
         }
     }
+
     public function actionUpdateAttendance()
     {
         date_default_timezone_set('Asia/Manila');
@@ -246,9 +247,6 @@ class ApiController extends Controller
             return ['errors' => $attendances->errors];
         }
     }
-
-
-
 
 
 //    -- EMPLOYEE'S --
@@ -395,6 +393,7 @@ class ApiController extends Controller
         // Return the formatted response
         return $formattedEmployees;
     }
+
     public function actionCreateEmployees()
     {
         date_default_timezone_set('Asia/Manila');
@@ -413,6 +412,7 @@ class ApiController extends Controller
             ];
         }
     }
+
     public function actionUpdateEmployees($id = null)
     {
         Yii::$app->getResponse()->format = Response::FORMAT_JSON;
@@ -448,15 +448,13 @@ class ApiController extends Controller
     }
 
 
-
-
-
 //  ----- CLUSTER REGION PROVINCE CITY-----
     public function actionCluster()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
         return Clusters::find()->all();
     }
+
     public function actionRegion()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -496,6 +494,7 @@ class ApiController extends Controller
         // Return result or false if no regions found
         return !empty($formattedRegions) ? $formattedRegions : false;
     }
+
     public function actionProvince()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -535,6 +534,7 @@ class ApiController extends Controller
         }
         return $formattedProvinces;
     }
+
     public function actionCity()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -589,9 +589,6 @@ class ApiController extends Controller
     }
 
 
-
-
-
 //  ----- User Accounts -----
     public function actionGetUsers()
     {
@@ -633,6 +630,7 @@ class ApiController extends Controller
             return ['error' => 'No users found.'];
         }
     }
+
     public function actionCreateUser()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -663,6 +661,7 @@ class ApiController extends Controller
             }
         }
     }
+
     public function actionUpdateUser($id)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -683,6 +682,7 @@ class ApiController extends Controller
             return ['errors' => $model->errors];
         }
     }
+
     public function actionUserLoginValidation($username, $password)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -698,9 +698,6 @@ class ApiController extends Controller
         }
         return ['success' => false];
     }
-
-
-
 
 
 //  ----- SERVICES -----
@@ -742,6 +739,7 @@ class ApiController extends Controller
             ];
         }
     }
+
     public function actionCreateService()
     {
         date_default_timezone_set('Asia/Manila');
@@ -766,6 +764,7 @@ class ApiController extends Controller
             ];
         }
     }
+
     public function actionUpdateService($id = null)
     {
         date_default_timezone_set('Asia/Manila');
@@ -802,9 +801,6 @@ class ApiController extends Controller
     }
 
 
-
-
-
 //  ----- CUSTOMER -----
     public function actionGetCustomers()
     {
@@ -835,6 +831,7 @@ class ApiController extends Controller
             ];
         }
     }
+
     public function actionCreateCustomers()
     {
         date_default_timezone_set('Asia/Manila');
@@ -845,8 +842,7 @@ class ApiController extends Controller
         $customer->logged_time = date('Y-m-d H:i:s');
         $customer->updated_by = '';
         $customer->updated_time = '';
-        if ($customer->save())
-        {
+        if ($customer->save()) {
             Yii::$app->response->setStatusCode(201);
             return [
                 'success' => true,
@@ -858,6 +854,7 @@ class ApiController extends Controller
             ];
         }
     }
+
     public function actionUpdateCustomers($id = null)
     {
         date_default_timezone_set('Asia/Manila');
@@ -891,9 +888,6 @@ class ApiController extends Controller
             ];
         }
     }
-
-
-
 
 
 //  ----- BOOKINGS -----
@@ -935,6 +929,7 @@ class ApiController extends Controller
             ];
         }
     }
+
     public function actionCreateBooking()
     {
         date_default_timezone_set('Asia/Manila');
@@ -945,6 +940,11 @@ class ApiController extends Controller
         $booking->updated_time = '';
         $booking->updated_by = '';
         $booking->load(Yii::$app->request->getBodyParams(), '');
+
+        if ($booking->booking_type == 'Online'){
+            $booking->fk_booking_status = 5;
+        }
+
         if ($booking->save()) {
             Yii::$app->response->setStatusCode(201); // Created
             return [
@@ -958,7 +958,34 @@ class ApiController extends Controller
             ];
         }
     }
-    public function actionUpdateBooking($id = null){
+
+    public function actionCreateCustomerBooking()
+    {
+        date_default_timezone_set('Asia/Manila');
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $booking = new Bookings();
+        $booking->logged_time = date('Y-m-d H:i:s');
+        $booking->fk_booking_status = 5;
+        $booking->booking_type = 'Online';
+        $booking->updated_time = '';
+        $booking->updated_by = '';
+        $booking->load(Yii::$app->request->getBodyParams(), '');
+        if ($booking->save()) {
+            Yii::$app->response->setStatusCode(201); // Created
+            return [
+                $booking,
+                'success' => true,
+            ];
+        } else {
+            return [
+                'errors' => $booking->errors,
+                'success' => false
+            ];
+        }
+    }
+
+    public function actionUpdatePendingBooking($id = null){
+
         date_default_timezone_set('Asia/Manila');
         Yii::$app->response->format = Response::FORMAT_JSON;
 
@@ -976,7 +1003,54 @@ class ApiController extends Controller
             Yii::$app->response->statusCode = 404; // Not Found
             return [
                 'success' => false,
-                'message' => 'Service not found',
+                'message' => 'Booking not found',
+            ];
+        }
+
+        if ($booking->fk_booking_status == 5){
+            $booking->fk_booking_status = 1;
+        } else {
+            return [
+            'success' => false,
+            'message' => 'Booking status is not Pending',
+            ];
+        }
+
+        if ($booking->save()) {
+            return [
+                'success' => true,
+                'message' => 'Booking updated successfully',
+            ];
+        } else {
+            Yii::$app->response->statusCode = 500; // Internal Server Error
+            return [
+                'success' => false,
+                'message' => 'Failed to update booking',
+                'errors' => $booking->errors,
+            ];
+        }
+    }
+
+    public function actionUpdateBooking($id = null)
+    {
+        date_default_timezone_set('Asia/Manila');
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if ($id === null) {
+            Yii::$app->response->statusCode = 400; // Bad Request
+            return [
+                'success' => false,
+                'message' => 'Missing required parameter: id',
+            ];
+        }
+
+        $booking = Bookings::findOne($id);
+
+        if ($booking === null) {
+            Yii::$app->response->statusCode = 404; // Not Found
+            return [
+                'success' => false,
+                'message' => 'Booking not found',
             ];
         }
 
@@ -1019,8 +1093,7 @@ class ApiController extends Controller
         }
         $bookingsServices = $query->all();
 
-        if (!empty($bookingsServices))
-        {
+        if (!empty($bookingsServices)) {
             $formattedBookingsServices = [];
             foreach ($bookingsServices as $bookingsService) {
                 $formattedBookingService = [
@@ -1036,6 +1109,7 @@ class ApiController extends Controller
         return $bookingsServices;
 
     }
+
     public function actionCreateBookingServices()
     {
         date_default_timezone_set('Asia/Manila');
@@ -1044,8 +1118,7 @@ class ApiController extends Controller
         $booking_services = new BookingsServices();
         $booking_services->load(Yii::$app->request->getBodyParams(), '');
 
-        if ($booking_services->save())
-        {
+        if ($booking_services->save()) {
             Yii::$app->response->setStatusCode(201);
             return [
                 'success' => true,
@@ -1057,6 +1130,7 @@ class ApiController extends Controller
             ];
         }
     }
+
 //  ----- BOOKING STATUS -----
     public function actionGetBookingStatus()
     {
@@ -1086,6 +1160,7 @@ class ApiController extends Controller
         }
         return $booking_timings;
     }
+
     public function actionCreateBookingTiming()
     {
         date_default_timezone_set('Asia/Manila');
@@ -1094,7 +1169,7 @@ class ApiController extends Controller
         $booking_timing = new BookingsTiming();
         $booking_timing->load(Yii::$app->request->getBodyParams(), '');
 
-        if ($booking_timing->save()){
+        if ($booking_timing->save()) {
             Yii::$app->response->setStatusCode(201);
             return [
                 'success' => true,
@@ -1144,10 +1219,6 @@ class ApiController extends Controller
     }
 
 
-
-
-
-
 //  ----- BOOKING ROLES -----
     public function actionGetRoles()
     {
@@ -1167,9 +1238,9 @@ class ApiController extends Controller
                 $query->andWhere([$key => $value]);
             }
         }
-
         return $query->all();
     }
+
     public function actionCreatePromo()
     {
         date_default_timezone_set('Asia/Manila');
@@ -1177,8 +1248,7 @@ class ApiController extends Controller
 
         $promo = new Promos();
         $promo->load(Yii::$app->request->getBodyParams(), '');
-        if ($promo->save())
-        {
+        if ($promo->save()) {
             Yii::$app->response->setStatusCode(201);
             return [
                 'success' => true,
@@ -1190,6 +1260,7 @@ class ApiController extends Controller
             ];
         }
     }
+
     public function actionUpdatePromo($id = null)
     {
         date_default_timezone_set('Asia/Manila');
@@ -1215,8 +1286,7 @@ class ApiController extends Controller
 
         $promo->load(Yii::$app->getRequest()->getBodyParams(), '');
 
-        if ($promo->save())
-        {
+        if ($promo->save()) {
             Yii::$app->response->setStatusCode(201);
             return [
                 'success' => true,
@@ -1239,8 +1309,7 @@ class ApiController extends Controller
 
         $payment = new Payments();
         $payment->load(Yii::$app->request->getBodyParams(), '');
-        if ($payment->save())
-        {
+        if ($payment->save()) {
             Yii::$app->response->setStatusCode(201);
             return [
                 'success' => true,
@@ -1252,8 +1321,6 @@ class ApiController extends Controller
             ];
         }
     }
-
-
 
 
     public function getQueryParams($queryParams, array $fields, \yii\db\ActiveQuery $query)
@@ -1380,7 +1447,7 @@ class ApiController extends Controller
                 continue;
             }
 
-            if ($employee->fk_position != 3){
+            if ($employee->fk_position != 3) {
                 continue; // Skip this employee if position is not 3
             }
 
@@ -1391,7 +1458,6 @@ class ApiController extends Controller
         }
         return $employees;
     }
-
 
 
     public function actionAndroidReports()
@@ -1466,16 +1532,6 @@ class ApiController extends Controller
 
         exit;
     }
-
-
-
-
-
-
-
-
-
-
 
 
 //  PRODUCTS
@@ -1555,6 +1611,7 @@ class ApiController extends Controller
             return ['errors' => $model->errors];
         }
     }
+
     public function validateProduct($model)
     {
         $existingProduct = Products::findOne(['product_name' => $model->product_name]);
@@ -1654,9 +1711,6 @@ class ApiController extends Controller
     }
 
 
-
-
-
 //    ---------- Sub Products -----------
     public function actionGetSubItems()
     {
@@ -1680,7 +1734,7 @@ class ApiController extends Controller
         $result = [];
 
         if (!empty($subItems)) {
-            foreach ($subItems as $subItem){
+            foreach ($subItems as $subItem) {
                 $result[] = [
                     'id' => $subItem->id,
                     'sub_products_name' => $subItem->sub_products_name,
@@ -1930,17 +1984,28 @@ class ApiController extends Controller
         }
     }
 
-    public function actionRegisterCustomer(){
+    public function actionRegisterCustomer()
+    {
 
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $model = new CustomerRegisterForm();
-        $model->load(Yii::$app->getRequest()->getBodyParams(), '');
+        $CustomerRegisterForm_model = new CustomerRegisterForm();
+        $CustomerRegisterForm_model->load(Yii::$app->getRequest()->getBodyParams(), '');
 
-        if ($model->validate()){
-            return true;
+        if ($CustomerRegisterForm_model->validate()) {
+            if ($CustomerRegisterForm_model->customerRegister()) {
+                return [
+                    'success' => true,
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'error' => 'Failed to register customer.',
+                ];
+            }
         } else {
-            return $model->errors;
+            return $CustomerRegisterForm_model->errors;
         }
     }
+
 }

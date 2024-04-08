@@ -11,6 +11,7 @@ use app\models\Services as ServicesModel;
  */
 class Services extends ServicesModel
 {
+    public $searchQuery;
     /**
      * {@inheritdoc}
      */
@@ -18,7 +19,7 @@ class Services extends ServicesModel
     {
         return [
             [['id', 'completion_time'], 'integer'],
-            [['service_name', 'logged_by', 'logged_time', 'updated_by', 'updated_time'], 'safe'],
+            [['service_name', 'logged_by', 'logged_time', 'updated_by', 'updated_time', 'availability'], 'safe'],
             [['service_fee'], 'number'],
         ];
     }
@@ -47,13 +48,14 @@ class Services extends ServicesModel
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => 5, // Set the page size to 5
+            ],
         ]);
 
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
 

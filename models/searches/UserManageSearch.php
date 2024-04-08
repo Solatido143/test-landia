@@ -11,6 +11,8 @@ use app\models\User;
  */
 class UserManageSearch extends User
 {
+    public $searchQuery;
+
     /**
      * {@inheritdoc}
      */
@@ -18,7 +20,9 @@ class UserManageSearch extends User
     {
         return [
             [['id', 'status', 'availability'], 'integer'],
+            [['searchQuery'], 'string'],
             [['username', 'fk_employee_id', 'email', 'password_hash', 'password_reset_token', 'user_access', 'created_at', 'updated_at', 'auth_key', 'verification_token', 'managers_code'], 'safe'],
+
         ];
     }
 
@@ -42,6 +46,9 @@ class UserManageSearch extends User
     {
         $query = User::find();
 
+        // Exclude records where user_access is 6
+        $query->where(['not', ['user_access' => 6]]);
+
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -51,29 +58,14 @@ class UserManageSearch extends User
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'status' => $this->status,
-            'availability' => $this->availability,
+        $query->andFilterWhere(['or',
+            ['like', 'username', $this->searchQuery],
+            ['like', 'fk_employee_id', $this->searchQuery],
+            ['like', 'email', $this->searchQuery]
         ]);
-
-        $query->andFilterWhere(['like', 'username', $this->username])
-            ->andFilterWhere(['like', 'fk_employee_id', $this->fk_employee_id])
-            ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'password_hash', $this->password_hash])
-            ->andFilterWhere(['like', 'password_reset_token', $this->password_reset_token])
-            ->andFilterWhere(['like', 'user_access', $this->user_access])
-            ->andFilterWhere(['like', 'created_at', $this->created_at])
-            ->andFilterWhere(['like', 'updated_at', $this->updated_at])
-            ->andFilterWhere(['like', 'auth_key', $this->auth_key])
-            ->andFilterWhere(['like', 'verification_token', $this->verification_token])
-            ->andFilterWhere(['like', 'managers_code', $this->managers_code]);
 
         return $dataProvider;
     }

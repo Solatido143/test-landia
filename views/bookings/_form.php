@@ -9,8 +9,11 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\Bookings */
 /* @var $form yii\bootstrap4\ActiveForm */
-/* @var $services app\models\Services */
+
 /* @var $servicesModel app\models\Services */
+/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $searchModel app\models\searches\Services */
+
 
 $bookingServicesModel = new \app\models\BookingsServices();
 $booking_services = $bookingServicesModel->find()->where(['fk_booking' => $model->id])->all();
@@ -42,7 +45,9 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
                                 'startDate' => 'today',
                                 'todayBtn' => true,
                                 'format' => 'yyyy-mm-dd hh:ii',
+
                             ],
+                            'size' => 'sm',
                             'layout' => '{input}{picker}',
                         ]);
                         ?>
@@ -76,37 +81,42 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
             </div>
 
             <div class="col-md-6">
+
                 <div class="row">
+
                     <div class="col-md-6">
                         <h3>List of Services</h3>
                         <h5 class="border rounded ps-3">Total due: Php <span id="total-due">0.00</span></h5>
 
                     </div>
+
                     <div class="col-md-6 d-flex justify-content-end">
                         <div class="form-group">
                             <?= Html::a('<i class="fas fa-plus"></i>&nbsp Add Service', ['services/create'], ['class' => 'btn btn-success']) ?>
                         </div>
                     </div>
-                    <div class="col-md-12">
-                        <input type="text" name="searchQuery" placeholder="Search services here..." class="form-control form-group">
-                    </div>
+
                 </div>
 
+                <?= $form->field($model, 'searchQuery')->textInput([
+                    'id' => 'service-search-input',
+                    'placeholder' => 'Search services here...',
+                    'class' => 'form-control form-group'
+                ])->label(false) ?>
+
                 <?= \yii\grid\GridView::widget([
-                    'dataProvider' => new \yii\data\ArrayDataProvider([
-                        'allModels' => $services,
-                    ]),
-                    'options' => ['style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
+                    'dataProvider' => $dataProvider,
+                    'id' => 'service-grid-view',
+                    'options' => ['class' => 'grid-view', 'id' => 'dynamic-grid', 'style' => 'overflow: auto; word-wrap: break-word; width: 100%'],
                     'tableOptions' => ["class" => "table table-striped table-bordered create-bookings-list-services"],
                     'layout' => "{items}\n{pager}",
                     'columns' => [
                         [
                             'class' => 'yii\grid\CheckboxColumn',
                             'header' => '',
-                            'name' => 'selectedServices[]', // Correct the name attribute
+                            'name' => 'selectedServices[]',
                             'checkboxOptions' => function ($service, $key, $index, $column) use ($booking_services) {
                                 $isChecked = false;
-                                // Check if the service exists in the booking services
                                 foreach ($booking_services as $booking_service) {
                                     if ($booking_service->fk_service == $service->id) {
                                         $isChecked = true;
@@ -125,8 +135,18 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
                     ],
                     'pager' => [
                         'class' => 'yii\bootstrap4\LinkPager',
-                    ]
+                        'maxButtonCount' => 5, // adjust as per your need
+                        'options' => [
+                            'class' => 'pagination justify-content-center', // css class for the pagination container
+                        ],
+                        'prevPageCssClass' => 'page-item', // css class for the "previous" page link
+                        'nextPageCssClass' => 'page-item', // css class for the "next" page link
+                        'linkOptions' => ['class' => 'page-link'], // css class for the pagination links
+                    ],
+                    'summary' => '',
+                    'emptyText' => 'No records found',
                 ]) ?>
+
 
             </div>
         </div>
@@ -141,7 +161,7 @@ $this->registerJs(<<<JS
     $(document).ready(function() {
         // Fetch booking services via AJAX when the page loads
         $.ajax({
-            url: '/bookings/booking-services?id=<?= $model->id ?>',
+            url: '/bookings/booking-services?fk_booking=<?= $model->id ?>',
             type: 'GET',
             dataType: 'json',
             success: function(response) {
@@ -150,7 +170,6 @@ $this->registerJs(<<<JS
                     $('input[name="selectedServices[]"][value="' + service.fk_service + '"]').prop('checked', true);
                 });
                 
-                // Calculate and display the total due amount
                 calculateTotalDue();
             },
             error: function(xhr, status, error) {
@@ -172,6 +191,8 @@ $this->registerJs(<<<JS
             });
             $('#total-due').text(totalDue.toFixed(2));
         }
+        
+        
     });
 JS
 );

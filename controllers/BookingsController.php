@@ -8,6 +8,7 @@ use app\models\Employees;
 use app\models\EmployeeSelectionForm;
 use app\models\Payments;
 use app\models\Promos;
+use app\models\searches\Services as ServicesSearch;
 use app\models\Services;
 use app\models\WaitingTime;
 use Yii;
@@ -56,13 +57,6 @@ class BookingsController extends Controller
         ]);
     }
 
-
-    /**
-     * Displays a single Bookings model.
-     * @param int $id ID
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionView($id)
     {
         $model = Bookings::findOne($id);
@@ -130,7 +124,13 @@ class BookingsController extends Controller
         if (empty($bookingOngoingModel)) {
             $waiting_time = $serviceInqueueTime;
         } else {
-            $waiting_time = intval(($min_waiting_time + $serviceInqueueTime) / $employees_waiting_time_count) . ' to ' . intval(($max_waiting_time + $serviceInqueueTime) / $employees_waiting_time_count);
+            if ($employees_waiting_time_count != 0) {
+                $min_waiting_time = intval(($min_waiting_time + $serviceInqueueTime) / $employees_waiting_time_count);
+                $max_waiting_time = intval(($max_waiting_time + $serviceInqueueTime) / $employees_waiting_time_count);
+                $waiting_time = $min_waiting_time . ' to ' . $max_waiting_time;
+            } else {
+                $waiting_time = '0';
+            }
 
             if ($min_waiting_time == $max_waiting_time) {
                 $waiting_time = $min_waiting_time - $serviceInqueueAll + $serviceInqueueTime;
@@ -148,7 +148,6 @@ class BookingsController extends Controller
             'waiting_time' => $waiting_time
         ]);
     }
-
 
     public function actionOngoing($id)
     {
@@ -271,13 +270,19 @@ class BookingsController extends Controller
         return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
     }
 
-
-
     public function actionCreate()
     {
         date_default_timezone_set('Asia/Manila');
+
+        $query = Services::find();
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 5,
+            ],
+        ]);
+
         $model = new Bookings();
-        $services = Services::find()->all();
 
         $model->fk_booking_status = 1;
         $model->logged_by = Yii::$app->user->identity->username;
@@ -294,19 +299,7 @@ class BookingsController extends Controller
                     'body' => 'Please select at least one service.',
                 ]);
             } else {
-//                $existingBooking = Bookings::find()
-//                    ->where(['fk_customer' => $model->fk_customer])
-//                    ->one();
-//                if ($existingBooking !== null) {
-//                    Yii::$app->session->setFlash('error', [
-//                        'title' => 'Error!',
-//                        'body' => 'The customer already has a booking.',
-//                    ]);
-//                    return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
-//                }
-                // Validate and save the model
                 if ($model->validate() && $model->save()) {
-                    // Iterate through selected services and save them to the bookings_services table
                     foreach ($selectedServices as $serviceId) {
                         $bookingsServices = new BookingsServices();
                         $bookingsServices->fk_booking = $model->id;
@@ -326,22 +319,21 @@ class BookingsController extends Controller
 
         return $this->render('create', [
             'model' => $model,
-            'services' => $services,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
-    /**
-     * Updates an existing Bookings model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $servicesModel = new Services();
-        $services = Services::find()->all();
+
+        $query = Services::find();
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 5,
+            ],
+        ]);
 
         // Get previously selected services directly from the BookingsServices table
         $previousSelectedServices = BookingsServices::find()
@@ -380,8 +372,7 @@ class BookingsController extends Controller
 
         return $this->render('update', [
             'model' => $model,
-            'servicesModel' => $servicesModel,
-            'services' => $services,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -392,14 +383,6 @@ class BookingsController extends Controller
         return $booking_services;
     }
 
-
-    /**
-     * Deletes an existing Bookings model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionDelete($id)
     {
         Yii::$app->session->setFlash('error', [
@@ -409,13 +392,6 @@ class BookingsController extends Controller
         return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
     }
 
-    /**
-     * Finds the Bookings model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return Bookings the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     protected function findModel($id)
     {
         if (($model = Bookings::findOne($id)) !== null) {

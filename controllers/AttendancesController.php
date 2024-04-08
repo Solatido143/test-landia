@@ -158,14 +158,8 @@ class AttendancesController extends Controller
             ]);
             return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
         }
-        $today = date('Y-m-d');
-        $modelDate = $model->date;
-        if ($modelDate != $today) {
-            $model->sign_out = date('H:i Y-m-d');
-        } else {
-            $model->sign_out = date('H:i');
-        }
 
+        $model->sign_out = date('H:i');
         $model->sign_out_log = "Time Out";
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {

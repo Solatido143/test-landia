@@ -122,13 +122,14 @@ if ($promos) {
                     </div>
 
 
+                    <div class="col-md-6">
+                        <?= $form->field($paymentModel, 'amount_tendered')->textInput(['type' => 'number', 'id' => 'amount_tendered', 'step' => '0.01']) ?>
+                    </div>
+
                     <div class="col-md-4">
                         <?= $form->field($paymentModel, 'discount')->textInput(['readonly' => true, 'type' => 'number', 'id' => 'discount'])->label('Discounted Price') ?>
                     </div>
 
-                    <div class="col-md-6">
-                        <?= $form->field($paymentModel, 'amount_tendered')->textInput(['type' => 'number', 'id' => 'amount_tendered', 'step' => '0.01']) ?>
-                    </div>
                     <div class="col-md-6">
                         <?= $form->field($paymentModel, 'change')->textInput(['readonly' => true, 'id' => 'change']) ?>
                     </div>

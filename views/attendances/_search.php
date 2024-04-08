@@ -1,41 +1,38 @@
 <?php
 
+use app\models\Employees;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\searches\AttendancesSearch */
 /* @var $form yii\widgets\ActiveForm */
+
+$employees = Employees::find()->select(['id', 'CONCAT(fname, " ", lname) AS full_name'])->asArray()->all();
+$employeeList = ArrayHelper::map($employees, 'id', 'full_name');
 ?>
 
 <div class="row mt-2">
     <div class="col-md-12">
 
-    <?php $form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
-    ]); ?>
+        <?php $form = ActiveForm::begin([
+            'action' => ['index'],
+            'method' => 'get',
+            'options' => ['class' => 'd-md-flex justify-content-start'],
+        ]); ?>
 
-    <?= $form->field($model, 'id') ?>
+        <?= $form->field($model, 'searchQuery')->dropDownList(
+            $employeeList,
+            ['prompt' => '- Select Employee']
+        )->label(false) ?>
 
-    <?= $form->field($model, 'fk_employee') ?>
+        <div class="form-group ms-1 text-nowrap ">
+            <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
+            <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
+        </div>
 
-    <?= $form->field($model, 'sign_in') ?>
-
-    <?= $form->field($model, 'sign_out') ?>
-
-    <?= $form->field($model, 'remarks') ?>
-
-    <?php // echo $form->field($model, 'sign_in_log') ?>
-
-    <?php // echo $form->field($model, 'sign_out_log') ?>
-
-    <div class="form-group">
-        <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
-    </div>
-
-    <?php ActiveForm::end(); ?>
+        <?php ActiveForm::end(); ?>
 
     </div>
     <!--.col-md-12-->

@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Bookings */
-/* @var $services app\models\Services */
+/* @var $dataProvider app\models\Services */
 
 $this->title = 'New Bookings';
 $this->params['breadcrumbs'][] = ['label' => 'Bookings', 'url' => ['index']];
@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-md-12">
                     <?=$this->render('_form', [
                         'model' => $model,
-                        'services' => $services,
+                        'dataProvider' => $dataProvider,
                     ]) ?>
                 </div>
             </div>

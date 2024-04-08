@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ],
                                     [
                                         'label' => '<i class="fas fa-pencil"></i>&nbsp; Edit',
-                                        'url' => ['edit']
+                                        'url' => ['update']
                                     ],
                                     [
                                         'label' => '<i class="fas fa-trash"></i>&nbsp; Delete',
@@ -55,7 +55,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ],
                             ],
 
-                            'id',
                             'customer_name',
                             'contact_number',
                             'logged_by',

@@ -16,14 +16,14 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="row mb-2">
-                        <div class="col-md-12">
-                            <?= Html::a('Create User', ['create'], ['class' => 'btn btn-success']) ?>
+                    <div class="row">
+                        <div class="col-12 col-md-6 mb-3 mb-md-0">
+                            <?= Html::a('<i class="fas fa-plus"></i>&nbspCreate User', ['create'], ['class' => 'btn btn-success']) ?>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <?= $this->render('_search', ['model' => $searchModel]); ?>
                         </div>
                     </div>
-
-
-                    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
                     <?= GridView::widget([
                         'dataProvider' => $dataProvider,
@@ -53,13 +53,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ]
                                 ],
                             ],
-
-                            'id',
-                            'username',
                             [
                                 'attribute' => 'fk_employee_id',
                                 'label' => 'Employee ID',
                             ],
+                            'username',
+
                             'email:email',
                         ],
                         'summaryOptions' => ['class' => 'summary mb-2'],
