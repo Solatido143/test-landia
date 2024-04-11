@@ -1,6 +1,7 @@
 <?php
 
 use kartik\date\DatePicker;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 
@@ -193,7 +194,30 @@ $Status = $employeesModel->fetchAndMapData(\app\models\EmployeesStatus::class, '
 
                 </div>
                 <div class="col-md-3">
-                    <?= $form->field($model, 'emergency_contact_relations')->textInput(['maxlength' => true, 'class' => 'form-control form-control-sm'])->label('Relationship') ?>
+                    <?php
+                    $relationOptions = [
+                        'Parent' => 'Parent',
+                        'Sibling' => 'Sibling',
+                        'Spouse' => 'Spouse',
+                        'Child' => 'Child',
+                        'Relative' => 'Relative',
+                        'Friend' => 'Friend',
+                    ];
+                    ?>
+                    <?= $form->field($model, 'emergency_contact_relations')->widget(Select2::className(), [
+                        'data' => $relationOptions,  // Pass the options array
+                        'options' => [
+                            'placeholder' => '-- Select Relationship --',
+                            'allowClear' => true,
+                            'class' => 'form-control form-control-sm',
+                        ],
+                        'pluginOptions' => [
+                            'tags' => true,  // Allow users to create new options
+                            'dropdownAutoWidth' => true,
+                            'width' => '100%',
+                        ],
+                        'size' => 'sm',
+                    ])->label('Relationship'); ?>
 
                 </div>
             </div>

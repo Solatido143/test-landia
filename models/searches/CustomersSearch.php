@@ -1,5 +1,4 @@
 <?php
-
 namespace app\models\searches;
 
 use yii\base\Model;
@@ -7,10 +6,12 @@ use yii\data\ActiveDataProvider;
 use app\models\Customers;
 
 /**
- * CustomersSeach represents the model behind the search form of `app\models\Customers`.
+ * CustomersSearch represents the model behind the search form of `app\models\Customers`.
  */
-class CustomersSeach extends Customers
+class CustomersSearch extends Customers
 {
+    public $searchQuery;
+
     /**
      * {@inheritdoc}
      */
@@ -18,7 +19,7 @@ class CustomersSeach extends Customers
     {
         return [
             [['id'], 'integer'],
-            [['customer_name', 'contact_number', 'logged_by', 'logged_time', 'updated_by', 'updated_time'], 'safe'],
+            [['customer_name', 'contact_number', 'logged_by', 'logged_time', 'updated_by', 'updated_time', 'searchQuery'], 'safe'],  // Add searchQuery rule
         ];
     }
 
@@ -27,7 +28,7 @@ class CustomersSeach extends Customers
      */
     public function scenarios()
     {
-        // bypass scenarios() implementation in the parent class
+        // Bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
@@ -42,7 +43,7 @@ class CustomersSeach extends Customers
     {
         $query = Customers::find();
 
-        // add conditions that should always apply here
+        // Add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -59,22 +60,25 @@ class CustomersSeach extends Customers
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
+            // Uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
         }
 
-        // grid filtering conditions
+        // Grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
         ]);
 
-        $query->andFilterWhere(['like', 'customer_name', $this->customer_name])
-            ->andFilterWhere(['like', 'contact_number', $this->contact_number])
-            ->andFilterWhere(['like', 'logged_by', $this->logged_by])
-            ->andFilterWhere(['like', 'logged_time', $this->logged_time])
-            ->andFilterWhere(['like', 'updated_by', $this->updated_by])
-            ->andFilterWhere(['like', 'updated_time', $this->updated_time]);
+        // Perform a generalized search across multiple attributes
+        $query->andFilterWhere(['or',
+            ['like', 'customer_name', $this->searchQuery],
+            ['like', 'contact_number', $this->searchQuery],
+            ['like', 'logged_by', $this->searchQuery],
+            ['like', 'logged_time', $this->searchQuery],
+            ['like', 'updated_by', $this->searchQuery],
+            ['like', 'updated_time', $this->searchQuery],
+        ]);
 
         return $dataProvider;
     }

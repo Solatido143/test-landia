@@ -8,30 +8,23 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="row mt-2">
+<div class="row">
     <div class="col-md-12">
 
-    <?php $form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
-    ]); ?>
+        <?php $form = ActiveForm::begin([
+            'action' => ['index'],
+            'method' => 'get',
+            'options' => ['class' => 'd-md-flex justify-content-end'],
+        ]); ?>
 
-    <?= $form->field($model, 'id') ?>
+        <?= $form->field($model, 'searchQuery')->textInput(['placeholder' => 'Search'])->label(false) ?>
 
-    <?= $form->field($model, 'promo') ?>
+        <div class="form-group ms-1 text-nowrap ">
+            <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
+            <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
+        </div>
 
-    <?= $form->field($model, 'percentage') ?>
-
-    <?= $form->field($model, 'minimum_amount') ?>
-
-    <?= $form->field($model, 'expiration_date') ?>
-
-    <div class="form-group">
-        <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
-    </div>
-
-    <?php ActiveForm::end(); ?>
+        <?php ActiveForm::end(); ?>
 
     </div>
     <!--.col-md-12-->

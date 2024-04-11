@@ -4,38 +4,27 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\searches\CustomersSeach */
+/* @var $model app\models\searches\CustomersSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="row mt-2">
+<div class="row">
     <div class="col-md-12">
 
-    <?php $form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
-    ]); ?>
+        <?php $form = ActiveForm::begin([
+            'action' => ['index'],
+            'method' => 'get',
+            'options' => ['class' => 'd-md-flex justify-content-end'],
+        ]); ?>
 
-    <?= $form->field($model, 'id') ?>
+        <?= $form->field($model, 'searchQuery')->textInput(['placeholder' => 'Search'])->label(false) ?>
 
-    <?= $form->field($model, 'customer_name') ?>
+        <div class="form-group ms-1 text-nowrap ">
+            <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
+            <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
+        </div>
 
-    <?= $form->field($model, 'contact_number') ?>
-
-    <?= $form->field($model, 'logged_by') ?>
-
-    <?= $form->field($model, 'logged_time') ?>
-
-    <?php // echo $form->field($model, 'updated_by') ?>
-
-    <?php // echo $form->field($model, 'updated_time') ?>
-
-    <div class="form-group">
-        <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
-    </div>
-
-    <?php ActiveForm::end(); ?>
+        <?php ActiveForm::end(); ?>
 
     </div>
     <!--.col-md-12-->

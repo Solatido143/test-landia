@@ -16,14 +16,14 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="row mb-2">
-                        <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-12 col-md-6 mb-3 mb-md-0">
                             <?= Html::a('Create Promos', ['create'], ['class' => 'btn btn-success']) ?>
                         </div>
+                        <div class="col-12 col-md-6">
+                            <?= $this->render('_search', ['model' => $searchModel]); ?>
+                        </div>
                     </div>
-
-
-                    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
                     <?= GridView::widget([
                         'dataProvider' => $dataProvider,

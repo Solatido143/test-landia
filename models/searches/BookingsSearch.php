@@ -52,7 +52,7 @@ class BookingsSearch extends Bookings
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
-                'pageSize' => 10,
+                'pageSize' => 8,
             ],
             'sort' => [
                 'defaultOrder' => [

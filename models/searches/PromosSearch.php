@@ -11,6 +11,7 @@ use app\models\Promos;
  */
 class PromosSearch extends Promos
 {
+    public $searchQuery;
     /**
      * {@inheritdoc}
      */
@@ -18,7 +19,7 @@ class PromosSearch extends Promos
     {
         return [
             [['id', 'percentage'], 'integer'],
-            [['promo', 'expiration_date'], 'safe'],
+            [['promo', 'expiration_date', 'searchQuery'], 'safe'],
             [['minimum_amount'], 'number'],
         ];
     }
@@ -57,15 +58,13 @@ class PromosSearch extends Promos
             return $dataProvider;
         }
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'percentage' => $this->percentage,
-            'minimum_amount' => $this->minimum_amount,
+        $query->andFilterWhere(['or',
+            ['like', 'promo', $this->searchQuery],
+            ['like', 'expiration_date', $this->searchQuery],
+            ['like', 'percentage', $this->searchQuery],  // Make sure the table prefix is correct
+            ['like', 'minimum_amount', $this->searchQuery],
+            ['like', 'expiration_date', $this->searchQuery],
         ]);
-
-        $query->andFilterWhere(['like', 'promo', $this->promo])
-            ->andFilterWhere(['like', 'expiration_date', $this->expiration_date]);
 
         $query->andWhere(['>=', 'expiration_date', date('Y-m-d')]);
 

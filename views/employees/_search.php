@@ -17,9 +17,9 @@ use yii\widgets\ActiveForm;
             'options' => ['class' => 'd-md-flex justify-content-end'],
         ]); ?>
 
-        <?= $form->field($model, 'searchField', ['options' => ['class' => 'mb-2']])->textInput(['placeholder' => 'Search'])->label(false) ?>
+        <?= $form->field($model, 'searchQuery')->textInput(['placeholder' => 'Search'])->label(false) ?>
 
-        <div class="form-group ms-md-1 text-nowrap">
+        <div class="form-group ms-1 text-nowrap ">
             <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
             <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
         </div>

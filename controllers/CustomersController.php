@@ -2,9 +2,9 @@
 
 namespace app\controllers;
 
+use app\models\searches\CustomersSearch;
 use Yii;
 use app\models\Customers;
-use app\models\searches\CustomersSeach;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -35,7 +35,7 @@ class CustomersController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new CustomersSeach();
+        $searchModel = new CustomersSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [

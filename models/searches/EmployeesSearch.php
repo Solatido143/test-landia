@@ -11,7 +11,7 @@ use app\models\Employees;
  */
 class EmployeesSearch extends Employees
 {
-    public $searchField; // Add the searchField property
+    public $searchQuery;
 
     /**
      * {@inheritdoc}
@@ -20,7 +20,7 @@ class EmployeesSearch extends Employees
     {
         return [
             [['id', 'fk_position', 'fk_cluster', 'fk_region', 'fk_region_area', 'fk_city', 'fk_employment_status', 'availability'], 'integer'],
-            [['employee_id', 'fname', 'mname', 'lname', 'suffix', 'bday', 'gender', 'contact_number', 'house_address', 'date_hired', 'end_of_contract', 'emergency_contact_persons', 'emergency_contact_numbers', 'emergency_contact_relations', 'logged_by', 'logged_time', 'updated_by', 'updated_time', 'searchField'], 'safe'], // Include searchField in the rules
+            [['employee_id', 'fname', 'mname', 'lname', 'suffix', 'bday', 'gender', 'contact_number', 'house_address', 'date_hired', 'end_of_contract', 'emergency_contact_persons', 'emergency_contact_numbers', 'emergency_contact_relations', 'logged_by', 'logged_time', 'updated_by', 'updated_time', 'searchQuery'], 'safe'], // Include searchField in the rules
         ];
     }
 
@@ -44,7 +44,7 @@ class EmployeesSearch extends Employees
     {
         $query = Employees::find();
 
-        // add conditions that should always apply here
+        $query->joinWith('fkPosition');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -53,30 +53,16 @@ class EmployeesSearch extends Employees
         $this->load($params);
 
         if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
             return $dataProvider;
         }
 
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'fk_position' => $this->fk_position,
-            'availability' => $this->availability,
-            'fk_employment_status' => $this->fk_employment_status,
-            'fk_cluster' => $this->fk_cluster,
-            'fk_region' => $this->fk_region,
-            'fk_region_area' => $this->fk_region_area,
-            'fk_city' => $this->fk_city,
-
-        ]);
-
         // Filter based on searchField
         $query->andFilterWhere(['or',
-            ['like', 'employee_id', $this->searchField],
-            ['like', 'fname', $this->searchField],
-            ['like', 'mname', $this->searchField],
-            ['like', 'lname', $this->searchField],
+            ['like', 'employee_id', $this->searchQuery],
+            ['like', 'fname', $this->searchQuery],
+            ['like', 'mname', $this->searchQuery],
+            ['like', 'lname', $this->searchQuery],
+            ['like', 'position', $this->searchQuery],
         ]);
 
         return $dataProvider;

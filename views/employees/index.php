@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="card-body">
                     <div class="row mb-2">
                         <div class="col col-md-6">
-                            <?= Html::a('Create Employees', ['create'], ['class' => 'btn btn-success']) ?>
+                            <?= Html::a('<i class="fa fa-plus"></i>&nbspCreate Employees', ['create'], ['class' => 'btn btn-success']) ?>
                         </div>
                         <div class="col-12 col-sm-6">
                             <?= $this->render('_search', ['model' => $searchModel]); ?>
