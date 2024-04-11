@@ -12,6 +12,7 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
 ?>
 <div class="container-fluid">
     <div class="row">
+
         <div class="col-lg-3">
             <div class="row mb-3">
                 <div class="col-lg-12">
@@ -123,41 +124,70 @@ $this->params['breadcrumbs'] = [['label' => $this->title]];
 </div>
 
 <?php
-// Calculate the current month and year
-$currentMonth = date('n');
-$currentYear = date('Y');
+$payments = \app\models\Payments::find()->all();
 
-// Calculate the start month and year for the xAxis
-$startMonth = $currentMonth - 5; // 6 months ago
-$startYear = $currentYear;
+// Initialize variables to find the latest month and year in payment dates
+$latestMonth = null;
+$latestYear = null;
+
+foreach ($payments as $payment) {
+    $paymentDate = $payment->payment_date;
+    $paymentYear = (int) date('Y', strtotime($paymentDate));
+    $paymentMonth = (int) date('m', strtotime($paymentDate));
+
+    if ($latestYear === null || $latestYear < $paymentYear || ($latestYear == $paymentYear && $latestMonth < $paymentMonth)) {
+        $latestYear = $paymentYear;
+        $latestMonth = $paymentMonth;
+    }
+}
+
+// Calculate start month and year for the last six months based on the latest month and year
+$startMonth = $latestMonth - 5;
+$startYear = $latestYear;
 if ($startMonth <= 0) {
     $startMonth += 12;
     $startYear--;
 }
 
-// Define the range description for accessibility
-$rangeDescription = date('F Y', mktime(0, 0, 0, $startMonth, 1, $startYear)) . ' to ' . date('F Y');
+// Calculate the range description
+$startTimestamp = mktime(0, 0, 0, $startMonth, 1, $startYear);
+$endTimestamp = mktime(0, 0, 0, $latestMonth, 1, $latestYear);
+$startDateStr = date('F Y', $startTimestamp);
+$endDateStr = date('F Y', $endTimestamp);
+$rangeDescription = "$startDateStr to $endDateStr";
 
-// Initialize arrays to store xAxis categories and sales data
+// Initialize arrays for xAxisCategories and salesData
 $xAxisCategories = [];
-$salesData = [];
+$salesData = [0, 0, 0, 0, 0, 0];
 
-// Loop through the last 6 months and populate xAxis categories and sales data
+// Calculate xAxisCategories and salesData for the last six months
 for ($i = 0; $i < 6; $i++) {
-    // Calculate month and year for the current iteration
-    $month = ($startMonth + $i) % 12;
-    if ($month == 0) $month = 12; // January is represented by 12 in date()
-    $year = $startYear + floor(($startMonth + $i - 1) / 12);
+    $currentMonth = $startMonth + $i;
+    $currentYear = $startYear;
 
-    // Add the month and year to the xAxis categories
-    $xAxisCategories[] = date('F Y', mktime(0, 0, 0, $month, 1, $year));
+    if ($currentMonth > 12) {
+        $currentMonth -= 12;
+        $currentYear++;
+    }
 
-    // Generate a random sales value (replace this with your actual sales data retrieval logic)
-    $salesValue = 0;
+    // Calculate timestamp and add formatted date to xAxisCategories
+    $timestamp = mktime(0, 0, 0, $currentMonth, 1, $currentYear);
+    $xAxisCategories[] = date('F Y', $timestamp);
 
-    // Add the sales value to the sales data array
-    $salesData[] = $salesValue;
+    // Calculate the payment date range for this month
+    $monthStart = date('Y-m-01', $timestamp);
+    $monthEnd = date('Y-m-t', $timestamp);
+
+    // Calculate the sum of payment_amount + discount for this month
+    foreach ($payments as $payment) {
+        $paymentDate = $payment->payment_date;
+        if ($paymentDate >= $monthStart && $paymentDate <= $monthEnd) {
+            $rowSum = $payment->payment_amount + $payment->discount;
+            $salesData[$i] += $rowSum;
+        }
+    }
 }
+
 
 // Highcharts chart initialization script with dynamic data
 $this->registerJs("

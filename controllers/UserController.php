@@ -137,7 +137,10 @@ class UserController extends Controller
             // Validate the password
             if (Yii::$app->security->validatePassword($password, $user->password_hash)) {
                 // Password is correct
-                return ['success' => true];
+                return [
+                    'success' => true,
+                    'id' => $user->id,
+                ];
             }
         }
 

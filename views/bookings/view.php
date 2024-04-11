@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                                 <?php elseif ($model->fk_booking_status == 5) : ?>
 
-                                    <?= Html::a('<i class="fa fa-check"></i>&nbsp; Approve', ['approve', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+                                    <?= Html::a('<i class="fa fa-check"></i>&nbsp; Approve', ['inqueue', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
 
                                 <?php endif; ?>
                             </p>

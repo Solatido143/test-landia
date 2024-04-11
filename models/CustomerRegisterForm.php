@@ -60,6 +60,7 @@ class CustomerRegisterForm extends Model
                 $customer->logged_by = 'system';
                 $customer->updated_by = '';
                 $customer->updated_time = '';
+                $customer->fk_user_id = $user->id;
 
                 if ($customer->validate()) {
                     if ($customer->save()) {

@@ -158,62 +158,99 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
 
 <?php
 $this->registerJs(<<<JS
+
 $(document).ready(function() {
-    // Listen for changes in the checkboxes
-    $(document).on('change', 'input[name="selectedServices[]"]', function() {
-        var checkedServices = getCheckedServices();
-        updateTotalDue(checkedServices);
-        saveCheckedServicesToStorage(checkedServices);
+    // Fetch booking services via AJAX when the page loads
+    $.ajax({
+        url: '/bookings/booking-services?fk_booking=<?= $model->id ?>',
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            // Iterate over the fetched services and check the corresponding checkboxes
+            $.each(response, function(index, service) {
+                $('input[name="selectedServices[]"][value="' + service.fk_service + '"]').prop('checked', true);
+            });
+            
+            calculateTotalDue();
+        },
+        error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+        }
     });
 
-    // Function to retrieve the IDs of checked services
-    function getCheckedServices() {
-        var checkedServices = [];
+    // Listen for changes in the checkboxes
+    $('input[name="selectedServices[]"]').on('change', function() {
+        // Calculate and display the total due amount
+        calculateTotalDue();
+    });
+
+    // Function to calculate and display the total due amount
+    function calculateTotalDue() {
+        var totalDue = 0;
         $('input[name="selectedServices[]"]:checked').each(function() {
-            checkedServices.push($(this).val());
+            totalDue += parseFloat($(this).data('fee'));
         });
-        return checkedServices;
+        $('#total-due').text(totalDue.toFixed(2));
     }
-
-    // Function to update the total due amount
-    function updateTotalDue(checkedServices) {
-        $.ajax({
-            url: '/services/get-service-fees',
-            type: 'GET',
-            dataType: 'json',
-            data: { services: checkedServices.join(',') },
-            success: function(response) {
-                $('#total-due').text(response.toFixed(2));
-            },
-            error: function(xhr, status, error) {
-                console.error(xhr.responseText);
-            }
-        });
-    }
-
-    // Function to save checked services to sessionStorage
-    function saveCheckedServicesToStorage(checkedServices) {
-        sessionStorage.setItem('checkedServices', JSON.stringify(checkedServices));
-    }
-
-    // Function to restore the state of checkboxes
-    function restoreCheckedServices() {
-        var storedCheckedServices = sessionStorage.getItem('checkedServices');
-        if (storedCheckedServices) {
-            var checkedServices = JSON.parse(storedCheckedServices);
-
-            $('input[name="selectedServices[]"]').each(function() {
-                var serviceId = $(this).val();
-                // Check if the service is in the saved selection
-                $(this).prop('checked', checkedServices.includes(serviceId));
-            });
-            updateTotalDue(checkedServices); // Update total due amount
-        }
-    }
-
-    // Call restoreCheckedServices function initially
-    restoreCheckedServices();
 });
+
+
+// $(document).ready(function() {
+//     // Listen for changes in the checkboxes
+//     $(document).on('change', 'input[name="selectedServices[]"]', function() {
+//         var checkedServices = getCheckedServices();
+//         updateTotalDue(checkedServices);
+//         saveCheckedServicesToStorage(checkedServices);
+//     });
+//
+//     // Function to retrieve the IDs of checked services
+//     function getCheckedServices() {
+//         var checkedServices = [];
+//         $('input[name="selectedServices[]"]:checked').each(function() {
+//             checkedServices.push($(this).val());
+//         });
+//         return checkedServices;
+//     }
+//
+//     // Function to update the total due amount
+//     function updateTotalDue(checkedServices) {
+//         $.ajax({
+//             url: '/services/get-service-fees',
+//             type: 'GET',
+//             dataType: 'json',
+//             data: { services: checkedServices.join(',') },
+//             success: function(response) {
+//                 $('#total-due').text(response.toFixed(2));
+//             },
+//             error: function(xhr, status, error) {
+//                 console.error(xhr.responseText);
+//             }
+//         });
+//     }
+//
+//     // Function to save checked services to sessionStorage
+//     function saveCheckedServicesToStorage(checkedServices) {
+//         sessionStorage.setItem('checkedServices', JSON.stringify(checkedServices));
+//     }
+//
+//     // Function to restore the state of checkboxes
+//     function restoreCheckedServices() {
+//         var storedCheckedServices = sessionStorage.getItem('checkedServices');
+//         if (storedCheckedServices) {
+//             var checkedServices = JSON.parse(storedCheckedServices);
+//
+//             $('input[name="selectedServices[]"]').each(function() {
+//                 var serviceId = $(this).val();
+//                 // Check if the service is in the saved selection
+//                 $(this).prop('checked', checkedServices.includes(serviceId));
+//             });
+//             updateTotalDue(checkedServices); // Update total due amount
+//         }
+//     }
+//
+//     // Call restoreCheckedServices function initially
+//     restoreCheckedServices();
+// });
 
 
 

@@ -101,13 +101,18 @@ class BookingsController extends Controller
             }
         }
 
-        $bookingInqueueModel = Bookings::find()
+        $todayStart = date('Y-m-d 00:00:00');
+        $todayEnd = date('Y-m-d 23:59:59');
+
+        $bookingInqueues = Bookings::find()
             ->where(['fk_booking_status' => 1])
             ->andWhere(['not', ['id' => $id]])
             ->andWhere(['<', 'id', $id])
+            ->andWhere(['between', 'logged_time', $todayStart, $todayEnd]) // Add condition for today's range
             ->all();
 
-        foreach ($bookingInqueueModel as $bookingInqueue){
+
+        foreach ($bookingInqueues as $bookingInqueue){
             $booking_Services = BookingsServices::find()
                 ->where(['fk_booking' => $bookingInqueue->id])
                 ->all();
@@ -147,6 +152,36 @@ class BookingsController extends Controller
             'bookingsTimingModel' => $bookingsTimingModel,
             'waiting_time' => $waiting_time
         ]);
+    }
+
+    public function actionInqueue($id) {
+        date_default_timezone_set('Asia/Manila');
+        $booking  = $this->findModel($id);
+
+        if ($booking->fk_booking_status !== 5) {
+            // Set an error flash message
+            Yii::$app->session->setFlash('error', [
+                'title' => 'Error',
+                'body' => 'Booking status is not pending.',
+            ]);
+            return $this->redirect(['view', 'id' => $booking->id]);
+        }
+
+        $booking->fk_booking_status = 1;
+
+        if ($booking->save()){
+            Yii::$app->session->setFlash('success', [
+                'title' => 'Yay!',
+                'body' => 'Booking has been approved successfully.',
+            ]);
+        } else {
+            // Handling the case when the save operation fails
+            Yii::$app->session->setFlash('error', [
+                'title' => 'Error',
+                'body' => 'Failed to approve booking. Please try again later.',
+            ]);
+        }
+        return $this->redirect(['view', 'id' => $booking->id]);
     }
 
     public function actionOngoing($id)
@@ -277,9 +312,6 @@ class BookingsController extends Controller
         $query = Services::find();
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => [
-                'pageSize' => 3,
-            ],
         ]);
 
         $model = new Bookings();
@@ -330,9 +362,6 @@ class BookingsController extends Controller
         $query = Services::find();
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'pagination' => [
-                'pageSize' => 3,
-            ],
         ]);
 
         // Get previously selected services directly from the BookingsServices table

@@ -2008,4 +2008,48 @@ class ApiController extends Controller
         }
     }
 
+    public function actionGetCustomerBooking() {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $id = Yii::$app->request->get('id');
+
+        if ($id === null) {
+            return [
+                'success' => false,
+                'message' => 'Missing required parameter: id',
+            ];
+        }
+
+        if (!is_numeric($id)) {
+            return [
+                'success' => false,
+                'message' => 'Invalid ID provided',
+            ];
+        }
+
+        $customer = Customers::findOne(['fk_user_id' => $id]);
+
+        if ($customer === null) {
+            return [
+                'success' => false,
+                'message' => 'Customer not found',
+            ];
+        }
+
+        $bookings = Bookings::findAll(['fk_customer' => $customer->id]);
+
+        if (empty($bookings)) {
+            return [
+                'success' => false,
+                'message' => 'No bookings found for the specified customer',
+            ];
+        }
+
+        return [
+            'success' => true,
+            'data' => $bookings,
+        ];
+    }
+
+
 }

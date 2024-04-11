@@ -8,6 +8,7 @@ use Yii;
  * This is the model class for table "customers".
  *
  * @property int $id
+ * @property int $fk_user_id
  * @property string $customer_name
  * @property string|null $contact_number
  * @property string $logged_by
@@ -35,6 +36,7 @@ class Customers extends \yii\db\ActiveRecord
         return [
             [['customer_name', 'logged_by', 'logged_time', 'contact_number'], 'required'],
             [['customer_name', 'contact_number', 'logged_by', 'logged_time', 'updated_by', 'updated_time'], 'string', 'max' => 255],
+            [['fk_user_id'], 'integer'],
             [
                 ['contact_number'],
                 'match',
@@ -57,6 +59,7 @@ class Customers extends \yii\db\ActiveRecord
             'logged_time' => 'Logged Time',
             'updated_by' => 'Updated By',
             'updated_time' => 'Updated Time',
+            'fk_user_id' => 'UID',
         ];
     }
 
@@ -68,6 +71,11 @@ class Customers extends \yii\db\ActiveRecord
     public function getBookings()
     {
         return $this->hasMany(Bookings::class, ['fk_customer' => 'id']);
+    }
+
+    public function getUserAccount()
+    {
+        return $this->hasOne(User::class, ['id' => 'fk_user_id']);
     }
 
     /**
