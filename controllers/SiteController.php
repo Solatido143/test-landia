@@ -140,13 +140,29 @@ class SiteController extends Controller
         }
 
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            Yii::$app->session->setFlash('success', [
-                'title' => 'Yay!',
-                'body' => 'Login successful.',
-            ]);
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            // Retrieve the user instance after successful form validation
+            $user = $model->getUser();
 
-            return $this->goBack();
+            // Check if user exists and has a `user_access` level of 5
+            if ($user !== null && $user->user_access == 6) {
+                // Prevent login and set an error flash message
+                Yii::$app->session->setFlash('error', [
+                    'title' => 'Access Denied',
+                    'body' => 'Contact an Administrator.',
+                ]);
+
+                // Redirect the user to the login page or any other appropriate page
+                return $this->redirect(['site/login']);
+            }
+
+            if ($model->login()) {
+                Yii::$app->session->setFlash('success', [
+                    'title' => 'Success!',
+                    'body' => 'Login successful.',
+                ]);
+                return $this->goBack();
+            }
         }
 
         $model->password = '';

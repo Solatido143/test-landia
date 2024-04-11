@@ -131,16 +131,17 @@ class UserController extends Controller
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        // Find the user by username
         $user = User::findOne(['username' => $username]);
         if ($user !== null) {
-            // Validate the password
             if (Yii::$app->security->validatePassword($password, $user->password_hash)) {
-                // Password is correct
-                return [
-                    'success' => true,
-                    'id' => $user->id,
-                ];
+                $userRole = $user->getRoles()->one();
+                if ($userRole !== null) {
+                    return [
+                        'success' => true,
+                        'id' => $user->id,
+                        'user_access' => $userRole->name,
+                    ];
+                }
             }
         }
 
