@@ -158,68 +158,6 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
 
 <?php
 $this->registerJs(<<<JS
-
-// $(document).ready(function() {
-//     // Listen for changes in the checkboxes
-//     $(document).on('change', 'input[name="selectedServices[]"]', function() {
-//         var checkedServices = getCheckedServices();
-//         console.log(checkedServices);
-//         updateTotalDue(checkedServices);
-//         saveCheckedServicesToStorage(checkedServices);
-//     });
-//
-//     // Function to retrieve the IDs of checked services
-//     function getCheckedServices() {
-//         var checkedServices = [];
-//         $('input[name="selectedServices[]"]:checked').each(function() {
-//             checkedServices.push($(this).val());
-//         });
-//         return checkedServices;
-//     }
-//
-//     // Function to update the total due amount
-//     function updateTotalDue(checkedServices) {
-//         $.ajax({
-//             url: '/services/get-service-fees',
-//             type: 'GET',
-//             dataType: 'json',
-//             data: { services: checkedServices.join(',') },
-//             success: function(response) {
-//                 $('#total-due').text(response.toFixed(2));
-//             },
-//             error: function(xhr, status, error) {
-//                 console.error(xhr.responseText);
-//             }
-//         });
-//     }
-//
-//     // Function to save checked services to sessionStorage
-//     function saveCheckedServicesToStorage(checkedServices) {
-//         sessionStorage.setItem('checkedServices', JSON.stringify(checkedServices));
-//     }
-//
-//     // Function to restore the state of checkboxes
-//     function restoreCheckedServices() {
-//         var storedCheckedServices = sessionStorage.getItem('checkedServices');
-//         if (storedCheckedServices) {
-//             var checkedServices = JSON.parse(storedCheckedServices);
-//
-//             $('input[name="selectedServices[]"]').each(function() {
-//                 var serviceId = $(this).val();
-//                 // Check if the service is in the saved selection
-//                 $(this).prop('checked', checkedServices.includes(serviceId));
-//             });
-//             updateTotalDue(checkedServices); // Update total due amount
-//         }
-//         console.log(checkedServices);
-//     }
-//
-//     // Call restoreCheckedServices function initially
-//     restoreCheckedServices();
-// });
-
-
-
 $(document).ready(function() {
     // Listen for changes in the checkboxes
     $(document).on('change', 'input[name="selectedServices[]"]', function() {
