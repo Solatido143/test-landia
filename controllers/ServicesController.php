@@ -143,7 +143,7 @@ class ServicesController extends Controller
 
     public function actionGetServiceFees()
     {
-        $ids = Yii::$app->request->post('services'); // Retrieve the array of service IDs from POST data
+        $ids = Yii::$app->request->get('services'); // Retrieve the array of service IDs from POST data
 
         // Convert the comma-separated string of IDs into an array
         if (!empty($ids)) {
