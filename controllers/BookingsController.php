@@ -159,7 +159,6 @@ class BookingsController extends Controller
         $booking  = $this->findModel($id);
 
         if ($booking->fk_booking_status !== 5) {
-            // Set an error flash message
             Yii::$app->session->setFlash('error', [
                 'title' => 'Error',
                 'body' => 'Booking status is not pending.',
@@ -175,7 +174,6 @@ class BookingsController extends Controller
                 'body' => 'Booking has been approved successfully.',
             ]);
         } else {
-            // Handling the case when the save operation fails
             Yii::$app->session->setFlash('error', [
                 'title' => 'Error',
                 'body' => 'Failed to approve booking. Please try again later.',
@@ -188,6 +186,14 @@ class BookingsController extends Controller
     {
         date_default_timezone_set('Asia/Manila');
         $bookingModel  = $this->findModel($id);
+
+        if ($bookingModel->fk_booking_status === 3) {
+            Yii::$app->session->setFlash('error', [
+                'title' => 'Oh no!',
+                'body' => 'Booking is already paid.',
+            ]);
+            return $this->redirect(['view', 'id' => $id]);
+        }
 
         $employeeSelectionModel = new EmployeeSelectionForm();
         $timing = new BookingsTiming();
@@ -226,6 +232,14 @@ class BookingsController extends Controller
 
         if ($bookingModel === null) {
             throw new NotFoundHttpException('The requested booking does not exist.');
+        }
+
+        if ($bookingModel->fk_booking_status === 3) {
+            Yii::$app->session->setFlash('error', [
+                'title' => 'Oh no!',
+                'body' => 'Booking is already paid.',
+            ]);
+            return $this->redirect(['view', 'id' => $id]);
         }
 
         // Calculate the sum of fk_service
@@ -369,6 +383,8 @@ class BookingsController extends Controller
             ->select('fk_service')
             ->where(['fk_booking' => $model->id])
             ->column();
+        $model->updated_time = date('Y-m-d H:i:s');
+        $model->updated_by = Yii::$app->user->identity->username;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             // Get currently selected services
