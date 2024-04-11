@@ -44,6 +44,9 @@ class BookingsSearch extends Bookings
     {
         $query = Bookings::find();
 
+        $query->joinWith('fkCustomer');
+        $query->joinWith('fkBookingStatus');
+
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -66,12 +69,13 @@ class BookingsSearch extends Bookings
             return $dataProvider;
         }
 
-        // Filter to show bookings for today's date or past dates with fk_booking_status of 2
+        // Modify the filter conditions to explicitly specify the table prefix
         $query->andFilterWhere([
             'or',
-            ['=', 'DATE(logged_time)', date('Y-m-d')],
-            ['and', ['<', 'logged_time', date('Y-m-d 00:00:00')], ['fk_booking_status' => 2]],
+            ['=', 'DATE(bookings.logged_time)', date('Y-m-d')],
+            ['and', ['<', 'bookings.logged_time', date('Y-m-d 00:00:00')], ['bookings.fk_booking_status' => 2]],
         ]);
+
 
         // grid filtering conditions
         $query->andFilterWhere([
@@ -82,11 +86,11 @@ class BookingsSearch extends Bookings
 
         // Perform a generalized search across multiple attributes
         $query->andFilterWhere(['or',
-            ['like', 'booking_type', $this->searchQuery],
-            ['like', 'fk_booking_status', $this->searchQuery],
-            ['like', 'fk_customer', $this->searchQuery],
-            ['like', 'schedule_time', $this->searchQuery],
-            ['like', 'remarks', $this->searchQuery],
+            ['like', 'bookings.booking_type', $this->searchQuery],
+            ['like', 'bookings_status.booking_status', $this->searchQuery],
+            ['like', 'customers.customer_name', $this->searchQuery],  // Make sure the table prefix is correct
+            ['like', 'bookings.schedule_time', $this->searchQuery],
+            ['like', 'bookings.remarks', $this->searchQuery],
         ]);
 
         return $dataProvider;
