@@ -98,11 +98,11 @@ $customers = $bookingsModel->fetchAndMapData(\app\models\Customers::class, 'id',
 
                 </div>
 
-                <?= $form->field($model, 'searchQuery')->textInput([
-                    'id' => 'service-search-input',
-                    'placeholder' => 'Search services here...',
-                    'class' => 'form-control form-group'
-                ])->label(false) ?>
+<!--                --><?php //= $form->field($model, 'searchQuery')->textInput([
+//                    'id' => 'service-search-input',
+//                    'placeholder' => 'Search services here...',
+//                    'class' => 'form-control form-group'
+//                ])->label(false) ?>
 
                 <?= \yii\grid\GridView::widget([
                     'dataProvider' => $dataProvider,
