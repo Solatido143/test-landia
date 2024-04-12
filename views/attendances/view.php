@@ -39,8 +39,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'value' => function($model) {
                                     if ($model->sign_in && $model->sign_out) {
                                         $signInTime = new DateTime($model->sign_in);
-                                        $signOutTime = new DateTime($model->sign_out);
-                                        $interval = $signInTime->diff($signOutTime);
+                                        $signOutTime = new DateTime($model->date . $model->sign_out);
+                                        $interval = $signOutTime->diff($signInTime);
 
                                         $output = '';
                                         if ($interval->d > 0) {
